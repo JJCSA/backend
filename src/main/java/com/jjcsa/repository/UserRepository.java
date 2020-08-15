@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepository  extends JpaRepository<User, Long> {
+public class UserRepository implements JpaRepository<User, Long> {
 
     @Override
     public List<User> findAll() {
