@@ -10,7 +10,7 @@ For steps on how you can contribute, please follow the [Contributing guide](CONT
 
 ```
 git clone git@github.com:JJCSA/backend.git
-cd frontend
+cd backend
 ```
 
 2. Install Postgres in local machine
