@@ -17,7 +17,7 @@ For contributions, it is preferred to create a new branch with the same name as 
 
 Ideally, these general steps should be followed to contribute.
 
-1. Open your Git Terminal and switch to the `developer` branch of the [frontend](https://github.com/JJCSA/frontend) repo
+1. Open your Git Terminal and switch to the `developer` branch of the [backend](https://github.com/JJCSA/backend) repo
 ```
 git checkout developer
 git pull --rebase
