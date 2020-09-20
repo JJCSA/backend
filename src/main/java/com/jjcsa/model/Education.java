@@ -1,17 +1,12 @@
 package com.jjcsa.model;
 
-import java.util.UUID;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.DateTimeFormat;
+import lombok.Data;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "education")
-public class Education{
+public @Data class Education{
 
     @Id
     @Column(name="educ_id")
@@ -28,53 +23,5 @@ public class Education{
     private int gradYear;
     private String specialization;
     private String degree;
-
-	public int getEducationId() {
-		return this.educationId;
-	}
-
-	public void setEducationId(int educationId) {
-		this.educationId = educationId;
-	}
-
-	public String getUniversityName() {
-		return this.universityName;
-	}
-
-	public void setUniversityName(String universityName) {
-		this.universityName = universityName;
-	}
-
-	public int getGradMonth() {
-		return this.gradMonth;
-	}
-
-	public void setGradMonth(int gradMonth) {
-		this.gradMonth = gradMonth;
-	}
-
-	public int getGradYear() {
-		return this.gradYear;
-	}
-
-	public void setGradYear(int gradYear) {
-		this.gradYear = gradYear;
-	}
-
-	public String getSpecialization() {
-		return this.specialization;
-	}
-
-	public void setSpecialization(String specialization) {
-		this.specialization = specialization;
-	}
-
-	public String getDegree() {
-		return this.degree;
-	}
-
-	public void setDegree(String degree) {
-		this.degree = degree;
-	}
 
 }
