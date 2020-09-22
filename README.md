@@ -55,7 +55,7 @@ To login to the Keycloak server credentails would be
     ```
     This will start you application server on port 9080.
     
-    Once the startup finishes, KeycloakInitializerRunner.java class will run and initialize company-services realm in Keycloak. Basically, it will create:
+    Once the startup finishes, KeycloakInitializerRunner.java class will run and initialize jjcsa-services realm in Keycloak. Basically, it will create:
     ```
     Realm: jjcsa-services
     Client: jjcsa
