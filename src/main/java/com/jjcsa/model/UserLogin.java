@@ -14,12 +14,16 @@ public @Data class UserLogin{
     @Column(name="user_id")
     @GeneratedValue()
     private UUID id;
-    
+
     private String email;
-	private String password;
-	
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private UserRole userrole;
-    
+
+    public UserLogin(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }
