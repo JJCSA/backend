@@ -12,11 +12,14 @@ public @Data class UserLogin{
 
     @Id
     @Column(name="user_id")
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String email;
     private String password;
+
+    @OneToOne(mappedBy = "userLogin", cascade = CascadeType.ALL)
+    private UserProfile userProfile;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")

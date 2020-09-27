@@ -50,6 +50,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         super.configure(http);
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                 .antMatchers("/api/users/getUserDetails").hasRole(KeycloakUtil.ADMIN)
                 .anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

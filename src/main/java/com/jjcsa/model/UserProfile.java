@@ -17,8 +17,11 @@ import javax.validation.constraints.Pattern;
 public @Data class UserProfile{
     @Id
     @Column(name="user_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
+    @OneToOne
+    @MapsId
+    private UserLogin userLogin;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "last_updated_date")
