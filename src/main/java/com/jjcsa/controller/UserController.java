@@ -1,4 +1,5 @@
 package com.jjcsa.controller;
+import java.util.List;
 
 import com.jjcsa.model.User;
 import com.jjcsa.service.UserService;
@@ -21,6 +22,12 @@ public class UserController {
     @GetMapping(path = "/test")
     public String testApi() {
         return "{ \"message\": \"Test Successful\"}";
+    }
+
+    @GetMapping(path = "/userList")
+    public List<User> getUser() {
+        List<User> savedUser = userService.getall();
+        return savedUser;
     }
 
 }
