@@ -16,11 +16,11 @@ import javax.validation.constraints.Pattern;
 @Table(name = "user_profile")
 public @Data class UserProfile{
     @Id
-    @Column(name="user_id")
     private UUID id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
+    @JoinColumn(name = "user_id")
     private UserLogin userLogin;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -74,7 +74,7 @@ public @Data class UserProfile{
     private MultipartFile profilePicture;
 
     @Column(name = "socialmedia_platform")
-    private char socialMediaPlatform;
+    private String socialMediaPlatform;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "volunteering_interest")

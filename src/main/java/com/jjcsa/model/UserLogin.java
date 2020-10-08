@@ -18,9 +18,6 @@ public @Data class UserLogin{
     private String email;
     private String password;
 
-    @OneToOne(mappedBy = "userLogin", cascade = CascadeType.ALL)
-    private UserProfile userProfile;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private UserRole userrole;

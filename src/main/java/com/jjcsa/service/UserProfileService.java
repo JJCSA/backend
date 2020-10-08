@@ -1,6 +1,5 @@
 package com.jjcsa.service;
 
-import com.jjcsa.model.User;
 import com.jjcsa.model.UserProfile;
 import com.jjcsa.repository.UserProfileRespository;
 import org.springframework.beans.factory.annotation.Autowired;

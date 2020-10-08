@@ -1,6 +1,5 @@
 package com.jjcsa.repository;
 
-import com.jjcsa.model.User;
 import com.jjcsa.model.UserProfile;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
