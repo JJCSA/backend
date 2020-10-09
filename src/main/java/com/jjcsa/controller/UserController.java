@@ -74,6 +74,10 @@ public class UserController {
 
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(@RequestBody @NonNull final AddNewUser addNewUser) {
+
+        // Create the new user in keycloak
+        KeycloakUtil.createNewUser(addNewUser, keycloakServerUrl);
+
         UserLogin userLogin = userLoginMapper.toUserLogin(addNewUser);
         UserProfile userProfile = userProfileMapper.toUserProfile(addNewUser);
 
