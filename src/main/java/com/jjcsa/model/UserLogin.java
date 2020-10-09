@@ -11,7 +11,7 @@ import javax.persistence.*;
 public @Data class UserLogin{
 
     @Id
-    @Column(name="user_id")
+    @Column(name="user_id", columnDefinition = "uuid")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
@@ -19,7 +19,7 @@ public @Data class UserLogin{
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_role")
+    @Column(name = "user_role", columnDefinition = "varchar(45) default User")
     private UserRole userrole;
 
     public UserLogin(String email, String password) {
