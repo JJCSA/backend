@@ -6,19 +6,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.representations.idm.ClientRepresentation;
-import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RealmRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.admin.client.resource.*;
+import org.keycloak.representations.idm.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,7 +31,6 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
      */
     @Override
     public void run(String... args) throws Exception {
-
 
         final Optional<RealmRepresentation> representationOptional = keycloakAdmin.realms().findAll().stream()
                 .filter(r -> r.getRealm().equals(KeycloakUtil.JJCSA_REALM_NAME)).findAny();
@@ -88,8 +81,36 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
 
             // Create Realm
             keycloakAdmin.realms().create(realmRepresentation);
+
+            // Update Admin role to add "manage-users" role
+            try {
+                updateAdminRole();
+            } catch (Exception ex) {
+                log.error("Unable to change clientRole for admin user");
+            }
+
             log.info("'{}' realm created", KeycloakUtil.JJCSA_REALM_NAME);
         }
+    }
+
+    public void updateAdminRole() {
+
+        // Get realm
+        RealmResource realmResource = keycloakAdmin.realm(KeycloakUtil.JJCSA_REALM_NAME);
+        UsersResource usersResource = realmResource.users();
+
+        // Client Representation for realm-management
+        ClientRepresentation clientRepresentation = realmResource.clients().findByClientId("realm-management").get(0);
+
+        // Role Representation for manage-users
+        RoleRepresentation roleRepresentation = realmResource.clients().get(clientRepresentation.getId()).roles().get("manage-users").toRepresentation();
+
+        // Admin userId
+        String userId = usersResource.search("admin", true).get(0).getId();
+
+        // Update user with clientRole
+        usersResource.get(userId).roles().clientLevel(clientRepresentation.getId()).add(Arrays.asList(roleRepresentation));
+
     }
 
 }

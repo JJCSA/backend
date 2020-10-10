@@ -76,7 +76,10 @@ public class UserController {
     public ResponseEntity<AddNewUser> register(@RequestBody @NonNull final AddNewUser addNewUser) {
 
         // Create the new user in keycloak
-        KeycloakUtil.createNewUser(addNewUser, keycloakServerUrl);
+        if(!KeycloakUtil.createNewUser(addNewUser, keycloakServerUrl)) {
+            // Creation of new user in keycloak failed
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         UserLogin userLogin = userLoginMapper.toUserLogin(addNewUser);
         UserProfile userProfile = userProfileMapper.toUserProfile(addNewUser);

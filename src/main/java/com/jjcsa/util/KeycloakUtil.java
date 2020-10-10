@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.exception.UserAlreadyExistsException;
 import com.jjcsa.model.UserLogin;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -17,10 +20,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.ws.rs.core.Response;
 
+@Slf4j
 public class KeycloakUtil {
 
     public static final String ADMIN = "ADMIN";
-    public static final String ADMIN_PASSWORD = "admin";
     public static final String USER = "USER";
     public static final String JJCSA_REALM_NAME = "jjcsa-services";
     public static final String JJCSA_CLIENT_ID = "jjcsa";
@@ -29,12 +32,12 @@ public class KeycloakUtil {
     public static final List<UserLogin> JJCSA_USERS = Arrays.asList(new UserLogin("admin", "admin"),
             new UserLogin("user", "user"));
 
-    public static void createNewUser(AddNewUser addNewUser, String keycloakServerUrl) {
+    public static boolean createNewUser(AddNewUser addNewUser, String keycloakServerUrl) {
         Keycloak keycloak = KeycloakBuilder.builder()
                                 .serverUrl(keycloakServerUrl)
                                 .realm(JJCSA_REALM_NAME)
-                                .username(ADMIN)
-                                .password(ADMIN_PASSWORD)
+                                .username("admin")
+                                .password("admin")
                                 .clientId(JJCSA_CLIENT_ID)
                                 .build();
 
@@ -42,6 +45,7 @@ public class KeycloakUtil {
         UserRepresentation user = new UserRepresentation();
         user.setEnabled(true);
         user.setEmail(addNewUser.getEmail());
+        user.setUsername(addNewUser.getEmail());
         user.setFirstName(addNewUser.getFirstName());
         user.setLastName(addNewUser.getLastName());
 
@@ -51,9 +55,17 @@ public class KeycloakUtil {
 
         // Create User
         Response response = usersResource.create(user);
-        System.out.printf("Response: %s %s%n", response.getStatus(), response.getStatusInfo());
-        System.out.println(response.getLocation());
+        if(response.getStatus() != HttpStatus.SC_CREATED) {
+            if(response.getStatus() == HttpStatus.SC_CONFLICT) {
+                throw new UserAlreadyExistsException("User with this email address already exists!");
+            } else {
+                log.error("Unable to create new user in Keycloak");
+                return false;
+            }
+        }
+
         String userId = CreatedResponseUtil.getCreatedId(response);
+        log.debug("New user created in Keycloak with userId {}", userId);
 
         // Define password credential
         CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
@@ -65,6 +77,8 @@ public class KeycloakUtil {
 
         // set password credential
         userResource.resetPassword(credentialRepresentation);
+
+        return true;
     }
 
 }
