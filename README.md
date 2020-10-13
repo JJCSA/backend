@@ -6,7 +6,7 @@ For steps on how you can contribute, please follow the [Contributing guide](CONT
 
 ## Development Instructions:
 
-1. Clone this repository and navigate to the frontend directory
+1. Clone this repository and navigate to the backend directory
 
     ```
     git clone git@github.com:JJCSA/backend.git
