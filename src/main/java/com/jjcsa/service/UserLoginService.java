@@ -1,6 +1,7 @@
 package com.jjcsa.service;
 
 import com.jjcsa.exception.BadRequestException;
+import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.model.UserLogin;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.repository.UserLoginRepository;
@@ -37,7 +38,19 @@ public class UserLoginService {
         if (userLogin.getUserrole() == null) {
             userLogin.setUserrole(UserRole.User);
         }
+        try{
+            userLogin = userLoginRepository.save(userLogin);
+        }
+        catch (Exception e) {
+            log.error("Error while saving UserLogin");
+            log.error(e.getMessage());
+            throw new UnknownServerErrorException("Internal Server Error",
+                    "Unable to store user to database",
+                    "Please check for system outage",
+                    "Please try again after some time",
+                    "");
+        }
 
-        return userLoginRepository.save(userLogin);
+        return userLogin;
     }
 }

@@ -17,4 +17,12 @@ public class ExceptionInterceptor extends ResponseEntityExceptionHandler {
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnknownServerErrorException.class)
+    public final ResponseEntity<Object> handleAllUnknownServerErrorExceptions(UnknownServerErrorException ex) {
+        CustomExceptionSchema exceptionResponse =
+                new CustomExceptionSchema(
+                        ex.getMessage(), ex.getDetails(), ex.getHint(), ex.getNextActions(), ex.getSupport());
+        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }
