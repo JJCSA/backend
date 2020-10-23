@@ -4,11 +4,13 @@ import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.UserLogin;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.repository.UserLoginRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserLoginService {
 
@@ -23,6 +25,7 @@ public class UserLoginService {
 
         //Check if userLogin already exits
         if (getUserLogin(userLogin.getEmail()).isPresent()) {
+            log.error("User [{}] already exists!", userLogin);
             throw new BadRequestException("User already exists",
                     "User with this email address already exists",
                     "Please login",

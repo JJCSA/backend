@@ -82,7 +82,7 @@ public class UserController {
         }
 
         UserLogin userLogin = userLoginMapper.toUserLogin(addNewUser);
-        UserProfile userProfile = userProfileMapper.toUserProfile(addNewUser);
+        final UserProfile userProfile = userProfileMapper.toUserProfile(addNewUser);
 
         log.info("Saving userLogin for '{}' ...", addNewUser.getEmail());
         userLogin = userLoginService.saveNewUserLogin(userLogin);
@@ -90,7 +90,7 @@ public class UserController {
 
         log.info("Saving userProfile for '{}' ...", addNewUser.getEmail());
         userProfile.setUserLogin(userLogin);
-        log.info("UserProfile stored successfully");
+        log.info("UserProfile [{}] stored successfully", userProfile);
         log.info(userProfile.toString());
         userProfileService.saveUserProfile(userProfile);
 
