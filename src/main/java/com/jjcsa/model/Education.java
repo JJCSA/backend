@@ -1,11 +1,13 @@
 package com.jjcsa.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "education")
+@NoArgsConstructor
 public @Data class Education{
 
     @Id

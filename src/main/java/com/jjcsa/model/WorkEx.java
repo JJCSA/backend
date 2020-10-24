@@ -1,10 +1,13 @@
 package com.jjcsa.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "work_ex")
+@NoArgsConstructor
 public @Data class WorkEx {
 
     @Id

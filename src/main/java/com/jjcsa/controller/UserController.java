@@ -3,6 +3,7 @@ package com.jjcsa.controller;
 import java.security.Principal;
 
 import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserLoginMapper;
 import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.UserLogin;
@@ -75,12 +76,7 @@ public class UserController {
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(@RequestBody @NonNull final AddNewUser addNewUser) {
 
-        // Create the new user in keycloak
-        if(!KeycloakUtil.createNewUser(addNewUser, keycloakServerUrl)) {
-            // Creation of new user in keycloak failed
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+        // Save the new user in our db
         UserLogin userLogin = userLoginMapper.toUserLogin(addNewUser);
         final UserProfile userProfile = userProfileMapper.toUserProfile(addNewUser);
 
@@ -93,6 +89,21 @@ public class UserController {
         log.info("UserProfile [{}] stored successfully", userProfile);
         log.info(userProfile.toString());
         userProfileService.saveUserProfile(userProfile);
+
+        // Create the new user in keycloak
+        boolean userCreatedInKeycloak = false;
+        try {
+            userCreatedInKeycloak = KeycloakUtil.createNewUser(addNewUser, keycloakServerUrl);
+        } catch (BadRequestException e) {
+            userCreatedInKeycloak = false;
+            throw e;
+        } finally {
+            if(!userCreatedInKeycloak) {
+                log.error("Creating User in Keycloak failed! Deleting from our db");
+                // Delete the record from our db
+                userProfileService.deleteUserProfile(userProfile);
+            }
+        }
 
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }

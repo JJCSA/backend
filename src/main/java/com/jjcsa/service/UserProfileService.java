@@ -22,4 +22,8 @@ public class UserProfileService {
     public UserProfile saveUserProfile(UserProfile userProfile) {
         return userProfileRepository.save(userProfile);
     }
+
+    public void deleteUserProfile(UserProfile userProfile) {
+        userProfileRepository.delete(userProfile);
+    }
 }

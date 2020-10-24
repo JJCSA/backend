@@ -2,6 +2,7 @@ package com.jjcsa.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "admin_action")
+@NoArgsConstructor
 public @Data class AdminAction{
 
     @Id

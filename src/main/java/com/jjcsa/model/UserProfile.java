@@ -9,16 +9,18 @@ import com.jjcsa.model.enumModel.ContactMethod;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "user_profile")
+@NoArgsConstructor
 public @Data class UserProfile{
     @Id
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "user_id", columnDefinition = "uuid")
     private UserLogin userLogin;
