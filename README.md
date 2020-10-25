@@ -36,7 +36,7 @@ This will create all the project deliverables in the `target` directory
 
 #### Running the app:
 
-1. Install Keycloak from this link https://www.keycloak.org/getting-started/getting-started-zip and unzip it to the desired location
+1. Use the keycloak server from the zip file used in the current github repository and unzip it to the desired location
 
 2. Navigate to Keycloak bin folder and run ./standalone.sh. This will start the Keycloak server and you can view the Keycloak UI on http://localhost:8080/auth.
 To login to the Keycloak server credentails would be 
