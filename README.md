@@ -4,6 +4,10 @@
 
 For steps on how you can contribute, please follow the [Contributing guide](CONTRIBUTING.md)
 
+## Resources:
+
+For resources on various documentation and references, please refer [Resources](RESOURCES.md)
+
 ## Development Instructions:
 
 1. Clone this repository and navigate to the backend directory
