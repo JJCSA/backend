@@ -77,7 +77,8 @@ public class UserController {
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(
             @RequestParam("newUser") @NonNull final String newUserJSONString,
-            @RequestParam("jainProof") @NonNull final MultipartFile jainProofDoc) throws JsonProcessingException {
+            @RequestParam("jainProof") @NonNull final MultipartFile jainProofDoc,
+            @RequestParam("profPicture") @NonNull final MultipartFile profPicture) throws JsonProcessingException {
 
         AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
 
@@ -93,7 +94,7 @@ public class UserController {
         userProfile.setUserLogin(userLogin);
         log.info("UserProfile [{}] stored successfully", userProfile);
         log.info(userProfile.toString());
-        userProfileService.saveUserProfile(userProfile, jainProofDoc);
+        userProfileService.saveUserProfile(userProfile, jainProofDoc, profPicture);
 
         // Create the new user in keycloak
         boolean userCreatedInKeycloak = false;
