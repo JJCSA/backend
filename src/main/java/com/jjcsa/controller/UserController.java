@@ -2,6 +2,8 @@ package com.jjcsa.controller;
 
 import java.security.Principal;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserLoginMapper;
@@ -20,14 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -45,6 +44,8 @@ public class UserController {
     private UserLoginMapper userLoginMapper;
     @Autowired
     private UserProfileMapper userProfileMapper;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping(path = "/getUserDetails")
     public String getUserDetails(@NonNull final Principal principal) {
@@ -74,7 +75,12 @@ public class UserController {
     }
 
     @PostMapping(path = "/register")
-    public ResponseEntity<AddNewUser> register(@RequestBody @NonNull final AddNewUser addNewUser) {
+    public ResponseEntity<AddNewUser> register(
+            @RequestParam("newUser") @NonNull final String newUserJSONString,
+            @RequestParam("jainProof") @NonNull final MultipartFile jainProofDoc,
+            @RequestParam("profPicture") @NonNull final MultipartFile profPicture) throws JsonProcessingException {
+
+        AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
 
         // Save the new user in our db
         UserLogin userLogin = userLoginMapper.toUserLogin(addNewUser);
@@ -88,7 +94,7 @@ public class UserController {
         userProfile.setUserLogin(userLogin);
         log.info("UserProfile [{}] stored successfully", userProfile);
         log.info(userProfile.toString());
-        userProfileService.saveUserProfile(userProfile);
+        userProfileService.saveUserProfile(userProfile, jainProofDoc, profPicture);
 
         // Create the new user in keycloak
         boolean userCreatedInKeycloak = false;

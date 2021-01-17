@@ -52,10 +52,8 @@ public @Data class UserProfile{
     @Column(name = "community_name", columnDefinition = "varchar(100) default ''")
     private String communityName;
 
-    //TODO: Figure out a way to store this
-    @Transient
-    @Column(name = "community_document")
-    private MultipartFile communityDocument;
+    @Column(name = "community_document_url", columnDefinition = "varchar(100) default ''")
+    private String communityDocumentURL;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status", columnDefinition = "varchar(45) default 'Pending'")
@@ -78,10 +76,8 @@ public @Data class UserProfile{
     @Column(name = "dob", columnDefinition = "varchar(45) default '11/11/1111'")
     private Date dateOfBirth;
 
-    //TODO: Figure out a way to store this
-    @Transient
-    @Column(name = "profile_picture")
-    private MultipartFile profilePicture;
+    @Column(name = "profile_picture_url", columnDefinition = "varchar(100) default ''")
+    private String profilePictureURL;
 
     @Column(name = "socialmedia_platform", columnDefinition = "varchar(45) default ''")
     private String socialMediaPlatform;
