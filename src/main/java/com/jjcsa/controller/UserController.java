@@ -1,6 +1,8 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,6 +74,21 @@ public class UserController {
         final String token = keycloakMovieApp.tokenManager().getAccessToken().getToken();
         log.info("'{}' logged in successfully", userLogin.getEmail());
         return token;
+    }
+
+    @GetMapping(path = "/getUsersList")
+    public List<UserProfile> getUsersList() {
+        log.info("Getting User List");
+        List<UserProfile> results = new ArrayList<>();
+        UserProfileService ups = new UserProfileService();
+        try{
+            results = ups.getall();
+        }catch (NullPointerException e) {
+            log.error("There are no details available in database");
+        }finally{
+            log.error("Something went wrong");
+        }
+        return results;
     }
 
     @PostMapping(path = "/register")

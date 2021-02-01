@@ -52,6 +52,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                 .antMatchers("/api/users/getUserDetails").hasRole(KeycloakUtil.ADMIN)
+                .antMatchers("/api/users/getUsersList").hasRole(KeycloakUtil.ADMIN)
                 .anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.cors().and().csrf().disable();
