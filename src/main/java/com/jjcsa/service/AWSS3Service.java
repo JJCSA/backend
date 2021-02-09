@@ -42,9 +42,10 @@ public class AWSS3Service {
         } catch (AmazonServiceException e) {
             log.error("Unable to save image to s3: " + e.getErrorMessage());
             return "";
+        } finally {
+            // delete the file created locally
+            file.delete();
         }
-        // delete the file created locally
-        file.delete();
 
         return getS3Client().getUrl(bucketName, objectKey).toString();
     }
