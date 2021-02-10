@@ -1,7 +1,6 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -76,17 +75,17 @@ public class UserController {
         return token;
     }
 
-    @GetMapping(path = "/getUsersList")
+    @GetMapping(path = "")
     public List<UserProfile> getUsersList() {
         log.info("Getting User List");
-        List<UserProfile> results = new ArrayList<>();
-        UserProfileService ups = new UserProfileService();
+        List<UserProfile> results = null;
         try{
+            UserProfileService ups = new UserProfileService();
             results = ups.getall();
         }catch (NullPointerException e) {
-            log.error("There are no details available in database");
-        }finally{
-            log.error("Something went wrong");
+            log.error("There are no details available in database",e);
+        }catch(Exception e){
+            log.error("Something went wrong",e);
         }
         return results;
     }
