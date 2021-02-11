@@ -1,8 +1,7 @@
 package com.jjcsa.util;
 
-import com.jjcsa.model.UserProfile;
+import com.jjcsa.model.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,10 +16,10 @@ public class ImageUtil {
         return "PROFILE_PICTURE." + (fileExtension.isEmpty() ? "jpg" : fileExtension);
     }
 
-    public static String generateProfilePictureKeyForUserProfile(UserProfile userProfile) {
+    public static String generateProfilePictureKeyForUserProfile(User user) {
         // Generate the S3 file key - user id/PROFILE_PICTURE.{FILE EXT}
-        String key = userProfile.getId() + "/PROFILE_PICTURE."
-                + userProfile.getProfilePictureURL().substring(userProfile.getProfilePictureURL().lastIndexOf(".")+1);
+        String key = user.getId() + "/PROFILE_PICTURE."
+                + user.getProfilePictureURL().substring(user.getProfilePictureURL().lastIndexOf(".")+1);
 
         return key;
     }
@@ -31,10 +30,10 @@ public class ImageUtil {
         return "COMMUNITY_DOCUMENT." + (fileExtension.isEmpty() ? "jpg" : fileExtension);
     }
 
-    public static String generateCommunityDocumentKeyForUserProfile(UserProfile userProfile) {
+    public static String generateCommunityDocumentKeyForUserProfile(User user) {
         // Generate the S3 file key - user id/COMMUNITY_DOCUMENT.{FILE EXT}
-        String key = userProfile.getId() + "/COMMUNITY_DOCUMENT."
-                + userProfile.getCommunityDocumentURL().substring(userProfile.getCommunityDocumentURL().lastIndexOf(".")+1);
+        String key = user.getId() + "/COMMUNITY_DOCUMENT."
+                + user.getCommunityDocumentURL().substring(user.getCommunityDocumentURL().lastIndexOf(".")+1);
 
         return key;
     }
