@@ -112,7 +112,7 @@ public class UserProfileService {
         userProfileRepository.delete(userProfile);
     }
 
-    public List<UserProfile> getall()
+    public List<UserProfile> getallUsers()
     {
         return (List<UserProfile>)userProfileRepository.findAll();
     }

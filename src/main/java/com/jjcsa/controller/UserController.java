@@ -80,8 +80,7 @@ public class UserController {
         log.info("Getting User List");
         List<UserProfile> results = null;
         try{
-            UserProfileService ups = new UserProfileService();
-            results = ups.getall();
+            results = userProfileService.getallUsers();
         }catch (NullPointerException e) {
             log.error("There are no details available in database",e);
         }catch(Exception e){
