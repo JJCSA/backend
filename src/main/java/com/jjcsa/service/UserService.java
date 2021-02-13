@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -119,5 +120,10 @@ public class UserService {
         deleteProfilePictureForUserProfile(user);
         deleteCommunityDocumentForUserProfile(user);
         userRepository.delete(user);
+    }
+
+    public List<UserProfile> getallUsers()
+    {
+        return (List<UserProfile>)userProfileRepository.findAll();
     }
 }
