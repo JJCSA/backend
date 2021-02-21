@@ -52,18 +52,6 @@ public class UserController {
         return "hello " + username;
     }
 
-    @GetMapping(path = "/getUserDetails")
-    public String getUserDetails(@NonNull final Principal principal) {
-        log.info("Fetching user detail..");
-        String username = "";
-        if (principal instanceof KeycloakAuthenticationToken) {
-            KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) principal;
-            AccessToken token = keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext().getToken();
-            username = token.getPreferredUsername();
-        }
-        return "hello " + username;
-    }
-
     @PostMapping(path = "/login")
     public String login(@RequestBody @NonNull final User user) {
 
@@ -80,17 +68,9 @@ public class UserController {
     }
 
     @GetMapping(path = "")
-    public List<UserProfile> getUsersList() {
+    public List<User> getUsersList() {
         log.info("Getting User List");
-        List<UserProfile> results = null;
-        try{
-            results = userProfileService.getallUsers();
-        }catch (NullPointerException e) {
-            log.error("There are no details available in database",e);
-        }catch(Exception e){
-            log.error("Something went wrong",e);
-        }
-        return results;
+        return userService.getallUsers();
     }
 
     @PostMapping(path = "/register")

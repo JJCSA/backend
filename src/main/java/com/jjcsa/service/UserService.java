@@ -122,8 +122,18 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<UserProfile> getallUsers()
+    public List<User> getallUsers()
     {
-        return (List<UserProfile>)userProfileRepository.findAll();
+        List<User> users = null;
+
+        try {
+            users = (List<User>)userRepository.findAll();
+        } catch (NullPointerException e) {
+            log.error("There are no details available in database",e);
+        } catch(Exception e){
+            log.error("Something went wrong",e);
+        }
+
+        return users;
     }
 }
