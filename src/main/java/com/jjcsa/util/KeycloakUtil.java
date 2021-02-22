@@ -2,7 +2,7 @@ package com.jjcsa.util;
 
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
-import com.jjcsa.model.UserLogin;
+import com.jjcsa.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.keycloak.admin.client.CreatedResponseUtil;
@@ -27,8 +27,8 @@ public class KeycloakUtil {
     public static final String JJCSA_CLIENT_ID = "jjcsa";
     public static final List<String> JJCSA_ROLES = Arrays.asList(ADMIN, USER);
     public static final String JJCSA_REDIRECT_URL = "http://localhost:3000/*";
-    public static final List<UserLogin> JJCSA_USERS = Arrays.asList(new UserLogin("admin", "admin"),
-            new UserLogin("user", "user"));
+    public static final List<User> JJCSA_USERS = Arrays.asList(new User("admin", "admin"),
+            new User("user", "user"));
 
     public static boolean createNewUser(AddNewUser addNewUser, String keycloakServerUrl) {
         Keycloak keycloak = KeycloakBuilder.builder()
