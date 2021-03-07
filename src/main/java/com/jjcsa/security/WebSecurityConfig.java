@@ -49,8 +49,8 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     protected void configure(@NonNull final HttpSecurity http) throws Exception {
         super.configure(http);
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+                .antMatchers("/api/users/login", "/api/users/register", "/actuator/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**")
+                .permitAll()
                 .antMatchers("/api/users/getUserDetails").hasRole(KeycloakUtil.ADMIN)
                 .antMatchers("/api/users").hasRole(KeycloakUtil.ADMIN)
                 .anyRequest().authenticated();
