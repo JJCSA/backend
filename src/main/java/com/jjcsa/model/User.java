@@ -5,7 +5,9 @@ import java.util.UUID;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jjcsa.model.enumModel.ContactMethod;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
 import lombok.Data;
@@ -14,16 +16,26 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Pattern;
 
 @Entity
-@Table(name = "user_profile")
+@Table(name = "user_account") // user is a reserved keyword in postgres
 @NoArgsConstructor
-public @Data class UserProfile{
+public @Data class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @MapsId
-    @JoinColumn(name = "user_id", columnDefinition = "uuid")
-    private UserLogin userLogin;
+    private String email;
+
+    @JsonIgnore
+    private String password;
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", columnDefinition = "varchar(45) default User")
+    private UserRole userrole;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "last_updated_date", columnDefinition = "varchar(45) default '11/11/1111'")

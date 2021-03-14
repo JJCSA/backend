@@ -7,12 +7,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
-import com.jjcsa.mapper.UserLoginMapper;
-import com.jjcsa.mapper.UserProfileMapper;
-import com.jjcsa.model.UserLogin;
-import com.jjcsa.model.UserProfile;
-import com.jjcsa.service.UserLoginService;
-import com.jjcsa.service.UserProfileService;
+import com.jjcsa.mapper.UserMapper;
+import com.jjcsa.model.User;
+import com.jjcsa.service.UserService;
 import com.jjcsa.util.KeycloakUtil;
 
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -38,19 +35,14 @@ public class UserController {
     private String keycloakServerUrl;
 
     @Autowired
-    private UserLoginService userLoginService;
+    private UserService userService;
     @Autowired
-    private UserProfileService userProfileService;
-    @Autowired
-    private UserLoginMapper userLoginMapper;
-    @Autowired
-    private UserProfileMapper userProfileMapper;
+    private UserMapper userMapper;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    @GetMapping(path = "/getUserDetails")
-    public String getUserDetails(@NonNull final Principal principal) {
-        log.info("Fetching user detail..");
+    @GetMapping(path = "/test")
+    public String testUserLogin(@NonNull final Principal principal) {
         String username = "";
         if (principal instanceof KeycloakAuthenticationToken) {
             KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) principal;
@@ -61,32 +53,24 @@ public class UserController {
     }
 
     @PostMapping(path = "/login")
-    public String login(@RequestBody @NonNull final UserLogin userLogin) {
+    public String login(@RequestBody @NonNull final User user) {
 
-        if(userLogin.getEmail().isEmpty() || userLogin.getPassword().isEmpty()) {
+        if(user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Email or password is empty. Username and password are mandatory");
         }
-        log.info("Getting token for '{}' ...", userLogin.getEmail());
+        log.info("Getting token for '{}' ...", user.getEmail());
         final Keycloak keycloakMovieApp = KeycloakBuilder.builder().serverUrl(keycloakServerUrl)
-                .realm(KeycloakUtil.JJCSA_REALM_NAME).username(userLogin.getEmail()).password(userLogin.getPassword())
+                .realm(KeycloakUtil.JJCSA_REALM_NAME).username(user.getEmail()).password(user.getPassword())
                 .clientId(KeycloakUtil.JJCSA_CLIENT_ID).build();
         final String token = keycloakMovieApp.tokenManager().getAccessToken().getToken();
-        log.info("'{}' logged in successfully", userLogin.getEmail());
+        log.info("'{}' logged in successfully", user.getEmail());
         return token;
     }
 
     @GetMapping(path = "")
-    public List<UserProfile> getUsersList() {
+    public List<User> getUsersList() {
         log.info("Getting User List");
-        List<UserProfile> results = null;
-        try{
-            results = userProfileService.getallUsers();
-        }catch (NullPointerException e) {
-            log.error("There are no details available in database",e);
-        }catch(Exception e){
-            log.error("Something went wrong",e);
-        }
-        return results;
+        return userService.getallUsers();
     }
 
     @PostMapping(path = "/register")
@@ -98,18 +82,12 @@ public class UserController {
         AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
 
         // Save the new user in our db
-        UserLogin userLogin = userLoginMapper.toUserLogin(addNewUser);
-        final UserProfile userProfile = userProfileMapper.toUserProfile(addNewUser);
+        final User user = userMapper.toUserProfile(addNewUser);
 
-        log.info("Saving userLogin for '{}' ...", addNewUser.getEmail());
-        userLogin = userLoginService.saveNewUserLogin(userLogin);
-        log.info("UserLogin stored successfully");
-
-        log.info("Saving userProfile for '{}' ...", addNewUser.getEmail());
-        userProfile.setUserLogin(userLogin);
-        log.info("UserProfile [{}] stored successfully", userProfile);
-        log.info(userProfile.toString());
-        userProfileService.saveUserProfile(userProfile, jainProofDoc, profPicture);
+        log.info("Saving user for '{}' ...", addNewUser.getEmail());
+        userService.saveUser(user, jainProofDoc, profPicture);
+        log.info("UserProfile [{}] stored successfully", user);
+        log.info(user.toString());
 
         // Create the new user in keycloak
         boolean userCreatedInKeycloak = false;
@@ -122,7 +100,7 @@ public class UserController {
             if(!userCreatedInKeycloak) {
                 log.error("Creating User in Keycloak failed! Deleting from our db");
                 // Delete the record from our db
-                userProfileService.deleteUserProfile(userProfile);
+                userService.deleteUser(user);
             }
         }
 
