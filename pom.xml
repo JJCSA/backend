@@ -93,8 +93,13 @@
 			<artifactId>aws-java-sdk-s3</artifactId>
 			<version>${aws.sdk.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>

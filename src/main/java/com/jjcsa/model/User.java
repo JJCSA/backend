@@ -1,6 +1,7 @@
 package com.jjcsa.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import javax.persistence.*;
 
@@ -10,15 +11,19 @@ import com.jjcsa.model.enumModel.ContactMethod;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "user_account") // user is a reserved keyword in postgres
 @NoArgsConstructor
-public @Data class User {
+@AllArgsConstructor
+@Data
+@Builder
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -32,6 +37,12 @@ public @Data class User {
         this.email = email;
         this.password = password;
     }
+
+    @OneToMany(mappedBy = "user")
+    private List<Education> educationList;
+
+    @OneToMany(mappedBy = "user")
+    private List<WorkEx> workExperience;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", columnDefinition = "varchar(45) default User")
