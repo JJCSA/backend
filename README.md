@@ -57,3 +57,10 @@ For resources on various documentation and references, please refer [Resources](
 6. Now you can test the APIs using postman or any other external client. For the APIs that need authentication use the token returned by the login API. The authorization type would be Bearer token.
    
    Eg API: http://localhost:9080/api/users/login
+
+7. You can test the App heath status by going to http://localhost:9080/actuator/health
+
+## Documentation
+
+The app uses [springdoc-openapi](https://springdoc.org) for API Documentation. 
+To access the API documentation, access Swagger UI at [http://localhost:9080/swagger-ui.html](http://localhost:9080/swagger-ui.html)
