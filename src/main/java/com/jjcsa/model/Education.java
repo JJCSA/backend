@@ -1,5 +1,7 @@
 package com.jjcsa.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +10,10 @@ import javax.persistence.*;
 @Entity
 @Table(name = "education")
 @NoArgsConstructor
-public @Data class Education{
+@AllArgsConstructor
+@Builder
+@Data
+public class Education{
 
     @Id
     @Column(name="educ_id", columnDefinition = "uuid")
@@ -29,5 +34,9 @@ public @Data class Education{
 
     @Column(columnDefinition = "varchar(100) default ''")
     private String degree;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
