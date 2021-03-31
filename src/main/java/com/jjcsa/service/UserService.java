@@ -1,8 +1,9 @@
 package com.jjcsa.service;
 
+import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.model.User;
-import com.jjcsa.repository.UserRespository;
+import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,24 +11,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
 public class UserService {
 
     @Autowired
-    private UserRespository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private AWSS3Service awss3Service;
 
-    public User getUser(UUID id) {
-        Optional<User> user = userRepository.findById(id);
-        return null;
+    public User getUser(String email) {
+        return userRepository.findUserByEmail(email);
     }
 
     public User saveUser(User user, MultipartFile jainProofDoc, MultipartFile profPicture) {
+
+        if(getUser(user.getEmail()) != null)
+            throw new BadRequestException(
+                    "User already exists",
+                    "User with this email address already exists",
+                    "Please try logging in",
+                    "",
+                    ""
+            );
 
         user = userRepository.save(user);
 
@@ -136,4 +143,5 @@ public class UserService {
 
         return users;
     }
+
 }
