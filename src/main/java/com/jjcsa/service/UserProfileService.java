@@ -46,4 +46,8 @@ public class UserProfileService {
         return userProfile;
 
     }
+
+    public void updateUserProfile(User user) {
+        userRepository.save(user);
+    }
 }
