@@ -6,12 +6,14 @@ import com.jjcsa.model.enumModel.ContactMethod;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 public class UserProfile {
     private UUID id;
     private String email;

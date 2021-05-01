@@ -1,6 +1,7 @@
 package com.jjcsa.mapper;
 
 import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.dto.UserProfile;
 import com.jjcsa.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,4 +17,6 @@ public interface UserMapper {
             @Mapping(source = "addNewUser.prefMethodOfContact", target = "contactMethod")
     })
     User toUserProfile(AddNewUser addNewUser);
+
+    User toUser(UserProfile userProfile);
 }
