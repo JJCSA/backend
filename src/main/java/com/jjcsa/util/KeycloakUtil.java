@@ -96,7 +96,7 @@ public class KeycloakUtil {
         user.setLastName(addNewUser.getLastName());
 
         // Get realm
-        RealmResource realmResource = keycloak.realm(JJCSA_REALM_NAME);
+        RealmResource realmResource = getKeyCloakClient().realm(JJCSA_REALM_NAME);
         UsersResource usersResource = realmResource.users();
 
         System.out.println(addNewUser);
@@ -134,6 +134,10 @@ public class KeycloakUtil {
         return true;
     }
 
+    public static boolean isAdmin(SimpleKeycloakAccount account) {
+        return account.getRoles().contains(UserRole.Admin.name());
+    }
+
     public static void updateUserRole(@NonNull String role,
                                @NonNull String email,
                                @NonNull String action) {
@@ -146,6 +150,7 @@ public class KeycloakUtil {
         ClientRepresentation clientRepresentation = realmResource.clients().findByClientId(KeycloakUtil.JJCSA_CLIENT_ID).get(0);
 
         log.info("roles: {}", realmResource.clients().get(clientRepresentation.getId()).roles().get(role));
+
         // Role Representation for manage-users
         RoleRepresentation roleRepresentation = realmResource.clients().get(clientRepresentation.getId()).roles().get(role).toRepresentation();
 
