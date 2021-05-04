@@ -8,6 +8,7 @@ import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.service.UserService;
 import com.jjcsa.util.KeycloakUtil;

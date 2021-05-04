@@ -40,7 +40,15 @@ import java.util.Optional;
 @Service
 @Data
 public class KeycloakUtil {
-    
+
+
+    public static String keycloakServerUrl;
+
+    @Value("${keycloak.auth-server-url}")
+    public void setKeycloakServerUrl(String keycloakServerUrl) {
+        KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
+    }
+
     public static final String ADMIN = "Admin";
     public static final String USER = "User";
     public static final String SUPER_ADMIN = "SuperAdmin";
@@ -53,17 +61,8 @@ public class KeycloakUtil {
         put("admin","admin");
         put("user","user");
     }};
-    
-    // TODO figure out a way to make this final. Spring does not allow injection for static variables.
-    public static String keycloakServerUrl;
 
-    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
-    public void setKeycloakServerUrl(String keycloakServerUrl) {
-        KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
-    }
-
-    @Bean
-    private static final Keycloak getKeyCloakClient(){
+    private static Keycloak getKeyCloakClient(){
         return KeycloakBuilder.builder()
                 .serverUrl(keycloakServerUrl)
                 .realm(JJCSA_REALM_NAME)
