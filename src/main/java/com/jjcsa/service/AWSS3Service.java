@@ -1,15 +1,12 @@
 package com.jjcsa.service;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.util.ImageUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,29 +14,27 @@ import java.io.File;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AWSS3Service {
+
+    private final AmazonS3Client amazonS3Client;
 
     @Value("${aws.s3.bucketname}")
     private String bucketName;
 
-    @Value("${aws.region}")
-    private String awsRegion;
-
-    private AmazonS3 s3Client;
-
-    private AmazonS3 getS3Client() {
-        if(s3Client == null) {
-            s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(awsRegion)
-                    .build();
-        }
-        return s3Client;
+    private void createBucket() {
+        log.debug("Creating S3 bucker with name: {}", bucketName);
+        amazonS3Client.createBucket(bucketName);
     }
 
     public String saveFile(String objectKey, MultipartFile multipartFile) {
         File file = ImageUtil.convertMultiPartFileToFile(multipartFile);
         try {
-            getS3Client().putObject(bucketName, objectKey, file);
+            if (!amazonS3Client.doesBucketExist(bucketName)) {
+                createBucket();
+            }
+            log.debug("Saving object {} to S3", objectKey);
+            amazonS3Client.putObject(bucketName, objectKey, file);
         } catch (AmazonServiceException e) {
             log.error("Unable to save image to s3: " + e.getErrorMessage());
             throw new UnknownServerErrorException("Error saving file",
@@ -52,12 +47,16 @@ public class AWSS3Service {
             file.delete();
         }
 
-        return getS3Client().getUrl(bucketName, objectKey).toString();
+        return amazonS3Client.getUrl(bucketName, objectKey).toString();
     }
 
     public void deleteFile(String objectKey) {
         try {
-            getS3Client().deleteObject(bucketName, objectKey);
+            if (!amazonS3Client.doesBucketExist(bucketName)) {
+                createBucket();
+            }
+            log.debug("Deleting object {} from S3", objectKey);
+            amazonS3Client.deleteObject(bucketName, objectKey);
         } catch (AmazonServiceException e) {
             log.error("Unable to delete image from s3: " + e.getErrorMessage());
         }

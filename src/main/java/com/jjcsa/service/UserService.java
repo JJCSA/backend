@@ -5,15 +5,24 @@ import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.model.User;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
+import com.jjcsa.util.KeycloakUtil;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.util.List;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserService {
 
     @Autowired
@@ -25,9 +34,17 @@ public class UserService {
         return userRepository.findUserByEmail(email);
     }
 
+    /**
+     * Need to come up with idea to execute this method as a transaction.
+     * @param user
+     * @param jainProofDoc
+     * @param profPicture
+     * @return
+     */
     public User saveUser(User user, MultipartFile jainProofDoc, MultipartFile profPicture) {
 
-        if(getUser(user.getEmail()) != null)
+        log.info("Save User Invoked for User:{}",user);
+        if(nonNull(getUser(user.getEmail())))
             throw new BadRequestException(
                     "User already exists",
                     "User with this email address already exists",
@@ -67,7 +84,7 @@ public class UserService {
         }
 
         user.setCommunityDocumentURL(jainProofDocURL);
-        user.setProfilePictureURL(profPictureURL);
+        user.setProfilePicture(profPictureURL);
         return user;
     }
 
@@ -95,8 +112,8 @@ public class UserService {
         String profPictureURL = null;
         try {
             // Save MultipartFile to S3
-            if(user.getProfilePictureURL() != null
-                    && !user.getProfilePictureURL().isEmpty()) {
+            if(user.getProfilePicture() != null
+                    && !user.getProfilePicture().isEmpty()) {
                 // Delete file if already present
                 deleteProfilePictureForUserProfile(user);
             }
@@ -112,9 +129,9 @@ public class UserService {
     }
 
     public void deleteProfilePictureForUserProfile(User user) {
-        if(user.getProfilePictureURL() == null) return;
+        if(user.getProfilePicture() == null) return;
         awss3Service.deleteFile(ImageUtil.generateProfilePictureKeyForUserProfile(user));
-        user.setProfilePictureURL(null);
+        user.setProfilePicture(null);
     }
 
     public void deleteCommunityDocumentForUserProfile(User user) {
@@ -124,24 +141,20 @@ public class UserService {
     }
 
     public void deleteUser(User user) {
-        deleteProfilePictureForUserProfile(user);
-        deleteCommunityDocumentForUserProfile(user);
+        KeycloakUtil.deleteUser(user);
+        this.deleteProfilePictureForUserProfile(user);
+        this.deleteCommunityDocumentForUserProfile(user);
         userRepository.delete(user);
     }
 
-    public List<User> getallUsers()
-    {
-        List<User> users = null;
-
-        try {
-            users = (List<User>)userRepository.findAll();
-        } catch (NullPointerException e) {
-            log.error("There are no details available in database",e);
-        } catch(Exception e){
-            log.error("Something went wrong",e);
-        }
-
-        return users;
+    public void deleteUserInDbOnly(User user) {
+        this.deleteProfilePictureForUserProfile(user);
+        this.deleteCommunityDocumentForUserProfile(user);
+        userRepository.delete(user);
     }
 
+    public List<User> getAllUsers()
+    {
+        return userRepository.findAll();
+    }
 }

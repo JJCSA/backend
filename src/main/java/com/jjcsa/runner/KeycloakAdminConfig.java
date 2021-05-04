@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KeycloakAdminConfig {
 
-    @Value("${keycloak.auth-server-url}")
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
     private String keycloakServerUrl;
 
     /**

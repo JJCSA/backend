@@ -19,8 +19,8 @@
 		<keycloak.version>11.0.2</keycloak.version>
 		<org.mapstruct.version>1.4.0.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.12</org.projectlombok.version>
-		<aws.sdk.version>1.11.905</aws.sdk.version>
 		<springdoc-openapi.version>1.5.5</springdoc-openapi.version>
+		<spring-cloud-aws-version>2.3.1</spring-cloud-aws-version>
 	</properties>
 
 	<dependencies>
@@ -67,14 +67,19 @@
 			<version>${org.mapstruct.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-			<version>${aws.sdk.version}</version>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>${springdoc-openapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.awspring.cloud</groupId>
+			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
+			<version>${spring-cloud-aws-version}</version>
 		</dependency>
 
 		<dependency>
@@ -91,12 +96,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
 		</dependency>
     
 	</dependencies>
@@ -107,13 +111,6 @@
 				<groupId>org.keycloak.bom</groupId>
 				<artifactId>keycloak-adapter-bom</artifactId>
 				<version>${keycloak.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-bom</artifactId>
-				<version>${aws.sdk.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

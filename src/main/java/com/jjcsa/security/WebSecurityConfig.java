@@ -1,6 +1,7 @@
 package com.jjcsa.security;
 
 import com.jjcsa.model.enumModel.UserRole;
+import com.jjcsa.util.KeycloakUtil;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
@@ -9,7 +10,6 @@ import org.keycloak.adapters.springsecurity.management.HttpSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,8 +17,6 @@ import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-
-import com.jjcsa.util.KeycloakUtil;
 
 import lombok.NonNull;
 
@@ -52,9 +50,9 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/users/login", "/api/users/register", "/actuator/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**")
                 .permitAll()
-                .antMatchers("/api/users/updateUserDetails").authenticated()
-                .antMatchers("/api/users/updateUserRole").hasRole(UserRole.SuperAdmin.name())
-                .antMatchers("/api/users").hasRole(UserRole.Admin.name())
+                .antMatchers("/api/users/getUserDetails").hasRole(KeycloakUtil.ADMIN)
+                .antMatchers("/api/admin/**").hasRole(KeycloakUtil.ADMIN)
+                .antMatchers("/api/users").hasRole(KeycloakUtil.ADMIN)
                 .anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.cors().and().csrf().disable();

@@ -24,5 +24,4 @@ public class ExceptionInterceptor extends ResponseEntityExceptionHandler {
                         ex.getMessage(), ex.getDetails(), ex.getHint(), ex.getNextActions(), ex.getSupport());
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }

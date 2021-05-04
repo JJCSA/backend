@@ -1,0 +1,23 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      jdbc:
+        lob:
+          non_contextual_creation: true
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/jjcsa
+    username: admin
+    password: jjcsa
+
+keycloak:
+  auth-server-url: http://localhost:8080/auth
+
+cloud:
+  aws:
+    credentials:
+      profile-name: default

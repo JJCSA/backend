@@ -1,7 +1,6 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
-import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,19 +8,15 @@ import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.service.UserService;
 import com.jjcsa.util.KeycloakUtil;
 
 import com.jjcsa.util.UserUtil;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,19 +27,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path="/api/users", produces = "application/json")
-public class UserController {
+public class LoginController {
 
-    @Value("${keycloak.auth-server-url}")
-    private String keycloakServerUrl;
-
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserMapper userMapper;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
+    // This method is for test
     @GetMapping(path = "/test")
     public String testUserLogin(@NonNull final Principal principal) {
         String username = "";
@@ -56,26 +48,26 @@ public class UserController {
         return "hello " + username;
     }
 
-    @PostMapping(path = "/login")
-    public String login(@RequestBody @NonNull final User user) {
-
-        if(user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Email or password is empty. Username and password are mandatory");
-        }
-        log.info("Getting token for '{}' ...", user.getEmail());
-        final Keycloak keycloakMovieApp = KeycloakBuilder.builder().serverUrl(keycloakServerUrl)
-                .realm(KeycloakUtil.JJCSA_REALM_NAME).username(user.getEmail()).password(user.getPassword())
-                .clientId(KeycloakUtil.JJCSA_CLIENT_ID).build();
-        final String token = keycloakMovieApp.tokenManager().getAccessToken().getToken();
-        log.info("'{}' logged in successfully", user.getEmail());
-        return token;
+    @GetMapping(path = "/test2")
+    public String test2() {
+        return "test2";
     }
 
-    @GetMapping(path = "")
-    public List<User> getUsersList() {
-        log.info("Getting User List");
-        return userService.getallUsers();
-    }
+    // This method is for test
+//    @PostMapping(path = "/login")
+//    public String login(@RequestBody @NonNull final User user) {
+//
+//        if(user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
+//            throw new IllegalArgumentException("Email or password is empty. Username and password are mandatory");
+//        }
+//        log.info("Getting token for '{}' ...", user.getEmail());
+//        final Keycloak keycloakMovieApp = KeycloakBuilder.builder().serverUrl(keycloakServerUrl)
+//                .realm(KeycloakUtil.JJCSA_REALM_NAME).username(user.getEmail()).password(user.getPassword())
+//                .clientId(KeycloakUtil.JJCSA_CLIENT_ID).build();
+//        final String token = keycloakMovieApp.tokenManager().getAccessToken().getToken();
+//        log.info("'{}' logged in successfully", user.getEmail());
+//        return token;
+//    }
 
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(
@@ -97,7 +89,7 @@ public class UserController {
         // Create the new user in keycloak
         boolean userCreatedInKeycloak = false;
         try {
-            userCreatedInKeycloak = KeycloakUtil.createNewUser(addNewUser, keycloakServerUrl);
+            userCreatedInKeycloak = KeycloakUtil.createNewUser(addNewUser);
         } catch (BadRequestException e) {
             userCreatedInKeycloak = false;
             throw e;
@@ -105,7 +97,7 @@ public class UserController {
             if(!userCreatedInKeycloak) {
                 log.error("Creating User in Keycloak failed! Deleting from our db");
                 // Delete the record from our db
-                userService.deleteUser(user);
+                userService.deleteUserInDbOnly(user);
             }
         }
 
@@ -144,7 +136,7 @@ public class UserController {
             }
 
             try {
-                KeycloakUtil.updateUserRole(userRole, userEmail, action, keycloakServerUrl);
+                KeycloakUtil.updateUserRole(userRole, userEmail, action);
             } catch (Exception ex) {
                 log.error("Error while updating user: {} with role: {}", userEmail, updatedRole);
                 throw ex;

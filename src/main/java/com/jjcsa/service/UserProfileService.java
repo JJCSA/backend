@@ -3,17 +3,17 @@ package com.jjcsa.service;
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserProfileMapper;
-import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
-import com.jjcsa.model.WorkEx;
+import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.EducationRepository;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.repository.WorkExRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 
 @Service
 @Slf4j
@@ -37,14 +37,16 @@ public class UserProfileService {
                     ""
             );
 
-        List<Education> educationList = educationRepository.findAllByUser(user);
-        List<WorkEx> workExperiences = workExRepository.findAllByUser(user);
+        if(!UserStatus.Active.equals(user.getUserStatus())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "User is not active"
+            );
+        }
 
-        UserProfile userProfile = userProfileMapper.convert(user);
-        userProfileMapper.addEducationAndWorkExperience(userProfile, educationList, workExperiences);
+        user.setEducationList(educationRepository.findAllByUser(user));
+        user.setWorkExperience(workExRepository.findAllByUser(user));
 
-        return userProfile;
-
+        return userProfileMapper.toUserProfile(user);
     }
 
     public void updateUserProfile(User user) {

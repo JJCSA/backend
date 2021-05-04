@@ -19,7 +19,7 @@ public class ImageUtil {
     public static String generateProfilePictureKeyForUserProfile(User user) {
         // Generate the S3 file key - user id/PROFILE_PICTURE.{FILE EXT}
         String key = user.getId() + "/PROFILE_PICTURE."
-                + user.getProfilePictureURL().substring(user.getProfilePictureURL().lastIndexOf(".")+1);
+                + user.getProfilePicture().substring(user.getProfilePicture().lastIndexOf(".")+1);
 
         return key;
     }
