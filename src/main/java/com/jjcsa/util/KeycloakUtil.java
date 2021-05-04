@@ -3,41 +3,78 @@ package com.jjcsa.util;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.UserRole;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
+import org.jboss.logging.Logger;
+import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
+@Service
+@Data
 public class KeycloakUtil {
+
+    public static String keycloakServerUrl;
+
+    @Value("${keycloak.auth-server-url}")
+    public void setKeycloakServerUrl(String keycloakServerUrl) {
+        KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
+    }
 
     public static final String ADMIN = "ADMIN";
     public static final String USER = "USER";
     public static final String JJCSA_REALM_NAME = "jjcsa-services";
     public static final String JJCSA_CLIENT_ID = "jjcsa";
     public static final List<String> JJCSA_ROLES = Arrays.asList(ADMIN, USER);
+    private static final String JJCSA = "jjcsa";
     public static final String JJCSA_REDIRECT_URL = "http://localhost:3000/*";
     public static final List<User> JJCSA_USERS = Arrays.asList(new User("admin", "admin"),
             new User("user", "user"));
 
-    public static boolean createNewUser(AddNewUser addNewUser, String keycloakServerUrl) {
-        Keycloak keycloak = KeycloakBuilder.builder()
+    private static Keycloak getKeyCloakClient(String keycloakServerUrl){
+        return KeycloakBuilder.builder()
                 .serverUrl(keycloakServerUrl)
                 .realm(JJCSA_REALM_NAME)
                 .username("admin")
                 .password("admin")
                 .clientId(JJCSA_CLIENT_ID)
                 .build();
+    }
+
+    public static boolean deleteUser(User user){
+        Keycloak keycloak = KeycloakUtil.getKeyCloakClient(keycloakServerUrl);
+        UsersResource usersResource = keycloak.realm(JJCSA_REALM_NAME).users();
+        Optional<UserRepresentation> keyCloakUser = usersResource.list().stream().filter(keyClockUser -> keyClockUser.getEmail().equalsIgnoreCase(user.getEmail())).findFirst();
+        if(keyCloakUser.isPresent()) {
+            Response response = usersResource.delete(keyCloakUser.get().getId());
+            if(response.getStatus() == HttpStatus.SC_NO_CONTENT) {
+                log.info("User Successfully deleted from keycloak");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean createNewUser(AddNewUser addNewUser, String keycloakServerUrl) {
+        Keycloak keycloak = KeycloakUtil.getKeyCloakClient(keycloakServerUrl);
 
         // Define user
         UserRepresentation user = new UserRepresentation();
@@ -81,6 +118,16 @@ public class KeycloakUtil {
         userResource.resetPassword(credentialRepresentation);
 
         return true;
+    }
+
+    public boolean isAdmin(SimpleKeycloakAccount account){
+        AccessToken token = account.getKeycloakSecurityContext().getToken();
+        AccessToken.Access access =  token.getResourceAccess().get(JJCSA);
+        if(access.isUserInRole(UserRole.Admin.name().toUpperCase())){
+            log.info("User {} is having access role as admin",token.getPreferredUsername());
+            return true;
+        }
+        return false;
     }
 
 }
