@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.service.ActionService;
 import com.jjcsa.service.UserProfileService;
 import com.jjcsa.service.UserService;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -49,7 +52,7 @@ public class UserProfileController {
         return userProfileService.getUserProfile(token.getEmail());
     }
 
-    @PutMapping(path = "/updateUserDetails")
+    @PutMapping(path = "/manageUserProfile")
     public ResponseEntity<String> updateUserDetails(
             @RequestParam("userProfileDetails") @NonNull final String userProfileJSONString,
             @RequestParam("actionPerformerEmail") @NonNull final String actionPerformerEmail,
@@ -58,6 +61,10 @@ public class UserProfileController {
             throws JsonProcessingException{
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
+        AccessToken.Access resourceAccess =
+                token.getResourceAccess(KeycloakUtil.JJCSA_CLIENT_ID);
+
+        Set<String> roles = resourceAccess.getRoles();
         if(token.isActive()){
             UserProfile updatedUserProfile = objectMapper.readValue(userProfileJSONString, UserProfile.class);
             log.info("Updating user with email {}", updatedUserProfile.getEmail());
@@ -71,12 +78,8 @@ public class UserProfileController {
             }
 
             // If user whose details need to be updated is in pending status then only admin can update that user
-            if(!UserUtil.isUserPending(existingUserDetails) && !KeycloakUtil.isAdmin(account)){
-                return new ResponseEntity<>("Only admin can perform update action on pending user", HttpStatus.UNAUTHORIZED);
-            }
-
-            // If there is a change in role then only superadmin can perform that
-            if(!UserUtil.isUserPending(existingUserDetails) && !KeycloakUtil.isAdmin(account)){
+            if(!UserUtil.isUserPending(existingUserDetails) &&
+                    !roles.contains(UserRole.Admin.name())){
                 return new ResponseEntity<>("Only admin can perform update action on pending user", HttpStatus.UNAUTHORIZED);
             }
 

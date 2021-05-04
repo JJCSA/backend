@@ -1,7 +1,6 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
-import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,12 +16,9 @@ import com.jjcsa.util.KeycloakUtil;
 import lombok.RequiredArgsConstructor;
 import com.jjcsa.util.UserUtil;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

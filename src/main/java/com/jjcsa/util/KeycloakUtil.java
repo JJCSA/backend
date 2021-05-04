@@ -5,6 +5,13 @@ import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
 import lombok.Data;
 import com.jjcsa.model.enumModel.UserRole;
+import lombok.Data;
+import com.jjcsa.model.enumModel.UserRole;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
+import com.jjcsa.model.enumModel.RoleAction;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
@@ -62,7 +69,7 @@ public class KeycloakUtil {
 
     private static Keycloak getKeyCloakClient(){
         return KeycloakBuilder.builder()
-                .serverUrl(KeycloakUtil.keycloakServerUrl)
+                .serverUrl(keycloakServerUrl)
                 .realm(JJCSA_REALM_NAME)
                 .username("admin")
                 .password("admin")
@@ -96,7 +103,7 @@ public class KeycloakUtil {
         user.setLastName(addNewUser.getLastName());
 
         // Get realm
-        RealmResource realmResource = getKeyCloakClient().realm(JJCSA_REALM_NAME);
+        RealmResource realmResource = keycloak.realm(JJCSA_REALM_NAME);
         UsersResource usersResource = realmResource.users();
 
         System.out.println(addNewUser);
@@ -134,10 +141,6 @@ public class KeycloakUtil {
         return true;
     }
 
-    public static boolean isAdmin(SimpleKeycloakAccount account) {
-        return account.getRoles().contains(UserRole.Admin.name());
-    }
-
     public static void updateUserRole(@NonNull String role,
                                @NonNull String email,
                                @NonNull String action) {
@@ -150,7 +153,7 @@ public class KeycloakUtil {
         ClientRepresentation clientRepresentation = realmResource.clients().findByClientId(KeycloakUtil.JJCSA_CLIENT_ID).get(0);
 
         log.info("roles: {}", realmResource.clients().get(clientRepresentation.getId()).roles().get(role));
-
+        
         // Role Representation for manage-users
         RoleRepresentation roleRepresentation = realmResource.clients().get(clientRepresentation.getId()).roles().get(role).toRepresentation();
 
