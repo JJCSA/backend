@@ -5,15 +5,23 @@ import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.model.User;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
+import com.jjcsa.util.KeycloakUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserService {
 
     @Autowired
@@ -25,8 +33,16 @@ public class UserService {
         return userRepository.findUserByEmail(email);
     }
 
+    /**
+     * Need to come up with idea to execute this method as a transaction.
+     * @param user
+     * @param jainProofDoc
+     * @param profPicture
+     * @return
+     */
     public User saveUser(User user, MultipartFile jainProofDoc, MultipartFile profPicture) {
 
+        log.info("Save User Invoked for User:{}",user);
         if(getUser(user.getEmail()) != null)
             throw new BadRequestException(
                     "User already exists",
@@ -124,8 +140,9 @@ public class UserService {
     }
 
     public void deleteUser(User user) {
-        deleteProfilePictureForUserProfile(user);
-        deleteCommunityDocumentForUserProfile(user);
+        KeycloakUtil.deleteUser(user);
+        this.deleteProfilePictureForUserProfile(user);
+        this.deleteCommunityDocumentForUserProfile(user);
         userRepository.delete(user);
     }
 
