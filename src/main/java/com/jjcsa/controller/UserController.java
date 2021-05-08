@@ -7,14 +7,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
-import com.jjcsa.exception.UserRoleException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
 import com.jjcsa.service.UserService;
 import com.jjcsa.util.KeycloakUtil;
 
-import lombok.AllArgsConstructor;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -35,7 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     // I think it is a good idea to move this to keycloak utils rather than having it in controller.
-    @Value("${keycloak.auth-server-url}")
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
     private String keycloakServerUrl;
 
     @Autowired
@@ -79,35 +76,6 @@ public class UserController {
     public List<User> getUsersList() {
         log.info("Getting User List");
         return userService.getallUsers();
-    }
-
-    /**
-     * Delete user method to delete the user with {userId} provided as param.
-     * @param authenticationToken will be used for authenticating user using authorization header.
-     * @param userId user to be deleted. It will be email id of the user.
-     * @returns the message on successful deletion of user
-     */
-    @PostMapping(path = "delete/{userId}")
-    public String deleteUser(KeycloakAuthenticationToken authenticationToken, @PathVariable String userId) throws UserRoleException {
-
-        log.info("Delete User invoked for userId:{}", userId);
-        SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
-        if(keycloakUtil.isAdmin(account)) {
-            User user = userService.getUser(userId);
-            userService.deleteUser(user);
-            return "User successfully deleted";
-        } else {
-            UserRoleException exception = UserRoleException
-                                          .builder()
-                                          .details("User is not Authorized to delete user in this realm")
-                                          .hint("Check the access of your role")
-                                          .message("Please contact JJC SA developer team for assistance")
-                                          .nextActions("Contact JJC SA administrator to enable user as an admin role")
-                                          .support("Please contact this email")
-                                          .build();
-
-            throw exception;
-        }
     }
 
     @PostMapping(path = "/register")
