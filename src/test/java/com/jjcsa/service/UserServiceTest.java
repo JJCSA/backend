@@ -8,6 +8,7 @@ import com.jjcsa.util.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -26,7 +27,8 @@ import java.io.IOException;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserServiceTest {
 
-    @Value("${keycloak.auth-server-url}")
+    // Need this as a test functionality of delete user from keycloak
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
     private String keycloakServerUrl;
 
     @Autowired
@@ -96,7 +98,7 @@ class UserServiceTest {
         File profileFile = this.getFile("D:\\Projects\\JJC\\backend\\src\\test\\data\\profileDoc.jpeg");
         MultipartFile profileMultiPartFile = this.getMultiPartFileFromFile(profileFile);
 
-        log.info("User {} with files:{},{}",user.toString(),communityMultiPartFile.getName(),profileMultiPartFile.getName());
+        log.info("User {} with files:{},{}",user,communityMultiPartFile.getName(),profileMultiPartFile.getName());
         User saveUser = userService.saveUser(user,communityMultiPartFile,profileMultiPartFile);
 
         AddNewUser newUser = AddNewUser.builder()

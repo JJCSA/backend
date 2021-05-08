@@ -32,9 +32,10 @@ import java.util.Optional;
 @Data
 public class KeycloakUtil {
 
+    // TODO figure out a way to make this final. Spring does not allow injection for static variables.
     public static String keycloakServerUrl;
 
-    @Value("${keycloak.auth-server-url}")
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
     public void setKeycloakServerUrl(String keycloakServerUrl) {
         KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
     }

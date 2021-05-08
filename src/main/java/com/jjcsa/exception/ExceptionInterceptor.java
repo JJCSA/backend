@@ -24,13 +24,4 @@ public class ExceptionInterceptor extends ResponseEntityExceptionHandler {
                         ex.getMessage(), ex.getDetails(), ex.getHint(), ex.getNextActions(), ex.getSupport());
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    @ExceptionHandler(UserRoleException.class)
-    public final ResponseEntity<Object> handleUserRoleExceptions(UserRoleException ex) {
-        CustomExceptionSchema exceptionResponse =
-                new CustomExceptionSchema(
-                        ex.getMessage(), ex.getDetails(), ex.getHint(), ex.getNextActions(), ex.getSupport());
-        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Component
 public class KeycloakInitializerRunner implements CommandLineRunner {
 
-    @Value("${keycloak.auth-server-url}")
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
     private String keycloakServerUrl;
 
     private final Keycloak keycloakAdmin;
