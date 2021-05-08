@@ -41,10 +41,9 @@ import java.util.Optional;
 @Data
 public class KeycloakUtil {
 
-
     public static String keycloakServerUrl;
 
-    @Value("${keycloak.auth-server-url}")
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
     public void setKeycloakServerUrl(String keycloakServerUrl) {
         KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
     }
