@@ -3,7 +3,6 @@ package com.jjcsa.util;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.UserRole;
 import lombok.Data;
 import com.jjcsa.model.enumModel.UserRole;
 import lombok.NonNull;
