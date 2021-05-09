@@ -3,23 +3,18 @@ package com.jjcsa.util;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.UserRole;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
-import org.jboss.logging.Logger;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
@@ -120,15 +115,4 @@ public class KeycloakUtil {
 
         return true;
     }
-
-    public boolean isAdmin(SimpleKeycloakAccount account){
-        AccessToken token = account.getKeycloakSecurityContext().getToken();
-        AccessToken.Access access =  token.getResourceAccess().get(JJCSA);
-        if(access.isUserInRole(UserRole.Admin.name().toUpperCase())){
-            log.info("User {} is having access role as admin",token.getPreferredUsername());
-            return true;
-        }
-        return false;
-    }
-
 }
