@@ -83,7 +83,7 @@ public class KeycloakUtil {
         }
         return false;
     }
-
+    
     public static boolean createNewUser(AddNewUser addNewUser) {
         Keycloak keycloak = KeycloakUtil.getKeyCloakClient();
 
