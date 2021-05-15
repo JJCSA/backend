@@ -15,6 +15,7 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
@@ -45,7 +46,8 @@ public class KeycloakUtil {
     public static final List<User> JJCSA_USERS = Arrays.asList(new User("admin", "admin"),
             new User("user", "user"));
 
-    private static Keycloak getKeyCloakClient(String keycloakServerUrl){
+    @Bean
+    private static final Keycloak getKeyCloakClient(){
         return KeycloakBuilder.builder()
                 .serverUrl(keycloakServerUrl)
                 .realm(JJCSA_REALM_NAME)
@@ -56,7 +58,7 @@ public class KeycloakUtil {
     }
 
     public static boolean deleteUser(User user){
-        Keycloak keycloak = KeycloakUtil.getKeyCloakClient(keycloakServerUrl);
+        Keycloak keycloak = KeycloakUtil.getKeyCloakClient();
         UsersResource usersResource = keycloak.realm(JJCSA_REALM_NAME).users();
         Optional<UserRepresentation> keyCloakUser = usersResource.list().stream().filter(keyClockUser -> keyClockUser.getEmail().equalsIgnoreCase(user.getEmail())).findFirst();
         if(keyCloakUser.isPresent()) {
@@ -70,7 +72,7 @@ public class KeycloakUtil {
     }
 
     public static boolean createNewUser(AddNewUser addNewUser, String keycloakServerUrl) {
-        Keycloak keycloak = KeycloakUtil.getKeyCloakClient(keycloakServerUrl);
+        Keycloak keycloak = KeycloakUtil.getKeyCloakClient();
 
         // Define user
         UserRepresentation user = new UserRepresentation();
