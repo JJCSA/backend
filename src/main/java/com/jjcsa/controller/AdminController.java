@@ -6,10 +6,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -25,7 +22,7 @@ public class AdminController {
      * @param userId user to be deleted. It will be email id of the user.
      * @returns the message on successful deletion of user
      */
-    @PostMapping(path = "delete/{userId}")
+    @DeleteMapping(path = "/{userId}")
     public String deleteUser(@PathVariable String userId){
 
         log.info("Delete User invoked for userId:{}", userId);
