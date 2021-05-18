@@ -27,10 +27,6 @@ import java.io.IOException;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserServiceTest {
 
-    // Need this as a test functionality of delete user from keycloak
-    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
-    private String keycloakServerUrl;
-
     @Autowired
     private UserService userService;
 
@@ -110,7 +106,7 @@ class UserServiceTest {
                 .password(user.getPassword())
                 .build();
 
-        KeycloakUtil.createNewUser(newUser,keycloakServerUrl);
+        KeycloakUtil.createNewUser(newUser);
 
         log.info("User after save:{}", saveUser.toString());
         return saveUser;

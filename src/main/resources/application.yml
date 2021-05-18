@@ -1,17 +1,11 @@
-# Endpoints
-endpoint:
-  users: /api/users
-
 # Specify port to start the app in
 server:
   port: 9080
 
-  # Database config
+# Database config
 spring:
   jpa:
     database: POSTGRESQL
-    show-sql: true
-    generate-ddl: true
     hibernate:
       ddl-auto: update
       jdbc:
@@ -19,7 +13,6 @@ spring:
           non_contextual_creation: true
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/jjcsa
     username: admin
     password: jjcsa
 
@@ -29,7 +22,6 @@ keycloak:
   bearer-only: true
   ssl-required: none
   resource: jjcsa
-  auth-server-url: http://localhost:8080/auth
   cors: true
   use-resource-role-mappings: true
 
