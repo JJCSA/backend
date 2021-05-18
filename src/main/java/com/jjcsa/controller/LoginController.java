@@ -1,6 +1,7 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,16 +9,16 @@ import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.UserRole;
-import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.service.UserService;
 import com.jjcsa.util.KeycloakUtil;
 
-import com.jjcsa.util.UserUtil;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,11 +50,6 @@ public class LoginController {
         return "hello " + username;
     }
 
-    @GetMapping(path = "/test2")
-    public String test2() {
-        return "test2";
-    }
-
     // This method is for test
 //    @PostMapping(path = "/login")
 //    public String login(@RequestBody @NonNull final User user) {
@@ -80,7 +76,6 @@ public class LoginController {
 
         // Save the new user in our db
         final User user = userMapper.toUserProfile(addNewUser);
-        user.setUserStatus(UserStatus.Pending);
 
         log.info("Saving user for '{}' ...", addNewUser.getEmail());
         userService.saveUser(user, jainProofDoc, profPicture);
@@ -98,55 +93,11 @@ public class LoginController {
             if(!userCreatedInKeycloak) {
                 log.error("Creating User in Keycloak failed! Deleting from our db");
                 // Delete the record from our db
-                userService.deleteUserInDbOnly(user);
+                userService.deleteUser(user);
             }
         }
 
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/updateUserRole")
-    public ResponseEntity<String> updateUserRole(
-            @RequestParam("userEmail") @NonNull final String userEmail,
-            @RequestParam("actionPerformerEmail") @NonNull final String actionPerformerEmail,
-            @RequestParam("role") @NonNull final String updatedRole,
-            @RequestParam("action") @NonNull final String action,
-            KeycloakAuthenticationToken authenticationToken)
-            throws JsonProcessingException{
-        SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
-        AccessToken token = account.getKeycloakSecurityContext().getToken();
-        if(token.isActive()){
-            log.info("Updating user role with email {}", userEmail);
-            User actionPerfomerDetails = userService.getUser(actionPerformerEmail);
-
-            // User who is performing action should be an approved user
-            if(!UserUtil.isUserApproved(actionPerfomerDetails)){
-                return new ResponseEntity<>("Action performing user is not an active user", HttpStatus.UNAUTHORIZED);
-            }
-
-            String userRole = null;
-
-            if(UserUtil.isValidRole(updatedRole)) {
-                userRole = UserRole.valueOf(updatedRole).name(); // Get the correct case and role value from enum
-            } else {
-                throw new BadRequestException("Invalid role type",
-                        "Role type: " + updatedRole + " does not exist",
-                        "",
-                        "",
-                        "");
-            }
-
-            try {
-                KeycloakUtil.updateUserRole(userRole, userEmail, action);
-            } catch (Exception ex) {
-                log.error("Error while updating user: {} with role: {}", userEmail, updatedRole);
-                throw ex;
-            }
-
-            return new ResponseEntity<>("user role updated successfully", HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>("User does not have valid token", HttpStatus.UNAUTHORIZED);
-        }
-
-    }
 }

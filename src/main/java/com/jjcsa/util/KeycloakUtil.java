@@ -62,7 +62,7 @@ public class KeycloakUtil {
 
     private static Keycloak getKeyCloakClient(){
         return KeycloakBuilder.builder()
-                .serverUrl(keycloakServerUrl)
+                .serverUrl(KeycloakUtil.keycloakServerUrl)
                 .realm(JJCSA_REALM_NAME)
                 .username("admin")
                 .password("admin")
@@ -83,7 +83,7 @@ public class KeycloakUtil {
         }
         return false;
     }
-    
+
     public static boolean createNewUser(AddNewUser addNewUser) {
         Keycloak keycloak = KeycloakUtil.getKeyCloakClient();
 
