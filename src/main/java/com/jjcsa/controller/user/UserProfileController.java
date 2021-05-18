@@ -1,4 +1,4 @@
-package com.jjcsa.controller;
+package com.jjcsa.controller.user;
 
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.service.UserProfileService;
