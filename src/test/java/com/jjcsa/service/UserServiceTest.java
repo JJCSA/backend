@@ -113,13 +113,12 @@ public class UserServiceTest {
         UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
         assertEquals(exception.getMessage(), "Unable to save Jain Proof Doc to S3");
     }
-
+    
     @Test
     public void shouldValidateProfPictureURLOnSaveUser() {
         when(userRepository.save(any())).thenReturn(sampleUser);
         doReturn("jainproof.jpg").when(userService).saveJainProofForUserProfile(any(), any());
         doReturn(null).when(userService).saveProfilePictureForUserProfile(any(), any());
-
         UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
         assertEquals(exception.getMessage(), "Unable to save Profile Picture to S3");
     }
