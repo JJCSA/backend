@@ -1,7 +1,9 @@
 package com.jjcsa.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 public @Data class AddNewUser {
     private String firstName;
     private String lastName;

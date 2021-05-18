@@ -31,13 +31,18 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(path="/api/users", produces = "application/json")
 public class UserController {
 
-    @Value("${keycloak.auth-server-url}")
+    // I think it is a good idea to move this to keycloak utils rather than having it in controller.
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
     private String keycloakServerUrl;
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private KeycloakUtil keycloakUtil;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
