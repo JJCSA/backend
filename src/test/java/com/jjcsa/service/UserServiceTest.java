@@ -113,7 +113,7 @@ public class UserServiceTest {
         UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
         assertEquals(exception.getMessage(), "Unable to save Jain Proof Doc to S3");
     }
-    
+
     @Test
     public void shouldValidateProfPictureURLOnSaveUser() {
         when(userRepository.save(any())).thenReturn(sampleUser);
