@@ -12,6 +12,7 @@ import com.jjcsa.model.User;
 import com.jjcsa.service.UserService;
 import com.jjcsa.util.KeycloakUtil;
 
+import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -28,24 +29,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path="/api/users", produces = "application/json")
-public class UserController {
+public class LoginController {
 
-    // I think it is a good idea to move this to keycloak utils rather than having it in controller.
-    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
-    private String keycloakServerUrl;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private KeycloakUtil keycloakUtil;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
+    // This method is for test
     @GetMapping(path = "/test")
     public String testUserLogin(@NonNull final Principal principal) {
         String username = "";
@@ -57,26 +50,21 @@ public class UserController {
         return "hello " + username;
     }
 
-    @PostMapping(path = "/login")
-    public String login(@RequestBody @NonNull final User user) {
-
-        if(user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Email or password is empty. Username and password are mandatory");
-        }
-        log.info("Getting token for '{}' ...", user.getEmail());
-        final Keycloak keycloakMovieApp = KeycloakBuilder.builder().serverUrl(keycloakServerUrl)
-                .realm(KeycloakUtil.JJCSA_REALM_NAME).username(user.getEmail()).password(user.getPassword())
-                .clientId(KeycloakUtil.JJCSA_CLIENT_ID).build();
-        final String token = keycloakMovieApp.tokenManager().getAccessToken().getToken();
-        log.info("'{}' logged in successfully", user.getEmail());
-        return token;
-    }
-
-    @GetMapping(path = "")
-    public List<User> getUsersList() {
-        log.info("Getting User List");
-        return userService.getallUsers();
-    }
+    // This method is for test
+//    @PostMapping(path = "/login")
+//    public String login(@RequestBody @NonNull final User user) {
+//
+//        if(user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
+//            throw new IllegalArgumentException("Email or password is empty. Username and password are mandatory");
+//        }
+//        log.info("Getting token for '{}' ...", user.getEmail());
+//        final Keycloak keycloakMovieApp = KeycloakBuilder.builder().serverUrl(keycloakServerUrl)
+//                .realm(KeycloakUtil.JJCSA_REALM_NAME).username(user.getEmail()).password(user.getPassword())
+//                .clientId(KeycloakUtil.JJCSA_CLIENT_ID).build();
+//        final String token = keycloakMovieApp.tokenManager().getAccessToken().getToken();
+//        log.info("'{}' logged in successfully", user.getEmail());
+//        return token;
+//    }
 
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(
@@ -97,7 +85,7 @@ public class UserController {
         // Create the new user in keycloak
         boolean userCreatedInKeycloak = false;
         try {
-            userCreatedInKeycloak = KeycloakUtil.createNewUser(addNewUser, keycloakServerUrl);
+            userCreatedInKeycloak = KeycloakUtil.createNewUser(addNewUser);
         } catch (BadRequestException e) {
             userCreatedInKeycloak = false;
             throw e;

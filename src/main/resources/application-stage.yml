@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+      jdbc:
+        lob:
+          non_contextual_creation: true
+  datasource:
+#    Replace with database properties in stage
+#    url: jdbc:postgresql://localhost:5432/jjcsa
+#    username: admin
+#    password: jjcsa
+
+keycloak:
+  auth-server-url: http://backend.jjcsausa.com:8080/auth/

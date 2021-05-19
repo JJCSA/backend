@@ -40,18 +40,16 @@ For resources on various documentation and references, please refer [Resources](
 
 5. Now navigate to the backend folder and run 
     ```
-    mvn clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dserver.port=9080"
+    mvn clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dserver.port=9080" -Dspring-boot.run.profiles=dev
     ```
-    This will start you application server on port 9080.
+    This will start you application server on port 9080.  
     
-    Once the startup finishes, KeycloakInitializerRunner.java class will run and initialize jjcsa-services realm in Keycloak. Basically, it will create:
+    If running the app in IntelliJ, make sure to add profiles to the Run Configuration:
+    ![IntelliJ Config](IntelliJ-Config.png)
+    
+    If the app is run in a docker container, add the env var for spring profile:
     ```
-    Realm: jjcsa-services
-    Client: jjcsa
-    Client Roles: ADMIN and USER
-    Two users
-    admin: with roles ADMIN and USER
-    user: only with role USER
+    docker run -e "SPRING_PROFILES_ACTIVE=stage" <IMAGE>
     ```
     
 6. Now you can test the APIs using postman or any other external client. For the APIs that need authentication use the token returned by the login API. The authorization type would be Bearer token.
