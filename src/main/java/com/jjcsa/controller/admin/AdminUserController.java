@@ -1,18 +1,19 @@
-package com.jjcsa.controller;
+package com.jjcsa.controller.admin;
 
 import com.jjcsa.model.User;
 import com.jjcsa.service.UserService;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
 @Data
-@RequestMapping(path="/api/admin", produces = "application/json")
-public class AdminController {
+@RequestMapping(path="/api/admin/users", produces = "application/json")
+public class AdminUserController {
 
     @NonNull
     private UserService userService;
@@ -29,5 +30,11 @@ public class AdminController {
         User user = userService.getUser(userId);
         userService.deleteUser(user);
         return "User successfully deleted";
+    }
+
+    @GetMapping(path = "")
+    public List<User> getUsersList() {
+        log.info("Getting User List");
+        return userService.getallUsers();
     }
 }
