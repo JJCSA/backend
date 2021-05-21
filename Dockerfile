@@ -4,8 +4,8 @@ FROM maven:3.6.3-openjdk-8 as BUILDER
 
 COPY src /home/app/src
 COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package
-
+# RUN mvn -f /home/app/pom.xml clean package
+RUN mvn -f /home/app/pom.xml clean package -DskipTests
 
 # FROM openjdk:17-jdk-alpine as PRODUCTION
 # FROM openjdk:11-jre-slim
