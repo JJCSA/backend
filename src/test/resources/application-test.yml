@@ -29,7 +29,7 @@ keycloak:
   bearer-only: true
   ssl-required: none
   resource: jjcsa
-  auth-server-url: http://localhost:8080/auth
+  auth-server-url: http://backend.jjcsausa.com:8080/auth/
   cors: true
   use-resource-role-mappings: true
 

@@ -129,8 +129,7 @@ class UserServiceTest {
     void deleteCommunityDocumentForUserProfile() {
     }
 
-//    This test case is failing, services need to be mocked
-//    @Test
+    @Test
     void deleteUser() throws IOException {
         //  Assuming user is already present in database
         User savedUser = this.saveUser();
