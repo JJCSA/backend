@@ -16,3 +16,8 @@ spring:
 
 keycloak:
   auth-server-url: http://localhost:8080/auth
+
+cloud:
+  aws:
+    credentials:
+      profile-name: default

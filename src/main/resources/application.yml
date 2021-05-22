@@ -30,3 +30,12 @@ aws:
   s3:
     bucketname: jjcsa-usa
   region: us-east-1
+
+cloud:
+  aws:
+    region:
+      static: us-east-1
+    credentials:
+#      profile-name: default
+#      access-key:
+#      secret-key:
