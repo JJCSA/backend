@@ -40,7 +40,7 @@ For resources on various documentation and references, please refer [Resources](
 
 5. Now navigate to the backend folder and run 
     ```
-    mvn clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dserver.port=9080" -Dspring-boot.run.profiles=dev
+    mvn clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dserver.port=9080" -Dspring-boot.run.profiles=local
     ```
     This will start you application server on port 9080.  
     
