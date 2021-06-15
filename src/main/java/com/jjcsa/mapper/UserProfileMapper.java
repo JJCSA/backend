@@ -23,16 +23,4 @@ public interface UserProfileMapper {
     })
     User toUser(UserProfile userProfile);
 
-    UserProfile convert(User user);
-
-    default UserProfile addEducationAndWorkExperience(UserProfile userProfile, List<Education> educationList, List<WorkEx> workExperiences) {
-        if(educationList == null || workExperiences == null) {
-            return null;
-        }
-
-        userProfile.setEducation(educationList);
-        userProfile.setWorkExperience(workExperiences);
-
-        return userProfile;
-    }
 }
