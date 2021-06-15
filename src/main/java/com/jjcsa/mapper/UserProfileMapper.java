@@ -18,6 +18,8 @@ public interface UserProfileMapper {
     })
     UserProfile toUserProfile(User user);
 
+    UserProfile convert(User user);
+
     @Mappings({
             @Mapping(source = "userProfile.education", target = "educationList")
     })
