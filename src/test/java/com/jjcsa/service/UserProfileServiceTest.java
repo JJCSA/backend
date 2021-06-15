@@ -1,6 +1,7 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.UserProfile;
+import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
@@ -18,8 +19,7 @@ import org.springframework.context.annotation.Profile;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -79,5 +79,13 @@ public class UserProfileServiceTest {
         assertEquals(response.getEducation().get(0).getEducationId(), 1);
         assertEquals(response.getWorkExperience().size(), 1);
         assertEquals(response.getWorkExperience().get(0).getExpId(), 1);
+    }
+
+    @Test
+    public void testGetUserProfileFromInvalidEmail() {
+        when(userService.getUser(any())).thenReturn(null);
+
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> userProfileService.getUserProfile("xyz"));
+        assertEquals(exception.getMessage(), "User Profile does not exist");
     }
 }
