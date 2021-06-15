@@ -27,9 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Profile("test")
 @ExtendWith(MockitoExtension.class)
 public class UserProfileMapperTest {
-    @Mock UserProfileMapper userProfileMapper;
 
-    @Spy @InjectMocks UserProfileMapperImpl mapper;
+    @Spy UserProfileMapperImpl mapper;
 
     private List<Education> generateEducationData() {
         return Arrays.asList(
