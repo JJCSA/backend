@@ -100,14 +100,14 @@ public class User {
     private Date dateOfBirth;
 
     @Column(name = "profile_picture_url", columnDefinition = "varchar(100) default ''")
-    private String profilePictureURL;
+    private String profilePicture;
 
     @Column(name = "socialmedia_platform", columnDefinition = "varchar(45) default ''")
     private String socialMediaPlatform;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "volunteering_interest", columnDefinition = "varchar(45) default 'No'")
-    private VolunteeringInterest volInterest;
+    private VolunteeringInterest volunteeringInterest;
 
     @Column(name = "loan_taken", columnDefinition = "boolean default false")
     private boolean loanTaken;

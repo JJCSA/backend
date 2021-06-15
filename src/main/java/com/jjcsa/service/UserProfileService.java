@@ -37,6 +37,8 @@ public class UserProfileService {
                     ""
             );
 
+//        user.setEducationList(educationRepository.findAllByUser(user));
+//        user.setWorkExperience(workExRepository.findAllByUser(user));
         List<Education> educationList = educationRepository.findAllByUser(user);
         List<WorkEx> workExperiences = workExRepository.findAllByUser(user);
 

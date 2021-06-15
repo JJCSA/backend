@@ -7,15 +7,12 @@ import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
 import com.jjcsa.util.KeycloakUtil;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -83,7 +80,7 @@ public class UserService {
         }
 
         user.setCommunityDocumentURL(jainProofDocURL);
-        user.setProfilePictureURL(profPictureURL);
+        user.setProfilePicture(profPictureURL);
         return user;
     }
 
@@ -111,8 +108,8 @@ public class UserService {
         String profPictureURL = null;
         try {
             // Save MultipartFile to S3
-            if(user.getProfilePictureURL() != null
-                    && !user.getProfilePictureURL().isEmpty()) {
+            if(user.getProfilePicture() != null
+                    && !user.getProfilePicture().isEmpty()) {
                 // Delete file if already present
                 deleteProfilePictureForUserProfile(user);
             }
@@ -128,9 +125,9 @@ public class UserService {
     }
 
     public void deleteProfilePictureForUserProfile(User user) {
-        if(user.getProfilePictureURL() == null) return;
+        if(user.getProfilePicture() == null) return;
         awss3Service.deleteFile(ImageUtil.generateProfilePictureKeyForUserProfile(user));
-        user.setProfilePictureURL(null);
+        user.setProfilePicture(null);
     }
 
     public void deleteCommunityDocumentForUserProfile(User user) {
