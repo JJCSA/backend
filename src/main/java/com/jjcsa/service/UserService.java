@@ -42,9 +42,9 @@ public class UserService {
         log.info("Save User Invoked for User:{}",user);
         if(getUser(user.getEmail()) != null)
             throw new BadRequestException(
-                    "User already exists",
-                    "User with this email address already exists",
-                    "Please try logging in",
+                    "User must contain a valid email address",
+                    "User does not contain a valid email address",
+                    "Please enter a valid email address",
                     "",
                     ""
             );
@@ -143,19 +143,9 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<User> getallUsers()
+    public List<User> getAllUsers()
     {
-        List<User> users = null;
-
-        try {
-            users = (List<User>)userRepository.findAll();
-        } catch (NullPointerException e) {
-            log.error("There are no details available in database",e);
-        } catch(Exception e){
-            log.error("Something went wrong",e);
-        }
-
-        return users;
+        return userRepository.findAll();
     }
 
 }

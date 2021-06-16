@@ -1,155 +1,127 @@
 package com.jjcsa.service;
 
-import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.exception.BadRequestException;
+import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.model.User;
 import com.jjcsa.repository.UserRepository;
-import com.jjcsa.util.ImageUtil;
-import com.jjcsa.util.KeycloakUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.*;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.UUID;
 
-@SpringBootTest
-@Slf4j
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserServiceTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
-    @Autowired
-    private UserService userService;
+@Profile("test")
+@ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class UserServiceTest {
+    @Mock private UserRepository userRepository;
+    @Mock private AWSS3Service awss3Service;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Spy @InjectMocks private UserService userService;
 
-    @Autowired
-    private AWSS3Service awss3Service;
+    private User sampleUser;
+    private MultipartFile jainProofDoc;
+    private MultipartFile profPicture;
 
-    @Test
-    void injectedComponentsAreNotNull(){
-        Assertions.assertNotNull(userService);
-        Assertions.assertNotNull(userRepository);
-        Assertions.assertNotNull(awss3Service);
+    @BeforeAll
+    public void loadData() {
+        sampleUser = generateSampleUser();
+        jainProofDoc = generateSampleJainProofDoc();
+        profPicture = generateSampleProfPic();
     }
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void getUser() {
-    }
-
-    private File getFile(String path){
-        return new File(path);
-    }
-
-    private String getCommunityURL() throws IOException {
-        File file = this.getFile("D:\\Projects\\JJC\\backend\\src\\test\\data\\communityDoc.jpeg");
-        MultipartFile multipartFile = this.getMultiPartFileFromFile(file);
-        return ImageUtil.generateCommunityDocumentName(multipartFile);
-    }
-
-    private String getProfileURL() throws IOException {
-        File file = this.getFile("D:\\Projects\\JJC\\backend\\src\\test\\data\\profileDo.jpeg");
-        MultipartFile multipartFile = this.getMultiPartFileFromFile(file);
-        return ImageUtil.generateProfilePictureName(multipartFile);
-    }
-
-    private MultipartFile getMultiPartFileFromFile(File file) throws IOException {
-        FileInputStream input = new FileInputStream(file);
-        MultipartFile imageMultiPartFile = new MockMultipartFile(file.getName(),  IOUtils.toByteArray(input));
-        return imageMultiPartFile;
-    }
-
-    private User getTestUser(){
-        User user = new User();
-        user.setFirstName("Test");
-        user.setCity("city");
-        user.setEmail("abc@gmail.com");
-        user.setPassword("testUser");
-        return user;
-    }
-
-    User saveUser() throws IOException {
-        User user = this.getTestUser();
-        File communityFile = ResourceUtils.getFile("classpath:static/sample.png");
-        MultipartFile communityMultiPartFile = this.getMultiPartFileFromFile(communityFile);
-
-        File profileFile = ResourceUtils.getFile("classpath:static/sample.png");
-        MultipartFile profileMultiPartFile = this.getMultiPartFileFromFile(profileFile);
-
-        log.info("User {} with files:{},{}",user,communityMultiPartFile.getName(),profileMultiPartFile.getName());
-        User saveUser = userService.saveUser(user,communityMultiPartFile,profileMultiPartFile);
-
-        AddNewUser newUser = AddNewUser.builder()
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .jainCommunity(user.getCommunityName())
-                .mobileNumber(user.getMobileNumber())
-                .password(user.getPassword())
+    private User generateSampleUser() {
+        return new User().builder()
+                .id(UUID.randomUUID())
+                .email("test@test.com")
                 .build();
+    }
 
-        KeycloakUtil.createNewUser(newUser);
+    private MultipartFile generateSampleJainProofDoc() {
+        try {
+            File file = File.createTempFile("jainproof", "jpg");
+            return new MockMultipartFile("jainproofdoc", file.getName(), "image/jpeg", new FileInputStream(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-        log.info("User after save:{}", saveUser.toString());
-        return saveUser;
+    private MultipartFile generateSampleProfPic() {
+        try {
+            File file = File.createTempFile("profpic", "jpg");
+            return new MockMultipartFile("profpic", file.getName(), "image/jpeg", new FileInputStream(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Test
-    void saveJainProofForUserProfile() {
+    public void shouldSaveValidUser() {
+        when(userRepository.save(any())).thenReturn(sampleUser);
+        doReturn("jainproof.jpg").when(userService).saveJainProofForUserProfile(any(), any());
+        doReturn("profpic.jpg").when(userService).saveProfilePictureForUserProfile(any(), any());
+
+        User response = userService.saveUser(sampleUser, jainProofDoc, profPicture);
+        assertNotNull(response);
+        assertEquals(response.getId(), sampleUser.getId());
+        assertEquals(response.getEmail(), sampleUser.getEmail());
+        assertEquals(response.getCommunityDocumentURL(), "jainproof.jpg");
+        assertEquals(response.getProfilePicture(), "profpic.jpg");
     }
 
     @Test
-    void saveProfilePictureForUserProfile() {
+    public void shouldValidateUserWithInvalidEmail() {
+        User invalidUser = new User().builder().build();
+        doReturn(invalidUser).when(userService).getUser(any());
+
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.saveUser(invalidUser, jainProofDoc, profPicture));
+        assertEquals(exception.getMessage(), "User must contain a valid email address");
     }
 
     @Test
-    void deleteProfilePictureForUserProfile() {
+    public void shouldValidateErrorInUserSave() {
+        when(userRepository.save(any())).thenReturn(null);
+
+        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
+        assertEquals(exception.getMessage(), "Unable to store user profile");
     }
 
     @Test
-    void deleteCommunityDocumentForUserProfile() {
-    }
+    public void shouldValidateJainProofURLOnSaveUser() {
+        when(userRepository.save(any())).thenReturn(sampleUser);
+        doReturn(null).when(userService).saveJainProofForUserProfile(any(), any());
 
-//    This test case is failing, services need to be mocked
-//    @Test
-    void deleteUser() throws IOException {
-        //  Assuming user is already present in database
-        User savedUser = this.saveUser();
-        log.info("Saved User:{} in delete User",savedUser.toString());
-
-        User dbUser = userRepository.findUserByEmail(savedUser.getEmail());
-
-        // Making sure user is there in database.
-        Assertions.assertNotNull(dbUser);
-
-        // Making sure user service delete the user without any error.
-        Assertions.assertDoesNotThrow(()->userService.deleteUser(savedUser));
-        User dbUserAfterDelete = userRepository.findUserByEmail(savedUser.getEmail());
-
-        // Making sure user is not present in the database.
-        Assertions.assertNull(dbUserAfterDelete);
+        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
+        assertEquals(exception.getMessage(), "Unable to save Jain Proof Doc to S3");
     }
 
     @Test
-    void getallUsers() {
+    public void shouldValidateProfPictureURLOnSaveUser() {
+        when(userRepository.save(any())).thenReturn(sampleUser);
+        doReturn("jainproof.jpg").when(userService).saveJainProofForUserProfile(any(), any());
+        doReturn(null).when(userService).saveProfilePictureForUserProfile(any(), any());
+
+        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
+        assertEquals(exception.getMessage(), "Unable to save Profile Picture to S3");
     }
 }
