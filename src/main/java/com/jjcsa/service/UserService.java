@@ -45,9 +45,9 @@ public class UserService {
         log.info("Save User Invoked for User:{}",user);
         if(nonNull(getUser(user.getEmail())))
             throw new BadRequestException(
-                    "User already exists",
-                    "User with this email address already exists",
-                    "Please try logging in",
+                    "User must contain a valid email address",
+                    "User does not contain a valid email address",
+                    "Please enter a valid email address",
                     "",
                     ""
             );

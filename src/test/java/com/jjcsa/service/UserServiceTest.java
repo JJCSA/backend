@@ -123,4 +123,3 @@ public class UserServiceTest {
         assertEquals(exception.getMessage(), "Unable to save Profile Picture to S3");
     }
 }
-
