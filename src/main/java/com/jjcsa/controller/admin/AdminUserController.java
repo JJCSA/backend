@@ -35,6 +35,6 @@ public class AdminUserController {
     @GetMapping(path = "")
     public List<User> getUsersList() {
         log.info("Getting User List");
-        return userService.getallUsers();
+        return userService.getAllUsers();
     }
 }
