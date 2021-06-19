@@ -6,6 +6,7 @@ import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
 import com.jjcsa.model.WorkEx;
+import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.EducationRepository;
 import com.jjcsa.repository.WorkExRepository;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +40,7 @@ public class UserProfileServiceTest {
     private User generateUserData() {
         return new User().builder()
                 .email("test@test.com")
+                .userStatus(UserStatus.Active)
                 .build();
     }
 
@@ -87,5 +91,18 @@ public class UserProfileServiceTest {
 
         BadRequestException exception = assertThrows(BadRequestException.class, () -> userProfileService.getUserProfile("xyz"));
         assertEquals(exception.getMessage(), "User Profile does not exist");
+    }
+
+    @Test
+    public void testGetUserProfileForInactiveUser() {
+        User inactiveUser = generateUserData();
+        inactiveUser.setUserStatus(UserStatus.Pending);
+
+        when(userService.getUser(any())).thenReturn(inactiveUser);
+
+        ResponseStatusException exception =
+                assertThrows(ResponseStatusException.class, () -> userProfileService.getUserProfile("test@test.com"));
+        assertEquals(exception.getStatus(), HttpStatus.FORBIDDEN);
+        assertEquals(exception.getReason(), "User is not active");
     }
 }
