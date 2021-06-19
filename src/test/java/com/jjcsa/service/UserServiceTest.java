@@ -90,12 +90,11 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldValidateUserWithInvalidEmail() {
-        User invalidUser = new User().builder().build();
-        doReturn(invalidUser).when(userService).getUser(any());
+    public void shouldValidateErrorIfUserAlreadyExists() {
+        when(userRepository.findUserByEmail(any())).thenReturn(sampleUser);
 
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.saveUser(invalidUser, jainProofDoc, profPicture));
-        assertEquals(exception.getMessage(), "User must contain a valid email address");
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
+        assertEquals(exception.getMessage(), "User already exists");
     }
 
     @Test
