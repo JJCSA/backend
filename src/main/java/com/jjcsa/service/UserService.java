@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -40,7 +42,7 @@ public class UserService {
     public User saveUser(User user, MultipartFile jainProofDoc, MultipartFile profPicture) {
 
         log.info("Save User Invoked for User:{}",user);
-        if(getUser(user.getEmail()) != null)
+        if(isNull(user.getEmail()))
             throw new BadRequestException(
                     "User must contain a valid email address",
                     "User does not contain a valid email address",
@@ -138,6 +140,12 @@ public class UserService {
 
     public void deleteUser(User user) {
         KeycloakUtil.deleteUser(user);
+        this.deleteProfilePictureForUserProfile(user);
+        this.deleteCommunityDocumentForUserProfile(user);
+        userRepository.delete(user);
+    }
+
+    public void deleteUserInDbOnly(User user) {
         this.deleteProfilePictureForUserProfile(user);
         this.deleteCommunityDocumentForUserProfile(user);
         userRepository.delete(user);
