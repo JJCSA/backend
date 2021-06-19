@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @Slf4j
@@ -42,11 +43,11 @@ public class UserService {
     public User saveUser(User user, MultipartFile jainProofDoc, MultipartFile profPicture) {
 
         log.info("Save User Invoked for User:{}",user);
-        if(isNull(user.getEmail()))
+        if(nonNull(getUser(user.getEmail())))
             throw new BadRequestException(
-                    "User must contain a valid email address",
-                    "User does not contain a valid email address",
-                    "Please enter a valid email address",
+                    "User already exists",
+                    "User with this email address already exists",
+                    "Please try logging in",
                     "",
                     ""
             );
