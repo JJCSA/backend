@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 public interface UserMapper {
 
     @Mappings({
-            @Mapping(source = "addNewUser.prefMethodOfContact", target = "contactMethod")
+            @Mapping(source = "addNewUser.prefMethodOfContact", target = "contactMethod"),
+            @Mapping(source = "addNewUser.jainCommunity", target = "communityName")
     })
     User toUserProfile(AddNewUser addNewUser);
 }

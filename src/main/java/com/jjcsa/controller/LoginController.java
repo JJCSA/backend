@@ -50,6 +50,11 @@ public class LoginController {
         return "hello " + username;
     }
 
+    @GetMapping(path = "/test2")
+    public String test2() {
+        return "test2";
+    }
+
     // This method is for test
 //    @PostMapping(path = "/login")
 //    public String login(@RequestBody @NonNull final User user) {
@@ -93,7 +98,7 @@ public class LoginController {
             if(!userCreatedInKeycloak) {
                 log.error("Creating User in Keycloak failed! Deleting from our db");
                 // Delete the record from our db
-                userService.deleteUser(user);
+                userService.deleteUserInDbOnly(user);
             }
         }
 
