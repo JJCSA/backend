@@ -1,5 +1,6 @@
 package com.jjcsa.util;
 
+import com.amazonaws.transform.MapEntry;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
@@ -19,9 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -42,8 +41,10 @@ public class KeycloakUtil {
     public static final List<String> JJCSA_ROLES = Arrays.asList(ADMIN, USER);
     private static final String JJCSA = "jjcsa";
     public static final String JJCSA_REDIRECT_URL = "http://localhost:3000/*";
-    public static final List<User> JJCSA_USERS = Arrays.asList(new User("admin", "admin"),
-            new User("user", "user"));
+    public static final Map<User,String> userToPwMap = new HashMap<User,String>() {{
+        put(new User("admin"),"admin");
+        put(new User("user"),"user");
+    }};
 
     @Bean
     private static final Keycloak getKeyCloakClient(){
