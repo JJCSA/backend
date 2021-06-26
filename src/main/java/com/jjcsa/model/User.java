@@ -30,12 +30,8 @@ public class User {
 
     private String email;
 
-    @JsonIgnore
-    private String password;
-
-    public User(String email, String password) {
+    public User(String email) {
         this.email = email;
-        this.password = password;
     }
 
     @OneToMany(mappedBy = "user")
@@ -43,10 +39,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<WorkEx> workExperience;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_role", columnDefinition = "varchar(45) default User")
-    private UserRole userrole;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "last_updated_date", columnDefinition = "varchar(45) default '11/11/1111'")
