@@ -31,9 +31,4 @@ public class EmailTemplate {
     @Column(name="email_body", columnDefinition = "text default ''")
     @NotNull
     private String emailBody;
-
-    @Column(name="template_status", columnDefinition = "varchar(1) default 'A'")
-    @NotNull
-    private String templateStatus;
-
 }
