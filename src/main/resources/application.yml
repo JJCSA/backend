@@ -35,7 +35,7 @@ cloud:
   aws:
     region:
       static: us-east-1
-    credentials:
-#      profile-name: default
-#      access-key:
-#      secret-key:
+    # credentials:
+    #  profile-name: default
+    #  access-key:
+    #  secret-key:
