@@ -54,10 +54,10 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
             realmRepresentation.setClients(Collections.singletonList(clientRepresentation));
 
             // Users
-            final List<UserRepresentation> userRepresentations = KeycloakUtil.userToPwMap.keySet().stream().map(userPass -> {
+            final List<UserRepresentation> userRepresentations = KeycloakUtil.emailToPwMap.keySet().stream().map(userPass -> {
                 // Client roles
                 final Map<String, List<String>> clientRoles = new HashMap<>();
-                if ("admin".equals(userPass.getEmail())) {
+                if ("admin".equals(userPass)) {
                     clientRoles.put(KeycloakUtil.JJCSA_CLIENT_ID, KeycloakUtil.JJCSA_ROLES);
                 } else {
                     clientRoles.put(KeycloakUtil.JJCSA_CLIENT_ID, Collections.singletonList(KeycloakUtil.JJCSA_ROLES.get(1)));
@@ -66,11 +66,11 @@ public class KeycloakInitializerRunner implements CommandLineRunner {
                 // User Credentials
                 final CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
                 credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-                credentialRepresentation.setValue(KeycloakUtil.userToPwMap.get(userPass.getEmail()));
+                credentialRepresentation.setValue(KeycloakUtil.emailToPwMap.get(userPass));
 
                 // User
                 final UserRepresentation userRepresentation = new UserRepresentation();
-                userRepresentation.setUsername(userPass.getEmail());
+                userRepresentation.setUsername(userPass);
                 userRepresentation.setEnabled(true);
                 userRepresentation.setCredentials(Collections.singletonList(credentialRepresentation));
                 userRepresentation.setClientRoles(clientRoles);
