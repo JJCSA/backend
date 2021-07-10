@@ -1,6 +1,5 @@
 package com.jjcsa.util;
 
-import com.amazonaws.transform.MapEntry;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
@@ -41,9 +40,9 @@ public class KeycloakUtil {
     public static final List<String> JJCSA_ROLES = Arrays.asList(ADMIN, USER);
     private static final String JJCSA = "jjcsa";
     public static final String JJCSA_REDIRECT_URL = "http://localhost:3000/*";
-    public static final Map<User,String> userToPwMap = new HashMap<User,String>() {{
-        put(new User("admin"),"admin");
-        put(new User("user"),"user");
+    public static final Map<String,String> emailToPwMap = new HashMap<String,String>() {{
+        put("admin","admin");
+        put("user","user");
     }};
 
     @Bean
