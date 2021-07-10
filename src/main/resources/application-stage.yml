@@ -6,11 +6,11 @@ spring:
       jdbc:
         lob:
           non_contextual_creation: true
-  datasource:
-#    Replace with database properties in stage
-#    url: jdbc:postgresql://localhost:5432/jjcsa
-#    username: admin
-#    password: jjcsa
+  # datasource:
+  # #  Replace with database properties in stage
+  #  url: jdbc:postgresql://backend.postgres.jjcsausa.com:5432/jjcsa
+  #  username: jjcsa
+  #  password: jjcsa-jjcsa
 
 keycloak:
   auth-server-url: http://backend.jjcsausa.com:8080/auth/
