@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<keycloak.version>11.0.2</keycloak.version>
+		<keycloak.version>13.0.1</keycloak.version>
 		<org.mapstruct.version>1.4.0.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.12</org.projectlombok.version>
 		<springdoc-openapi.version>1.5.5</springdoc-openapi.version>
