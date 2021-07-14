@@ -105,49 +105,4 @@ public class LoginController {
 
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }
-
-    @PutMapping(path = "/updateUserRole")
-    public ResponseEntity<String> updateUserRole(
-            @RequestParam("userEmail") @NonNull final String userEmail,
-            @RequestParam("actionPerformerEmail") @NonNull final String actionPerformerEmail,
-            @RequestParam("role") @NonNull final String updatedRole,
-            @RequestParam("action") @NonNull final String action,
-            KeycloakAuthenticationToken authenticationToken)
-            throws JsonProcessingException{
-        SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
-        AccessToken token = account.getKeycloakSecurityContext().getToken();
-        if(token.isActive()){
-            log.info("Updating user role with email {}", userEmail);
-            User actionPerfomerDetails = userService.getUser(actionPerformerEmail);
-
-            // User who is performing action should be an approved user
-            if(!UserUtil.isUserApproved(actionPerfomerDetails)){
-                return new ResponseEntity<>("Action performing user is not an active user", HttpStatus.UNAUTHORIZED);
-            }
-
-            String userRole = null;
-
-            if(UserUtil.isValidRole(updatedRole)) {
-                userRole = UserRole.valueOf(updatedRole).name(); // Get the correct case and role value from enum
-            } else {
-                throw new BadRequestException("Invalid role type",
-                        "Role type: " + updatedRole + " does not exist",
-                        "",
-                        "",
-                        "");
-            }
-
-            try {
-                KeycloakUtil.updateUserRole(userRole, userEmail, action);
-            } catch (Exception ex) {
-                log.error("Error while updating user: {} with role: {}", userEmail, updatedRole);
-                throw ex;
-            }
-
-            return new ResponseEntity<>("user role updated successfully", HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>("User does not have valid token", HttpStatus.UNAUTHORIZED);
-        }
-
-    }
 }
