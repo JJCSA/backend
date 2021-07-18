@@ -7,10 +7,10 @@ spring:
         lob:
           non_contextual_creation: true
   datasource:
-    # Will be replaced by environment variables
-    url: ${BACKEND_DB_URL}
-    username: ${BACKEND_DB_UNAME}
-    password: ${BACKEND_DB_PW}
+    url: jdbc:postgresql://localhost:5432/jjcsa
+    # Will be set by aws parameter store variables.
+    # for username it should be /config/application_stage(for whole application with stage profile)/spring.datasource.username
+    # Same for PW.
 
 keycloak:
-  auth-server-url: ${KEYCLOACK_URL}
+  auth-server-url: http://backend.jjcsausa.com:8080/auth/
