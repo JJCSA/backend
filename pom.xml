@@ -12,19 +12,30 @@
 	<artifactId>jjcsa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>jjcsa</name>
-	<description>JJC SA Website</description>
+	<description>JJC SA Website using Spring Boot</description>
 
 	<properties>
 		<java.version>1.8</java.version>
 		<keycloak.version>13.0.1</keycloak.version>
-		<spring-cloud-starter-aws-parameter-store-version>2.2.6.RELEASE</spring-cloud-starter-aws-parameter-store-version>
 		<org.mapstruct.version>1.4.0.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.12</org.projectlombok.version>
 		<springdoc-openapi.version>1.5.5</springdoc-openapi.version>
 		<spring-cloud-aws-version>2.3.1</spring-cloud-aws-version>
+		<spring-cloud-starter-version>3.0.3</spring-cloud-starter-version>
+		<spring-cloud-aws-parameter-store-config-version>2.2.6.RELEASE</spring-cloud-aws-parameter-store-config-version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-aws-parameter-store-config</artifactId>
+			<version>${spring-cloud-aws-parameter-store-config-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter</artifactId>
+			<version>${spring-cloud-starter-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -81,11 +92,6 @@
 			<groupId>io.awspring.cloud</groupId>
 			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
 			<version>${spring-cloud-aws-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-aws-parameter-store-config</artifactId>
-			<version>${spring-cloud-starter-aws-parameter-store-version}</version>
 		</dependency>
 
 		<dependency>
