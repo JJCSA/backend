@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -32,6 +33,8 @@ public class UserService {
     public User getUser(String email) {
         return userRepository.findUserByEmail(email);
     }
+
+    public User getUserById(UUID userId) { return userRepository.findUserById(userId); }
 
     /**
      * Need to come up with idea to execute this method as a transaction.

@@ -3,7 +3,7 @@ package com.jjcsa.controller.admin;
 import com.jjcsa.model.User;
 import com.jjcsa.service.UserService;
 import lombok.Data;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +13,10 @@ import java.util.List;
 @RestController
 @Data
 @RequestMapping(path="/api/admin/users", produces = "application/json")
+@RequiredArgsConstructor
 public class AdminUserController {
 
-    @NonNull
-    private UserService userService;
+    private final UserService userService;
 
     /**
      * Delete user method to delete the user with {userId} provided as param.
