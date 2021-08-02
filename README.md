@@ -17,7 +17,7 @@ For resources on various documentation and references, please refer [Resources](
     cd backend
     ```
 
-2. Install Postgres in local machine  
+2. Install & configure Postgres in local machine  
   
         For Windows, Follow these instructions: https://www.2ndquadrant.com/en/blog/pginstaller-install-postgresql/
   
@@ -25,8 +25,11 @@ For resources on various documentation and references, please refer [Resources](
   
         For Ubuntu, Follow these instructions: https://phoenixnap.com/kb/how-to-install-postgresql-on-ubuntu
 
-3. In Postgres, create a new database called `jjcsa` and a role (user) with the name `admin` with password `jjcsa`
-        If not, create the same with the following steps:  
+   Configuration:  
+   
+   In Postgres, create a new database called `jjcsa` and a role (user) with the name `admin` with password `jjcsa`  
+        
+   If not, create the same with the following steps:  
         
         # Open a psql terminal
         sudo -u postgres psql
@@ -35,6 +38,13 @@ For resources on various documentation and references, please refer [Resources](
         postgres=# create database jjcsa;
         postgres=# create user admin with encrypted password 'jjcsa';
         postgres=# grant all privileges on database jjcsa to admin;
+
+3. (Optional) Start postgres through docker container:
+
+   ```commandline
+   cd postgres
+   docker-compose up
+   ```
 
 4. Make sure Keycloak service is already running. If not, start the same with the following instructions: https://github.com/JJCSA/Authentication/tree/developer#steps-to-start-the-server  
 
