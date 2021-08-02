@@ -51,9 +51,8 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/users/login", "/api/users/register", "/actuator/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**")
                 .permitAll()
-                .antMatchers("/api/users/getUserDetails").hasRole(KeycloakUtil.ADMIN)
                 .antMatchers("/api/admin/**").hasRole(KeycloakUtil.ADMIN)
-                .antMatchers("/api/users").hasRole(KeycloakUtil.ADMIN)
+                .antMatchers("/api/user/**").hasRole(KeycloakUtil.USER)
                 .anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.cors().and().csrf().disable();
