@@ -10,6 +10,7 @@ import org.apache.http.HttpStatus;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RoleScopeResource;
 import org.keycloak.admin.client.resource.UserResource;
@@ -43,10 +44,6 @@ public class KeycloakUtil {
     public static final String JJCSA_CLIENT_ID = "jjcsa";
     private static final String JJCSA = "jjcsa";
     public static final String JJCSA_REDIRECT_URL = "http://localhost:3000/*";
-    public static final Map<String,String> emailToPwMap = new HashMap<String,String>() {{
-        put("admin","admin");
-        put("user","user");
-    }};
 
     private static RealmResource keycloakRealmResource;
     private static ClientRepresentation clientRepresentation;
@@ -56,8 +53,8 @@ public class KeycloakUtil {
             Keycloak keycloakClient = KeycloakBuilder.builder()
                     .serverUrl(KeycloakUtil.keycloakServerUrl)
                     .realm(JJCSA_REALM_NAME)
-                    .username("admin")
-                    .password("admin")
+                    .username("admin")  // TODO: Make this fetch from properties
+                    .password("admin")  // TODO: Make this fetch from properties
                     .clientId(JJCSA_CLIENT_ID)
                     .build();
             keycloakRealmResource = keycloakClient.realm(KeycloakUtil.JJCSA_REALM_NAME);
@@ -142,7 +139,7 @@ public class KeycloakUtil {
     public static void addUserRole(String email, UserRole role) {
 
         // get the RoleRepresentation
-        RoleRepresentation roleRepresentation = getRealmResource().clients().get(clientRepresentation.getId()).roles().get(role.getRoleText()).toRepresentation();
+        RoleRepresentation roleRepresentation = getRealmResource().clients().get(getClientRepresentation().getId()).roles().get(role.getRoleText()).toRepresentation();
 
         // get the UsersResource
         UsersResource usersResource = getRealmResource().users();
@@ -161,21 +158,13 @@ public class KeycloakUtil {
     public static void removeUserRole(String email, UserRole role) {
 
         // get the RoleRepresentation
-        RoleRepresentation roleRepresentation = getRealmResource().clients().get(clientRepresentation.getId()).roles().get(role.getRoleText()).toRepresentation();
+        RoleRepresentation roleRepresentation = getRealmResource().clients().get(getClientRepresentation().getId()).roles().get(role.getRoleText()).toRepresentation();
 
         // get the UsersResource
         UsersResource usersResource = getRealmResource().users();
 
         // get userId
         String userId = usersResource.search(email, true).get(0).getId();
-
-//        RoleScopeResource userClientRoles
-//                = usersResource.get(userId)
-//                    .roles()
-//                    .clientLevel(getClientRepresentation().getId());
-//
-//        // validate if user has role
-//        userClientRoles.
 
         // remove role for the user
         usersResource.get(userId)

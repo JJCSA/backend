@@ -97,6 +97,7 @@ public class LoginController {
         } finally {
             if(!userCreatedInKeycloak) {
                 log.error("Creating User in Keycloak failed! Deleting from our db");
+                // TODO: Throw exception
                 // Delete the record from our db
                 userService.deleteUserInDbOnly(user);
             }

@@ -31,7 +31,6 @@ public class SuperAdminUserController {
 
     @PostMapping(path = "{userId}/role")
     public ResponseEntity addUserRole(@PathVariable UUID userId, @RequestBody UpdateUserRole updateUserRole) {
-        // TODO: check if default validation works for invalid role
 
         User user = userService.getUserById(userId);
         if(isNull(user)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id not found");
@@ -43,7 +42,6 @@ public class SuperAdminUserController {
 
     @DeleteMapping(path = "{userId}/role/{role}")
     public ResponseEntity addUserRole(@PathVariable UUID userId, @PathVariable UserRole role) {
-        // TODO: check if default validation works for invalid role
 
         User user = userService.getUserById(userId);
         if(isNull(user)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id not found");
