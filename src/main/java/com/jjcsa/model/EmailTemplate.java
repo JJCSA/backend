@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Entity
 @Table(name = "email_templates")
@@ -18,7 +19,7 @@ public class EmailTemplate {
     @Id
     @Column(name="template_id", columnDefinition = "uuid")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int templateId;
+    private UUID templateId;
 
     @Column(name="template_name", columnDefinition = "varchar(255) default ''", unique=true)
     @NotNull
