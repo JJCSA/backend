@@ -16,6 +16,9 @@ spring:
     username: jjcsa
     password: jjcsa-jjcsa
 
+security:
+  enabled: true
+
 # Keycloak Config
 keycloak:
   realm: jjcsa-services
