@@ -60,7 +60,7 @@ public class AWSS3Service {
     public void deleteFile(String objectKey) {
         try {
 
-            if(activeProfiles.equals("local")) {
+            if(activeProfiles.contains("local")) {
                 return;
             }
 
