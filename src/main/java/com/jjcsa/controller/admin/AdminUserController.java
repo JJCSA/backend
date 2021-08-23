@@ -1,15 +1,20 @@
 package com.jjcsa.controller.admin;
 
+import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +50,7 @@ public class AdminUserController {
     }
 
     @PutMapping(path = "/status")
-    public boolean updateUserStatus(@RequestParam UUID userId, @RequestParam UserStatus status) {
+    public boolean updateUserStatus(@RequestParam UUID userId, @RequestParam UserStatus status, KeycloakAuthenticationToken authenticationToken) {
 
         log.info("Find User for userId: {}", userId);
         User user = userService.getUserById(userId);
@@ -54,6 +59,15 @@ public class AdminUserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find user");
         }
 
-        return userService.updateUserStatus(user, status);
+        SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
+        AccessToken token = account.getKeycloakSecurityContext().getToken();
+
+        User adminUser = userService.getUser(token.getEmail());
+        AdminAction adminAction = new AdminAction();
+        adminAction.setFromUserId(adminUser.getId());
+        adminAction.setToUserId(userId);
+        adminAction.setDateOfAction(new Date());
+
+        return userService.updateUserStatus(user, status, adminAction);
     }
 }

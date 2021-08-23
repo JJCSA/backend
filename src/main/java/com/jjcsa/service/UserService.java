@@ -2,8 +2,11 @@ package com.jjcsa.service;
 
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
+import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.Action;
 import com.jjcsa.model.enumModel.UserStatus;
+import com.jjcsa.repository.AdminActionRepository;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
 import com.jjcsa.util.KeycloakUtil;
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,13 +27,12 @@ import static java.util.Objects.nonNull;
 @Service
 @Slf4j
 @AllArgsConstructor
-@NoArgsConstructor
+@Transactional
 public class UserService {
 
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private AWSS3Service awss3Service;
+    private AdminActionRepository adminActionRepository;
 
     public User getUser(String email) {
         return userRepository.findUserByEmail(email);
@@ -172,7 +175,7 @@ public class UserService {
     * Updates user's status with the given status
     * returns true if successful
     */
-    public boolean updateUserStatus(User user, UserStatus status) {
+    public boolean updateUserStatus(User user, UserStatus status, AdminAction adminAction) {
 
         UserStatus currentStatus = user.getUserStatus();
 
@@ -186,6 +189,8 @@ public class UserService {
                             "",
                             "");
                 }
+                adminAction.setAction(Action.APPROVE_USER);
+                adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));
                 break;
             case Active:
                 if(currentStatus.equals(UserStatus.Pending)
@@ -214,7 +219,11 @@ public class UserService {
                             "");
                 }
                 log.info("Rejecting user with email {}", user.getEmail());
+                adminAction.setAction(Action.REJECT_USER);
+                adminAction.setDescrip(String.format("User with email %s rejected by Admin", user.getEmail()));
+
                 this.deleteUser(user);
+                adminActionRepository.save(adminAction);
                 return true;
         }
 
@@ -222,6 +231,7 @@ public class UserService {
 
         user.setUserStatus(status);
         userRepository.save(user);
+        adminActionRepository.save(adminAction);
 
         return true;
     }
