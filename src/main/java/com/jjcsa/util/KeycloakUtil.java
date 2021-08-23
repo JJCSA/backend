@@ -80,16 +80,19 @@ public class KeycloakUtil {
     }
 
     public static boolean deleteUser(User user){
+
+        log.info("Deleting user from keycloak with email {}", user.getEmail());
+
         UsersResource usersResource = getRealmResource().users();
-        Optional<UserRepresentation> keyCloakUser = usersResource.list().stream().filter(keyClockUser -> keyClockUser.getEmail().equalsIgnoreCase(user.getEmail())).findFirst();
-        if(keyCloakUser.isPresent()) {
-            Response response = usersResource.delete(keyCloakUser.get().getId());
-            if(response.getStatus() == HttpStatus.SC_NO_CONTENT) {
-                log.info("User Successfully deleted from keycloak");
-                return true;
-            }
+        List<UserRepresentation> userRepresentationList = usersResource.search(user.getEmail());
+        if(isNull(userRepresentationList) || userRepresentationList.size() == 0) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "User not found");
         }
-        return false;
+
+        UserRepresentation userRepresentation = userRepresentationList.get(0);
+        usersResource.delete(userRepresentation.getId());
+
+        return true;
     }
 
     public static boolean createNewUser(AddNewUser addNewUser) {

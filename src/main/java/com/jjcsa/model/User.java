@@ -70,7 +70,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status", columnDefinition = "varchar(45) default 'Pending'")
-    private UserStatus userStatus;
+    private UserStatus userStatus = UserStatus.Pending;
 
     @Column(columnDefinition = "varchar(45) default ''")
     private String street;
