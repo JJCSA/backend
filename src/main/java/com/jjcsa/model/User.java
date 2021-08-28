@@ -6,9 +6,7 @@ import java.util.UUID;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jjcsa.model.enumModel.ContactMethod;
-import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
 import lombok.AllArgsConstructor;
@@ -72,7 +70,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status", columnDefinition = "varchar(45) default 'Pending'")
-    private UserStatus userStatus;
+    private UserStatus userStatus = UserStatus.Pending;
 
     @Column(columnDefinition = "varchar(45) default ''")
     private String street;
