@@ -72,3 +72,7 @@ For resources on various documentation and references, please refer [Resources](
 
 The app uses [springdoc-openapi](https://springdoc.org) for API Documentation. 
 To access the API documentation, access Swagger UI at [http://localhost:9080/swagger-ui.html](http://localhost:9080/swagger-ui.html)
+
+## Postman config
+
+Please find the Postman collection here: https://www.getpostman.com/collections/ee05e59d8d48a55a9663
