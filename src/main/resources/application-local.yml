@@ -14,6 +14,9 @@ spring:
     username: admin
     password: jjcsa
 
+security:
+  enabled: false
+
 keycloak:
   auth-server-url: http://localhost:8080/auth
 

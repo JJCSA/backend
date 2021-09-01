@@ -22,6 +22,9 @@ public class AWSS3Service {
     @Value("${aws.s3.bucketname}")
     private String bucketName;
 
+    @Value("${spring.profiles.active:local}")
+    private String activeProfiles;
+
     private void createBucket() {
         log.debug("Creating S3 bucker with name: {}", bucketName);
         amazonS3Client.createBucket(bucketName);
@@ -30,6 +33,10 @@ public class AWSS3Service {
     public String saveFile(String objectKey, MultipartFile multipartFile) {
         File file = ImageUtil.convertMultiPartFileToFile(multipartFile);
         try {
+            if(activeProfiles.contains("local")) {
+                return file.getName();
+            }
+
             if (!amazonS3Client.doesBucketExist(bucketName)) {
                 createBucket();
             }
@@ -52,6 +59,11 @@ public class AWSS3Service {
 
     public void deleteFile(String objectKey) {
         try {
+
+            if(activeProfiles.contains("local")) {
+                return;
+            }
+
             if (!amazonS3Client.doesBucketExist(bucketName)) {
                 createBucket();
             }
