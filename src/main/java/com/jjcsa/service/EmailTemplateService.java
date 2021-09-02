@@ -1,40 +1,32 @@
 package com.jjcsa.service;
 
+import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.EmailTemplate;
 import com.jjcsa.model.User;
 import com.jjcsa.repository.EmailTemplateRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.StringTemplateResolver;
 
-import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Service
 @Slf4j
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class EmailTemplateService {
 
-    @Autowired
-    private SpringTemplateEngine templateEngine;
-    @Autowired
-    private EmailTemplateRepository emailTemplateRepository;
+    private final SpringTemplateEngine templateEngine;
+    private final EmailTemplateRepository emailTemplateRepository;
 
     public String resolveTemplate(Context context, String template){
         return templateEngine.process(template, context);
     }
 
-    public String resolveTemplate(User user, String templateName){
-        if(emailTemplateRepository == null) return "Template repository null";
+    public EmailTemplateDto resolveTemplate(User user, String templateName){
         EmailTemplate template = emailTemplateRepository.findByTemplateName(templateName);
         String templateBody = template.getEmailBody();
 
@@ -44,8 +36,14 @@ public class EmailTemplateService {
         params.put("random", "Random");
 
         Context context = new Context();
+        context.setLocale(Locale.ENGLISH);
         context.setVariables(params);
+        String resolvedBody = this.resolveTemplate(context, templateBody);
 
-        return resolveTemplate(context, templateBody);
+        log.info("User:{} , Resoled Body:{}, params:{}", user.getFirstName(), resolvedBody, params);
+        return EmailTemplateDto.builder()
+                .body(resolvedBody)
+                .subject(template.getEmailSubject())
+                .build();
     }
 }

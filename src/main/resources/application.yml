@@ -39,6 +39,9 @@ aws:
 
 cloud:
   aws:
+    ses:
+      region:
+        static: us-east-2
     stack:
       auto: false
     region:
