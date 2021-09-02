@@ -1,13 +1,21 @@
 package com.jjcsa.util;
 
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.SendEmailRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
+
 @Configuration
-public class EmailTemplateConfig {
+public class BackendConfig {
+
+    @Value("${cloud.aws.ses.region.static:us-east-2}")
+    private String region;
 
     @Bean
     public SpringTemplateEngine springTemplateEngine() {
@@ -23,4 +31,14 @@ public class EmailTemplateConfig {
         return emailTemplateResolver;
     }
 
+    @Bean
+    public AmazonSimpleEmailService getAmazonSimpleEmailServiceClient() {
+        return AmazonSimpleEmailServiceClientBuilder.standard()
+                .withRegion(region).build();
+    }
+
+    @Bean
+    public SendEmailRequest getSendEmailRequest() {
+        return new SendEmailRequest();
+    }
 }
