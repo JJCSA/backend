@@ -10,9 +10,7 @@ import org.apache.http.HttpStatus;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.RoleScopeResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.ClientRepresentation;
@@ -24,7 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import static java.util.Objects.isNull;
 
@@ -33,23 +32,16 @@ import static java.util.Objects.isNull;
 @Data
 public class KeycloakUtil {
 
-    public static String keycloakServerUrl;
-
-    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
-    public void setKeycloakServerUrl(String keycloakServerUrl) {
-        KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
-    }
-
     public static final String JJCSA_REALM_NAME = "jjcsa-services";
     public static final String JJCSA_CLIENT_ID = "jjcsa";
-    private static final String JJCSA = "jjcsa";
     public static final String JJCSA_REDIRECT_URL = "http://localhost:3000/*";
-
+    private static final String JJCSA = "jjcsa";
+    public static String keycloakServerUrl;
     private static RealmResource keycloakRealmResource;
     private static ClientRepresentation clientRepresentation;
 
     private static RealmResource getRealmResource() {
-        if(isNull(keycloakRealmResource)) {
+        if (isNull(keycloakRealmResource)) {
             Keycloak keycloakClient = KeycloakBuilder.builder()
                     .serverUrl(KeycloakUtil.keycloakServerUrl)
                     .realm(JJCSA_REALM_NAME)
@@ -59,7 +51,7 @@ public class KeycloakUtil {
                     .build();
             keycloakRealmResource = keycloakClient.realm(KeycloakUtil.JJCSA_REALM_NAME);
 
-            if(isNull(keycloakRealmResource)) {
+            if (isNull(keycloakRealmResource)) {
                 throw new ResponseStatusException(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR, "Keycloak realm not found");
             }
         }
@@ -68,10 +60,10 @@ public class KeycloakUtil {
     }
 
     private static ClientRepresentation getClientRepresentation() {
-        if(isNull(clientRepresentation)) {
+        if (isNull(clientRepresentation)) {
             clientRepresentation = getRealmResource().clients().findByClientId(KeycloakUtil.JJCSA_CLIENT_ID).get(0);
 
-            if(isNull(clientRepresentation)) {
+            if (isNull(clientRepresentation)) {
                 throw new ResponseStatusException(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR, "Keycloak client not found");
             }
         }
@@ -79,13 +71,13 @@ public class KeycloakUtil {
         return clientRepresentation;
     }
 
-    public static boolean deleteUser(User user){
+    public static boolean deleteUser(User user) {
 
         log.info("Deleting user from keycloak with email {}", user.getEmail());
 
         UsersResource usersResource = getRealmResource().users();
         List<UserRepresentation> userRepresentationList = usersResource.search(user.getEmail());
-        if(isNull(userRepresentationList) || userRepresentationList.size() == 0) {
+        if (isNull(userRepresentationList) || userRepresentationList.size() == 0) {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "User not found");
         }
 
@@ -99,7 +91,8 @@ public class KeycloakUtil {
 
         // Define user
         UserRepresentation user = new UserRepresentation();
-        user.setEnabled(true);
+        // new user is disabled by default, this will prevent them from signing in until approved
+        user.setEnabled(false);
         user.setEmail(addNewUser.getEmail());
         user.setUsername(addNewUser.getEmail());
         user.setFirstName(addNewUser.getFirstName());
@@ -139,6 +132,32 @@ public class KeycloakUtil {
         return true;
     }
 
+    /**
+     * Enables a user in Keycloak.
+     * New user is disabled in keycloak by default.
+     * Once approved by an admin, user should be enabled in keycloak
+     *
+     * @param email User's email address
+     */
+    public static void enableUser(String email) {
+        log.debug("Enabling user with email {} in keycloak", email);
+
+        // get the UsersResource
+        UsersResource usersResource = getRealmResource().users();
+
+        // get userId
+        String userId = usersResource.search(email, true).get(0).getId();
+
+        // Get UserRepresentation
+        UserRepresentation userRepresentation = usersResource.get(userId).toRepresentation();
+        userRepresentation.setEnabled(true);
+
+        // update
+        usersResource.get(userId).update(userRepresentation);
+
+        log.debug("Enabled user with email {} in keycloak successfully", email);
+    }
+
     public static void addUserRole(String email, UserRole role) {
 
         // get the RoleRepresentation
@@ -174,5 +193,10 @@ public class KeycloakUtil {
                 .roles()
                 .clientLevel(getClientRepresentation().getId())
                 .remove(Arrays.asList(roleRepresentation));
+    }
+
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
+    public void setKeycloakServerUrl(String keycloakServerUrl) {
+        KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
     }
 }
