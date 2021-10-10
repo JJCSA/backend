@@ -22,6 +22,11 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import com.jjcsa.util.KeycloakUtil;
 
 import lombok.NonNull;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @KeycloakConfiguration
 public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
@@ -62,12 +67,25 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                     .antMatchers("/api/user/**").hasRole(UserRole.USER.getRoleText())
                     .anyRequest().authenticated();
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-            http.cors().and().csrf().disable();
+            http.csrf().disable();
+
+            // Enable cors
+            http.cors();
         } else {
             http.cors().and().csrf().disable()
                     .authorizeRequests().antMatchers("/**").permitAll();
         }
 
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
     }
 
     @Bean
