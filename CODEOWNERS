@@ -1,0 +1,8 @@
+#   ref: https://github.blog/2017-07-06-introducing-code-owners/
+#   pattern 
+#
+#   file/directory    user
+#
+
+# These owners will be the default owners for everything in the repo.
+*        @shah-tejas @Nishit-Gopani 
