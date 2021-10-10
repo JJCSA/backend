@@ -36,7 +36,14 @@ public class KeycloakUtil {
     public static final String JJCSA_CLIENT_ID = "jjcsa";
     public static final String JJCSA_REDIRECT_URL = "http://localhost:3000/*";
     private static final String JJCSA = "jjcsa";
+
     public static String keycloakServerUrl;
+
+    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
+    public void setKeycloakServerUrl(String keycloakServerUrl) {
+        KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
+    }
+
     private static RealmResource keycloakRealmResource;
     private static ClientRepresentation clientRepresentation;
 
@@ -193,10 +200,5 @@ public class KeycloakUtil {
                 .roles()
                 .clientLevel(getClientRepresentation().getId())
                 .remove(Arrays.asList(roleRepresentation));
-    }
-
-    @Value("${keycloak.auth-server-url:http://localhost:8080/auth}")
-    public void setKeycloakServerUrl(String keycloakServerUrl) {
-        KeycloakUtil.keycloakServerUrl = keycloakServerUrl;
     }
 }
