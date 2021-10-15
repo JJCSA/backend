@@ -16,13 +16,8 @@ spring:
     username: jjcsa
     password: jjcsa-jjcsa
 
-management:
-  endpoints:
-    web:
-      cors:
-        allowed-headers: '*'
-        allowed-origins: '*'
-        allowed-methods: '*'
+cors:
+  allowed-origin-patterns: '*'
 
 security:
   enabled: true

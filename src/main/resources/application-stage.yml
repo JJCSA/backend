@@ -18,11 +18,8 @@ spring:
   #   # for username it should be /config/application_stage(for whole application with stage profile)/spring.datasource.username
   #   # Same for PW.
 
-management:
-  endpoints:
-    web:
-      cors:
-        allowed-origin-patterns: 'http://*.jjcsausa.com'
+cors:
+  allowed-origin-patterns: 'http://*.jjcsausa.com'
 
 keycloak:
   auth-server-url: http://backend.jjcsausa.com:8080/auth/
