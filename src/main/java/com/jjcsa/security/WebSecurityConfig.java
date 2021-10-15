@@ -34,6 +34,9 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     @Value("${security.enabled:true}")
     private boolean isSecurityEnabled;
 
+    @Value("${cors.allowed-origin-patterns}")
+    String[] allowedOriginPatterns;
+
     @Autowired
     public void configureGlobal(@NonNull final AuthenticationManagerBuilder auth) {
         final KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
@@ -79,12 +82,20 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     }
 
     @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOriginPatterns(Arrays.asList(allowedOriginPatterns));
+        corsConfiguration.setAllowedMethods(Arrays.asList("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }
+
+    @Bean
     @Override
     @ConditionalOnMissingBean(HttpSessionManager.class)
     protected HttpSessionManager httpSessionManager() {
         return new HttpSessionManager();
     }
-
-
 
 }
