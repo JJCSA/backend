@@ -79,16 +79,6 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
-        corsConfiguration.setAllowedMethods(Arrays.asList("*"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
-
-    @Bean
     @Override
     @ConditionalOnMissingBean(HttpSessionManager.class)
     protected HttpSessionManager httpSessionManager() {
