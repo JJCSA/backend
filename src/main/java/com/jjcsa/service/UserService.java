@@ -11,9 +11,7 @@ import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
 import com.jjcsa.util.KeycloakUtil;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
@@ -38,10 +35,13 @@ public class UserService {
         return userRepository.findUserByEmail(email);
     }
 
-    public User getUserById(UUID userId) { return userRepository.findUserById(userId); }
+    public User getUserById(UUID userId) {
+        return userRepository.findUserById(userId);
+    }
 
     /**
      * Need to come up with idea to execute this method as a transaction.
+     *
      * @param user
      * @param jainProofDoc
      * @param profPicture
@@ -49,8 +49,8 @@ public class UserService {
      */
     public User saveUser(User user, MultipartFile jainProofDoc, MultipartFile profPicture) {
 
-        log.info("Save User Invoked for User:{}",user);
-        if(nonNull(getUser(user.getEmail())))
+        log.info("Save User Invoked for User:{}", user);
+        if (nonNull(getUser(user.getEmail())))
             throw new BadRequestException(
                     "User already exists",
                     "User with this email address already exists",
@@ -64,7 +64,7 @@ public class UserService {
 
         user = userRepository.save(user);
 
-        if(user == null)
+        if (user == null)
             throw new UnknownServerErrorException(
                     "Unable to store user profile",
                     "Error while store user profile in database",
@@ -73,7 +73,7 @@ public class UserService {
                     "");
 
         String jainProofDocURL = saveJainProofForUserProfile(user, jainProofDoc);
-        if(jainProofDocURL == null) {
+        if (jainProofDocURL == null) {
             throw new UnknownServerErrorException(
                     "Unable to save Jain Proof Doc to S3",
                     "Jain Proof Doc upload failed!",
@@ -83,7 +83,7 @@ public class UserService {
         }
 
         String profPictureURL = saveProfilePictureForUserProfile(user, profPicture);
-        if(profPictureURL == null) {
+        if (profPictureURL == null) {
             throw new UnknownServerErrorException(
                     "Unable to save Profile Picture to S3",
                     "Profile Picture upload failed!",
@@ -101,7 +101,7 @@ public class UserService {
         String jainProofDocURL = null;
         try {
             // Save MultipartFile to S3
-            if(user.getCommunityDocumentURL() != null
+            if (user.getCommunityDocumentURL() != null
                     && !user.getCommunityDocumentURL().isEmpty()) {
                 // Delete file if already present
                 deleteCommunityDocumentForUserProfile(user);
@@ -109,7 +109,7 @@ public class UserService {
             String fileKey = user.getId() + "/" + ImageUtil.generateCommunityDocumentName(jainProofDoc);
             jainProofDocURL = awss3Service.saveFile(fileKey, jainProofDoc);
             log.info("(S3 upload) Jain Proof Doc for user email {} uploaded", user.getEmail());
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Error while saving Jain Proof Doc to S3");
             log.error(e.getMessage());
         } finally {
@@ -121,7 +121,7 @@ public class UserService {
         String profPictureURL = null;
         try {
             // Save MultipartFile to S3
-            if(user.getProfilePicture() != null
+            if (user.getProfilePicture() != null
                     && !user.getProfilePicture().isEmpty()) {
                 // Delete file if already present
                 deleteProfilePictureForUserProfile(user);
@@ -129,7 +129,7 @@ public class UserService {
             String fileKey = user.getId() + "/" + ImageUtil.generateProfilePictureName(profPicture);
             profPictureURL = awss3Service.saveFile(fileKey, profPicture);
             log.info("(S3 upload) Profile Picture for user email {} uploaded", user.getEmail());
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Error while saving Profile Picture to S3");
             log.error(e.getMessage());
         } finally {
@@ -138,13 +138,13 @@ public class UserService {
     }
 
     public void deleteProfilePictureForUserProfile(User user) {
-        if(user.getProfilePicture() == null) return;
+        if (user.getProfilePicture() == null) return;
         awss3Service.deleteFile(ImageUtil.generateProfilePictureKeyForUserProfile(user));
         user.setProfilePicture(null);
     }
 
     public void deleteCommunityDocumentForUserProfile(User user) {
-        if(user.getCommunityDocumentURL() == null) return;
+        if (user.getCommunityDocumentURL() == null) return;
         awss3Service.deleteFile(ImageUtil.generateCommunityDocumentKeyForUserProfile(user));
         user.setCommunityDocumentURL(null);
     }
@@ -165,43 +165,46 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<User> getAllUsers()
-    {
+    public List<User> getAllUsers() {
         // TODO: Fetch Role from keycloak for User
         return userRepository.findAll();
     }
 
     /*
-    * Updates user's status with the given status
-    * returns true if successful
-    */
+     * Updates user's status with the given status
+     * returns true if successful
+     */
     public boolean updateUserStatus(User user, UserStatus status, AdminAction adminAction) {
 
         UserStatus currentStatus = user.getUserStatus();
 
         switch (status) {
             case NewUser:
-                if(currentStatus.equals(UserStatus.Active)
-                    || currentStatus.equals(UserStatus.Rejected)) {
+                if (currentStatus.equals(UserStatus.Active)
+                        || currentStatus.equals(UserStatus.Rejected)) {
                     throw new BadRequestException("Cannot update UserStatus",
                             "Cannot update UserStatus for Active or Rejected Users",
                             "",
                             "",
                             "");
                 }
+
+                // Enable user in keycloak
+                KeycloakUtil.enableUser(user.getEmail());
+
                 adminAction.setAction(Action.APPROVE_USER);
                 adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));
                 break;
             case Active:
-                if(currentStatus.equals(UserStatus.Pending)
-                    || currentStatus.equals(UserStatus.Rejected)) {
+                if (currentStatus.equals(UserStatus.Pending)
+                        || currentStatus.equals(UserStatus.Rejected)) {
                     throw new BadRequestException("Cannot update UserStatus",
                             "Cannot update UserStatus to Active for Pending or Rejected users",
                             "",
                             "",
                             "");
                 }
-                if(!hasUserCompletedOnboardingProfile(user)) {
+                if (!hasUserCompletedOnboardingProfile(user)) {
                     throw new BadRequestException("Cannot update UserStatus to Active",
                             "User has not completed on-boarding profile",
                             "",
@@ -210,7 +213,7 @@ public class UserService {
                 }
                 break;
             case Rejected:
-                if(currentStatus.equals(UserStatus.NewUser)
+                if (currentStatus.equals(UserStatus.NewUser)
                         || currentStatus.equals(UserStatus.Active)) {
                     throw new BadRequestException("Cannot update UserStatus",
                             "Cannot update UserStatus to Rejected for NewUser or Active users",
@@ -237,9 +240,9 @@ public class UserService {
     }
 
     /*
-    * Checks if User finished on-boarding profile
-    * TODO: Add fields to check for on-boarding
-    */
+     * Checks if User finished on-boarding profile
+     * TODO: Add fields to check for on-boarding
+     */
     private boolean hasUserCompletedOnboardingProfile(User user) {
         return true;
     }

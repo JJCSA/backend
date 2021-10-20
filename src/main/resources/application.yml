@@ -16,6 +16,9 @@ spring:
     username: jjcsa
     password: jjcsa-jjcsa
 
+cors:
+  allowed-origin-patterns: '*'
+
 security:
   enabled: true
 
@@ -36,6 +39,9 @@ aws:
 
 cloud:
   aws:
+    ses:
+      region:
+        static: us-east-2
     stack:
       auto: false
     region:
