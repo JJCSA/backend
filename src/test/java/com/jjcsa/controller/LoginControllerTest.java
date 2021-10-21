@@ -1,6 +1,7 @@
 package com.jjcsa.controller;
 
 import com.jjcsa.mapper.UserMapper;
+import com.jjcsa.service.EmailSenderService;
 import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ public class LoginControllerTest {
     private UserMapper userMapper;
     @MockBean
     private KeycloakService keycloakService;
+    @MockBean
+    private EmailSenderService emailSenderService;
 
     @Autowired
     private MockMvc mockMvc;

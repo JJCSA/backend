@@ -1,6 +1,8 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,7 +59,7 @@ public class LoginController {
     public String sendEmail(@RequestBody List<String> emails){
         User user = User.builder().firstName("Developer").lastName("Dev").build();
         int failed = emailSenderService.sendEmail(user,"newsletter@jjcsausa.com", "registration",
-                emails,Collections.singletonList("jjcsausawebdev@gmail.com"),emails);
+                emails, Collections.singletonList("jjcsausawebdev@gmail.com"),emails);
         return "Sent email failed: " + failed;
     }
     // This method is for test
