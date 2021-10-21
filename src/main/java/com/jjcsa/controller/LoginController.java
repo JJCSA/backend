@@ -1,8 +1,6 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,17 +8,13 @@ import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.EmailSenderService;
 import com.jjcsa.service.UserService;
-import com.jjcsa.util.KeycloakUtil;
 
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class LoginController {
 
     private final UserService userService;
+    private final KeycloakService keycloakService;
     private final UserMapper userMapper;
     private final EmailSenderService emailSenderService;
 
@@ -100,7 +95,7 @@ public class LoginController {
         // Create the new user in keycloak
         boolean userCreatedInKeycloak = false;
         try {
-            userCreatedInKeycloak = KeycloakUtil.createNewUser(addNewUser);
+            userCreatedInKeycloak = keycloakService.createNewUser(addNewUser);
         } catch (BadRequestException e) {
             userCreatedInKeycloak = false;
             throw e;

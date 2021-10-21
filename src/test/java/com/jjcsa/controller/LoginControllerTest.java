@@ -1,6 +1,7 @@
 package com.jjcsa.controller;
 
 import com.jjcsa.mapper.UserMapper;
+import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class LoginControllerTest {
     private UserService userService;
     @MockBean
     private UserMapper userMapper;
+    @MockBean
+    private KeycloakService keycloakService;
 
     @Autowired
     private MockMvc mockMvc;

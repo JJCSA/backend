@@ -4,6 +4,7 @@ import com.jjcsa.dto.UserProfile;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.EducationRepository;
 import com.jjcsa.repository.UserRepository;
@@ -27,6 +28,7 @@ public class UserProfileService {
     private final WorkExRepository workExRepository;
     private final UserProfileMapper userProfileMapper;
     private final UserRepository userRepository;
+    private final KeycloakService keycloakService;
 
     public UserProfile getUserProfile(String email) {
         User user = userService.getUser(email);
@@ -48,7 +50,9 @@ public class UserProfileService {
         user.setEducationList(educationRepository.findAllByUser(user));
         user.setWorkExperience(workExRepository.findAllByUser(user));
 
-        return userProfileMapper.toUserProfile(user);
+        UserRole userRole = keycloakService.getUserRole(email);
+
+        return userProfileMapper.toUserProfile(user, userRole);
     }
 
     public UserProfile updateUserProfile(String userEmail, UserProfile updatedUserProfile) {
@@ -86,7 +90,9 @@ public class UserProfileService {
 
         User savedUser = userRepository.save(user);
 
-        return userProfileMapper.toUserProfile(savedUser);
+        UserRole userRole = keycloakService.getUserRole(userEmail);
+
+        return userProfileMapper.toUserProfile(savedUser, userRole);
     }
 
     public UserProfile updateUserProfilePicture(User user, MultipartFile profPicture) {
@@ -95,6 +101,8 @@ public class UserProfileService {
         user.setProfilePicture(userService.saveProfilePictureForUserProfile(user, profPicture));
         User savedUser = userRepository.save(user);
 
-        return userProfileMapper.toUserProfile(savedUser);
+        UserRole userRole = keycloakService.getUserRole(savedUser.getEmail());
+
+        return userProfileMapper.toUserProfile(savedUser, userRole);
     }
 }

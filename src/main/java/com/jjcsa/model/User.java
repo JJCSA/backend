@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jjcsa.model.enumModel.ContactMethod;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
 import lombok.AllArgsConstructor;
@@ -113,4 +114,7 @@ public class User {
     
     @Column(name = "contact_share", columnDefinition = "boolean default false")
     private boolean contactShared;
+
+    @Transient
+    private UserRole userRole;
 }   
