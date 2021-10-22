@@ -1,20 +1,5 @@
 package com.jjcsa.runner;
 
-import com.jjcsa.util.KeycloakUtil;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.*;
-import org.keycloak.representations.idm.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 //@Slf4j
 //@RequiredArgsConstructor
 //@Component

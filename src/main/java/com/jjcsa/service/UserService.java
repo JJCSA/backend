@@ -9,7 +9,6 @@ import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.AdminActionRepository;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
-import com.jjcsa.util.KeycloakUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,7 @@ public class UserService {
     private UserRepository userRepository;
     private AWSS3Service awss3Service;
     private AdminActionRepository adminActionRepository;
+    private KeycloakService keycloakService;
 
     public User getUser(String email) {
         return userRepository.findUserByEmail(email);
@@ -153,7 +153,7 @@ public class UserService {
 
         log.info("Deleting user with email {}", user.getEmail());
 
-        KeycloakUtil.deleteUser(user);
+        keycloakService.deleteUser(user);
         this.deleteProfilePictureForUserProfile(user);
         this.deleteCommunityDocumentForUserProfile(user);
         userRepository.delete(user);
@@ -166,8 +166,9 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        // TODO: Fetch Role from keycloak for User
-        return userRepository.findAll();
+        List<User> allUsers = userRepository.findAll();
+        allUsers.forEach(user -> user.setUserRole(keycloakService.getUserRole(user.getEmail())));
+        return allUsers;
     }
 
     /*
@@ -190,7 +191,7 @@ public class UserService {
                 }
 
                 // Enable user in keycloak
-                KeycloakUtil.enableUser(user.getEmail());
+                keycloakService.enableUser(user.getEmail());
 
                 adminAction.setAction(Action.APPROVE_USER);
                 adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));
@@ -225,7 +226,7 @@ public class UserService {
                 adminAction.setAction(Action.REJECT_USER);
                 adminAction.setDescrip(String.format("User with email %s rejected by Admin", user.getEmail()));
 
-                this.deleteUser(user);
+                deleteUser(user);
                 adminActionRepository.save(adminAction);
                 return true;
         }
