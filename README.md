@@ -14,7 +14,7 @@ For resources on various documentation and references, please refer [Resources](
    1. Docker (https://docs.docker.com/get-docker/)
    2. Java JDK 8 (https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
    3. Maven (https://maven.apache.org/install.html)
-   4. Keycloak: Follow instructions here: https://github.com/JJCSA/Authentication/tree/developer#steps-to-start-the-server
+   4. Keycloak: Follow instructions here: https://github.com/JJCSA/Authentication/tree/main#how-to-start
 
 2. Clone this repository and navigate to the backend directory
 
@@ -75,7 +75,7 @@ For resources on various documentation and references, please refer [Resources](
    docker-compose up
    ```
 
-4. Make sure Keycloak service is already running. If not, start the same with the following instructions: https://github.com/JJCSA/Authentication/tree/developer#steps-to-start-the-server  
+4. Make sure Keycloak service is already running. If not, start the same with the following instructions: https://github.com/JJCSA/Authentication/tree/main#how-to-start  
 
 5. Now navigate to the backend folder and run 
     ```
