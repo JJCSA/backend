@@ -8,6 +8,35 @@ For steps on how you can contribute, please follow the [Contributing guide](CONT
 
 For resources on various documentation and references, please refer [Resources](RESOURCES.md)
 
+## Running the app through Docker:
+
+1. Prerequisites:
+   1. Docker (https://docs.docker.com/get-docker/)
+   2. Java JDK 8 (https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
+   3. Maven (https://maven.apache.org/install.html)
+   4. Keycloak: Follow instructions here: https://github.com/JJCSA/Authentication/tree/developer#steps-to-start-the-server
+
+2. Clone this repository and navigate to the backend directory
+
+    ```
+    git clone git@github.com:JJCSA/backend.git
+    cd backend
+    ```
+
+3. Build the docker image:
+
+   ```shell
+   mvn clean spring-boot:build-image -DskipTests
+   ```
+
+4. Start the application:
+
+   ```shell
+   docker-compose up
+   ```
+
+5. You can test the App heath status by going to http://localhost:9080/actuator/health
+
 ## Running the app:
 
 1. Clone this repository and navigate to the backend directory

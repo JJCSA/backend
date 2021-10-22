@@ -9,7 +9,6 @@ spring:
         lob:
           non_contextual_creation: true
   datasource:
-    platform: postgres
     url: jdbc:postgresql://localhost:5432/jjcsa
     username: admin
     password: jjcsa
