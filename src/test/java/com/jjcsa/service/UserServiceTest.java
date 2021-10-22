@@ -34,6 +34,7 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
     @Mock private UserRepository userRepository;
     @Mock private AWSS3Service awss3Service;
+    @Mock private KeycloakService keycloakService;
 
     @Spy @InjectMocks private UserService userService;
 

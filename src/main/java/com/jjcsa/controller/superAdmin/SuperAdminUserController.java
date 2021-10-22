@@ -6,8 +6,8 @@ import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.Action;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.repository.AdminActionRepository;
+import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.UserService;
-import com.jjcsa.util.KeycloakUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
@@ -35,6 +35,7 @@ import static java.util.Objects.isNull;
 public class SuperAdminUserController {
 
     private final UserService userService;
+    private final KeycloakService keycloakService;
     private final AdminActionRepository adminActionRepository;
 
     @PostMapping(path = "{userId}/role")
@@ -45,7 +46,7 @@ public class SuperAdminUserController {
 
         AdminAction adminAction = initAdminAction(authenticationToken, userId);
 
-        KeycloakUtil.addUserRole(user.getEmail(), updateUserRole.getRole());
+        keycloakService.addUserRole(user.getEmail(), updateUserRole.getRole());
 
         if(updateUserRole.getRole().equals(UserRole.ADMIN)) {
             adminAction.setAction(Action.PROMOTE_USER_TO_ADMIN);
@@ -64,7 +65,7 @@ public class SuperAdminUserController {
 
         AdminAction adminAction = initAdminAction(authenticationToken, userId);
 
-        KeycloakUtil.removeUserRole(user.getEmail(), role);
+        keycloakService.removeUserRole(user.getEmail(), role);
 
         if(role.equals(UserRole.ADMIN)) {
             adminAction.setAction(Action.DEMOTE_ADMIN_TO_USER);

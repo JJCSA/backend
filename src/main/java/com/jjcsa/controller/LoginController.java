@@ -10,17 +10,13 @@ import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.EmailSenderService;
 import com.jjcsa.service.UserService;
-import com.jjcsa.util.KeycloakUtil;
 
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class LoginController {
 
     private final UserService userService;
+    private final KeycloakService keycloakService;
     private final UserMapper userMapper;
     private final EmailSenderService emailSenderService;
 
@@ -62,7 +59,7 @@ public class LoginController {
     public String sendEmail(@RequestBody List<String> emails){
         User user = User.builder().firstName("Developer").lastName("Dev").build();
         int failed = emailSenderService.sendEmail(user,"newsletter@jjcsausa.com", "registration",
-                emails,Collections.singletonList("jjcsausawebdev@gmail.com"),emails);
+                emails, Collections.singletonList("jjcsausawebdev@gmail.com"),emails);
         return "Sent email failed: " + failed;
     }
     // This method is for test
@@ -100,7 +97,7 @@ public class LoginController {
         // Create the new user in keycloak
         boolean userCreatedInKeycloak = false;
         try {
-            userCreatedInKeycloak = KeycloakUtil.createNewUser(addNewUser);
+            userCreatedInKeycloak = keycloakService.createNewUser(addNewUser);
         } catch (BadRequestException e) {
             userCreatedInKeycloak = false;
             throw e;

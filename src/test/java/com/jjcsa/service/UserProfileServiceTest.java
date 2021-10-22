@@ -6,14 +6,13 @@ import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
 import com.jjcsa.model.WorkEx;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.EducationRepository;
 import com.jjcsa.repository.WorkExRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -34,6 +33,7 @@ public class UserProfileServiceTest {
     @Mock private EducationRepository educationRepository;
     @Mock private WorkExRepository workExRepository;
     @Mock private UserProfileMapper userProfileMapper;
+    @Mock private KeycloakService keycloakService;
 
     @Spy @InjectMocks private UserProfileService userProfileService;
 
@@ -66,6 +66,7 @@ public class UserProfileServiceTest {
                 .email("test@test.com")
                 .education(generateEducationData())
                 .workExperience(generateWorkExData())
+                .userRole(UserRole.USER)
                 .build();
     }
 
@@ -74,11 +75,13 @@ public class UserProfileServiceTest {
         when(userService.getUser(any())).thenReturn(generateUserData());
         when(educationRepository.findAllByUser(any())).thenReturn(generateEducationData());
         when(workExRepository.findAllByUser(any())).thenReturn(generateWorkExData());
-        when(userProfileMapper.toUserProfile(any())).thenReturn(generateUserProfile());
+        when(keycloakService.getUserRole(any())).thenReturn(UserRole.USER);
+        when(userProfileMapper.toUserProfile(any(), any())).thenReturn(generateUserProfile());
 
         UserProfile response = userProfileService.getUserProfile("test@test.com");
         assertNotNull(response);
         assertEquals(response.getEmail(), "test@test.com");
+        assertEquals(response.getUserRole(), UserRole.USER);
         assertEquals(response.getEducation().size(), 1);
         assertEquals(response.getEducation().get(0).getEducationId(), 1);
         assertEquals(response.getWorkExperience().size(), 1);
@@ -103,6 +106,6 @@ public class UserProfileServiceTest {
         ResponseStatusException exception =
                 assertThrows(ResponseStatusException.class, () -> userProfileService.getUserProfile("test@test.com"));
         assertEquals(exception.getStatus(), HttpStatus.FORBIDDEN);
-        assertEquals(exception.getReason(), "User is not active");
+        assertEquals(exception.getReason(), "User is pending");
     }
 }
