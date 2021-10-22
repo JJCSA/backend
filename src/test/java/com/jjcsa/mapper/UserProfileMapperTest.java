@@ -5,6 +5,7 @@ import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
 import com.jjcsa.model.WorkEx;
 import com.jjcsa.model.enumModel.ContactMethod;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
 import org.junit.jupiter.api.Test;
@@ -80,10 +81,11 @@ public class UserProfileMapperTest {
         user.setEducationList(generateEducationData());
         user.setWorkExperience(generateWorkExData());
 
-        UserProfile response = mapper.toUserProfile(user);
+        UserProfile response = mapper.toUserProfile(user, UserRole.USER);
         assertNotNull(response);
         assertEquals(response.getId(), uuid);
         assertEquals(response.getEmail(), "test@test.com");
+        assertEquals(response.getUserRole(), UserRole.USER);
         assertEquals(response.getFirstName(), "fname");
         assertEquals(response.getMiddleName(), "mname");
         assertEquals(response.getLastName(), "lname");
@@ -140,11 +142,12 @@ public class UserProfileMapperTest {
                 .city("test city")
                 .state("test state")
                 .zip("123456")
-                .dateOfBirth(new Date())
+                .dateOfBirth(date)
                 .profilePicture("xyz.com/prof.jpg")
                 .socialMediaPlatform("Facebook")
                 .volunteeringInterest(VolunteeringInterest.Yes)
                 .linkedinUrl("linked.com/xyz")
+                .userRole(UserRole.USER)
                 .build();
         userProfile.setEducation(generateEducationData());
         userProfile.setWorkExperience(generateWorkExData());
@@ -169,6 +172,7 @@ public class UserProfileMapperTest {
         assertEquals(response.getSocialMediaPlatform(), "Facebook");
         assertEquals(response.getVolunteeringInterest(), VolunteeringInterest.Yes);
         assertEquals(response.getLinkedinUrl(), "linked.com/xyz");
+        assertEquals(response.getUserRole(), UserRole.USER);
         assertEquals(response.getEducationList().size(), 1);
         assertEquals(response.getWorkExperience().size(), 1);
 

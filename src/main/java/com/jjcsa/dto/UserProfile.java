@@ -3,6 +3,7 @@ package com.jjcsa.dto;
 import com.jjcsa.model.Education;
 import com.jjcsa.model.WorkEx;
 import com.jjcsa.model.enumModel.ContactMethod;
+import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.model.enumModel.VolunteeringInterest;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class UserProfile {
     private ContactMethod contactMethod;
     private String communityName;
     private UserStatus userStatus;
+    private UserRole userRole;
     private String street;
     private String city;
     private String state;
