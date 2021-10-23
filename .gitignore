@@ -1,5 +1,6 @@
 ### DD ###
 AWS-backend-DD-notes.sh
+backend-notes.sh
 ### DD ###
 
 
@@ -16,7 +17,7 @@ AWS-backend-DD-notes.sh
 .mtj.tmp/
 
 # Package Files #
-target/
+target
 *.jar
 *.war
 *.nar
