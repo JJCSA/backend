@@ -7,16 +7,10 @@ spring:
         lob:
           non_contextual_creation: true
   datasource:
-  #  Replace with database properties in stage
-   url: jdbc:postgresql://backend.postgres.jjcsausa.com:5432/jjcsa
-   username: jjcsa
-   password: jjcsa-jjcsa
-
-  # datasource:
-  #   url: jdbc:postgresql://localhost:5432/jjcsa
-  #   # Will be set by aws parameter store variables.
-  #   # for username it should be /config/application_stage(for whole application with stage profile)/spring.datasource.username
-  #   # Same for PW.
+    url: jdbc:postgresql://localhost:5432/jjcsa
+    # Will be set by aws parameter store variables.
+    # for username it should be /config/application_stage(for whole application with stage profile)/spring.datasource.username
+    # Same for PW.
 
 cors:
   allowed-origin-patterns: 'http://*.jjcsausa.com'
