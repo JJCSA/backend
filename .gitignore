@@ -29,3 +29,9 @@ hs_err_pid*
 
 # Maven packages
 .mvn
+
+### AWS ###
+*.sh
+### AWS ###
+
+.DS_Store
