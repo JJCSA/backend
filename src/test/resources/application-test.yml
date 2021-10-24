@@ -1,46 +1,3 @@
-# # Endpoints
-# endpoint:
-#   users: /api/users
-
-# # Specify port to start the app in
-# server:
-#   port: 9080
-
-#   # Database config
-# spring:
-#   jpa:
-#     database: POSTGRESQL
-#     show-sql: true
-#     generate-ddl: true
-#     hibernate:
-#       ddl-auto: update
-#       jdbc:
-#         lob:
-#           non_contextual_creation: true
-#   datasource:
-#     platform: postgres
-#     url: jdbc:postgresql://localhost:5432/jjcsa
-#     username: admin
-#     password: jjcsa
-
-# # Keycloak Config
-# keycloak:
-#   realm: jjcsa-services
-#   bearer-only: true
-#   ssl-required: none
-#   resource: jjcsa
-#   auth-server-url: http://localhost:8080/auth
-#   cors: true
-#   use-resource-role-mappings: true
-
-# # AWS properties
-# aws:
-#   s3:
-#     bucketname: jjcsa-usa
-#   region: us-east-1
-
-
-############### aws-cfn-jjcsa ###############
 # Endpoints
 endpoint:
   users: /api/users
@@ -62,9 +19,9 @@ spring:
           non_contextual_creation: true
   datasource:
     platform: postgres
-    url: jdbc:postgresql://backend.postgres.jjcsausa.com:5432/jjcsa
-    username: jjcsa
-    password: jjcsa-jjcsa
+    url: jdbc:postgresql://localhost:5432/jjcsa
+    username: admin
+    password: jjcsa
 
 # Keycloak Config
 keycloak:
@@ -72,7 +29,7 @@ keycloak:
   bearer-only: true
   ssl-required: none
   resource: jjcsa
-  auth-server-url: http://backend.jjcsausa.com:8080/auth
+  auth-server-url: http://localhost:8080/auth
   cors: true
   use-resource-role-mappings: true
 
@@ -81,4 +38,3 @@ aws:
   s3:
     bucketname: jjcsa-usa
   region: us-east-1
-############### aws-cfn-jjcsa ###############
