@@ -1,6 +1,0 @@
-[
-    {
-        "name": "Backend",
-        "imageUri": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${BackendECRRepository}:latest"
-    }
-]
