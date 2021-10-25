@@ -39,6 +39,7 @@ public class UserProfileServiceTest {
 
     private User generateUserData() {
         return new User().builder()
+                .id("1")
                 .email("test@test.com")
                 .userStatus(UserStatus.Active)
                 .build();
@@ -63,6 +64,7 @@ public class UserProfileServiceTest {
 
     private UserProfile generateUserProfile() {
         return new UserProfile().builder()
+                .id("1")
                 .email("test@test.com")
                 .education(generateEducationData())
                 .workExperience(generateWorkExData())
@@ -72,14 +74,15 @@ public class UserProfileServiceTest {
 
     @Test
     public void testGetUserProfileFromEmail() {
-        when(userService.getUser(any())).thenReturn(generateUserData());
+        when(userService.getUserById(any())).thenReturn(generateUserData());
         when(educationRepository.findAllByUser(any())).thenReturn(generateEducationData());
         when(workExRepository.findAllByUser(any())).thenReturn(generateWorkExData());
         when(keycloakService.getUserRole(any())).thenReturn(UserRole.USER);
         when(userProfileMapper.toUserProfile(any(), any())).thenReturn(generateUserProfile());
 
-        UserProfile response = userProfileService.getUserProfile("test@test.com");
+        UserProfile response = userProfileService.getUserProfile("1");
         assertNotNull(response);
+        assertEquals(response.getId(), "1");
         assertEquals(response.getEmail(), "test@test.com");
         assertEquals(response.getUserRole(), UserRole.USER);
         assertEquals(response.getEducation().size(), 1);
@@ -90,7 +93,7 @@ public class UserProfileServiceTest {
 
     @Test
     public void testGetUserProfileFromInvalidEmail() {
-        when(userService.getUser(any())).thenReturn(null);
+        when(userService.getUserById(any())).thenReturn(null);
 
         BadRequestException exception = assertThrows(BadRequestException.class, () -> userProfileService.getUserProfile("xyz"));
         assertEquals(exception.getMessage(), "User Profile does not exist");
@@ -101,10 +104,10 @@ public class UserProfileServiceTest {
         User inactiveUser = generateUserData();
         inactiveUser.setUserStatus(UserStatus.Pending);
 
-        when(userService.getUser(any())).thenReturn(inactiveUser);
+        when(userService.getUserById(any())).thenReturn(inactiveUser);
 
         ResponseStatusException exception =
-                assertThrows(ResponseStatusException.class, () -> userProfileService.getUserProfile("test@test.com"));
+                assertThrows(ResponseStatusException.class, () -> userProfileService.getUserProfile("1"));
         assertEquals(exception.getStatus(), HttpStatus.FORBIDDEN);
         assertEquals(exception.getReason(), "User is pending");
     }
