@@ -75,8 +75,8 @@ public class UserProfileServiceTest {
     @Test
     public void testGetUserProfileFromEmail() {
         when(userService.getUserById(any())).thenReturn(generateUserData());
-        when(educationRepository.findAllByUser(any())).thenReturn(generateEducationData());
-        when(workExRepository.findAllByUser(any())).thenReturn(generateWorkExData());
+//        when(educationRepository.findAllByUser(any())).thenReturn(generateEducationData());
+//        when(workExRepository.findAllByUser(any())).thenReturn(generateWorkExData());
         when(keycloakService.getUserRole(any())).thenReturn(UserRole.USER);
         when(userProfileMapper.toUserProfile(any(), any())).thenReturn(generateUserProfile());
 
