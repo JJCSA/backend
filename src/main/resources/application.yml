@@ -46,7 +46,8 @@ cloud:
       auto: false
     region:
       static: us-east-1
-#     credentials:
+    credentials:
+       useDefaultAwsCredentialsChain: true
 #      profile-name: default
 #      access-key:
 #      secret-key:
