@@ -46,7 +46,7 @@ cloud:
       auto: false
     region:
       static: us-east-1
-    credentials:
+#     credentials:
 #      profile-name: default
 #      access-key:
 #      secret-key:
