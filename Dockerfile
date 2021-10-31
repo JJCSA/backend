@@ -17,7 +17,7 @@ ENV SERVER_PORT=${server_port}
 ARG profiles_active=stage
 ENV PROFILE_ACTIVE=${profiles_active}
 
-COPY --from=BUILDER /home/app/target/jjcsa-0.0.1-SNAPSHOT.jar /usr/local/lib/jjcsa.jar
+COPY --from=BUILDER /home/app/target/jjcsa-*.jar /usr/local/lib/jjcsa.jar
 EXPOSE ${server_port}
 
 # ENTRYPOINT mvn clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dserver.port=9080"
