@@ -4,6 +4,10 @@ server:
 
 # Database config
 spring:
+  application:
+    name: jjcsa-backend
+#  config:
+#    import: "aws-parameterstore:"
   jpa:
     database: POSTGRESQL
     hibernate:
@@ -36,6 +40,9 @@ aws:
   s3:
     bucketname: jjcsa-usa
   region: us-east-1
+#  paramstore:
+#    enabled: true
+#    region: us-east-2
 
 cloud:
   aws:
