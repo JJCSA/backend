@@ -39,7 +39,7 @@ public class UserProfileController {
     public UserProfile getUserProfile(KeycloakAuthenticationToken authenticationToken) {
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
-        return userProfileService.getUserProfile(token.getEmail());
+        return userProfileService.getUserProfile(token.getSubject());
     }
 
     @PutMapping()
@@ -51,19 +51,18 @@ public class UserProfileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update email address");
         }
 
-        UserProfile updatedUserProfile = userProfileService.updateUserProfile(token.getEmail(), userProfile);
+        UserProfile updatedUserProfile = userProfileService.updateUserProfile(token.getSubject(), userProfile);
 
         return updatedUserProfile;
     }
 
-    @PutMapping("/{userId}/profPicture")
-    public UserProfile updateUserProfilePicture(@PathVariable("userId") UUID userId,
-                                                @RequestParam("profPicture") MultipartFile profPicture,
+    @PutMapping("/profPicture")
+    public UserProfile updateUserProfilePicture(@RequestParam("profPicture") MultipartFile profPicture,
                                                 KeycloakAuthenticationToken authenticationToken) {
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
 
-        User user = userService.getUserById(userId);
+        User user = userService.getUserById(token.getSubject());
         if(isNull(user)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find user");
         }

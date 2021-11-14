@@ -55,7 +55,7 @@ public class UserProfileMapperTest {
 
     @Test
     public void shouldMapUserToUserProfile() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Date date = new Date();
 
         User user = new User().builder()
@@ -125,7 +125,7 @@ public class UserProfileMapperTest {
 
     @Test
     public void shouldMapUserProfileToUser() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Date date = new Date();
 
         UserProfile userProfile = new UserProfile().builder()

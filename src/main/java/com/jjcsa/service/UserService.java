@@ -1,7 +1,9 @@
 package com.jjcsa.service;
 
+import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
+import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.Action;
@@ -9,57 +11,62 @@ import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.AdminActionRepository;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class UserService {
 
-    private UserRepository userRepository;
-    private AWSS3Service awss3Service;
-    private AdminActionRepository adminActionRepository;
-    private KeycloakService keycloakService;
+    private final UserRepository userRepository;
+    private final AWSS3Service awss3Service;
+    private final AdminActionRepository adminActionRepository;
+    private final KeycloakService keycloakService;
+    private final UserMapper userMapper;
 
     public User getUser(String email) {
         return userRepository.findUserByEmail(email);
     }
 
-    public User getUserById(UUID userId) {
-        return userRepository.findUserById(userId);
+    public User getUserById(String userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     /**
      * Need to come up with idea to execute this method as a transaction.
      *
-     * @param user
+     * @param newUser
      * @param jainProofDoc
      * @param profPicture
      * @return
      */
-    public User saveUser(User user, MultipartFile jainProofDoc, MultipartFile profPicture) {
+    public User saveUser(AddNewUser newUser, MultipartFile jainProofDoc, MultipartFile profPicture) {
 
-        log.info("Save User Invoked for User:{}", user);
-        if (nonNull(getUser(user.getEmail())))
-            throw new BadRequestException(
-                    "User already exists",
-                    "User with this email address already exists",
-                    "Please try logging in",
-                    "",
-                    ""
-            );
+        log.info("Saving user for {}", newUser.getEmail());
+        String userId = keycloakService.createNewUser(newUser);
+
+        if(isNull(userId)) {
+            log.error("Keycloak not able to create user with email {}", newUser.getEmail());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to create user in Keycloak");
+        }
+
+        User user = userMapper.toUserProfile(newUser);
 
         // Set defaults
+        user.setId(userId);
         user.setUserStatus(UserStatus.Pending);
 
         user = userRepository.save(user);
@@ -167,7 +174,8 @@ public class UserService {
 
     public List<User> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
-        allUsers.forEach(user -> user.setUserRole(keycloakService.getUserRole(user.getEmail())));
+        // If role is not found in keycloak it will be set to null
+        allUsers.forEach(user -> user.setUserRole(keycloakService.getUserRole(user.getId())));
         return allUsers;
     }
 
@@ -191,7 +199,7 @@ public class UserService {
                 }
 
                 // Enable user in keycloak
-                keycloakService.enableUser(user.getEmail());
+                keycloakService.enableUser(user.getId());
 
                 adminAction.setAction(Action.APPROVE_USER);
                 adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));

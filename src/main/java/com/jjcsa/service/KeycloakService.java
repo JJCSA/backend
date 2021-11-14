@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
@@ -89,7 +90,14 @@ public class KeycloakService {
         return clientResource;
     }
 
-    public boolean createNewUser(AddNewUser addNewUser) {
+    public UserResource getUserResource(String userId) {
+        // get the UsersResource
+        UsersResource usersResource = getKeycloakRealmResource().users();
+
+        return usersResource.get(userId);
+    }
+
+    public String createNewUser(AddNewUser addNewUser) {
 
         // Define user
         UserRepresentation user = new UserRepresentation();
@@ -97,8 +105,6 @@ public class KeycloakService {
         user.setEnabled(false);
         user.setEmail(addNewUser.getEmail());
         user.setUsername(addNewUser.getEmail());
-        user.setFirstName(addNewUser.getFirstName());
-        user.setLastName(addNewUser.getLastName());
 
         UsersResource usersResource = getKeycloakRealmResource().users();
 
@@ -113,7 +119,7 @@ public class KeycloakService {
                         "");
             } else {
                 log.error("Unable to create new user in Keycloak");
-                return false;
+                return null;
             }
         }
 
@@ -131,7 +137,7 @@ public class KeycloakService {
         // set password credential
         userResource.resetPassword(credentialRepresentation);
 
-        return true;
+        return userId;
     }
 
     public boolean deleteUser(User user) {
@@ -139,13 +145,11 @@ public class KeycloakService {
         log.info("Deleting user from keycloak with email {}", user.getEmail());
 
         UsersResource usersResource = getKeycloakRealmResource().users();
-        List<UserRepresentation> userRepresentationList = usersResource.search(user.getEmail());
-        if (isNull(userRepresentationList) || userRepresentationList.size() == 0) {
-            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "User not found");
-        }
 
-        UserRepresentation userRepresentation = userRepresentationList.get(0);
-        usersResource.delete(userRepresentation.getId());
+        Response response = usersResource.delete(user.getId());
+        if(response.getStatus() == HttpStatus.NOT_FOUND.value()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        }
 
         return true;
     }
@@ -155,78 +159,92 @@ public class KeycloakService {
      * New user is disabled in keycloak by default.
      * Once approved by an admin, user should be enabled in keycloak
      *
-     * @param email User's email address
+     * @param userId User's id
      */
-    public void enableUser(String email) {
-        log.debug("Enabling user with email {} in keycloak", email);
+    public void enableUser(String userId) {
+        log.debug("Enabling user with id {} in keycloak", userId);
 
-        // get the UsersResource
-        UsersResource usersResource = getKeycloakRealmResource().users();
+        // Get UserResource
+        UserResource userResource = getUserResource(userId);
 
-        // get userId
-        String userId = usersResource.search(email, true).get(0).getId();
+        UserRepresentation userRepresentation = null;
+        try {
+            // Get UserRepresentation
+            userRepresentation = userResource.toRepresentation();
+        } catch (NotFoundException e) {
+            log.error("Could not find user {} in keycloak", userId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find user in keycloak");
+        }
 
-        // Get UserRepresentation
-        UserRepresentation userRepresentation = usersResource.get(userId).toRepresentation();
         userRepresentation.setEnabled(true);
 
         // update
-        usersResource.get(userId).update(userRepresentation);
+        userResource.update(userRepresentation);
 
-        log.debug("Enabled user with email {} in keycloak successfully", email);
+        log.debug("Enabled user with id {} in keycloak successfully", userId);
     }
 
-    public void addUserRole(String email, UserRole role) {
+    public void addUserRole(String userId, UserRole role) {
 
         // get the RoleRepresentation
         RoleRepresentation roleRepresentation = getClientResource().roles().get(role.getRoleText()).toRepresentation();
 
-        // get the UsersResource
-        UsersResource usersResource = getKeycloakRealmResource().users();
+        // Get UserResource
+        UserResource userResource = getUserResource(userId);
 
-        // get userId
-        String userId = usersResource.search(email, true).get(0).getId();
+        try {
+            // add role for the user
+            userResource.roles()
+                    .clientLevel(getClientRepresentation().getId())
+                    .add(Arrays.asList(roleRepresentation));
 
-        // add role for the user
-        usersResource.get(userId)
-                .roles()
-                .clientLevel(getClientRepresentation().getId())
-                .add(Arrays.asList(roleRepresentation));
+        } catch (NotFoundException e) {
+            log.error("Could not find user {} in keycloak", userId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find user in keycloak");
+        }
 
     }
 
-    public void removeUserRole(String email, UserRole role) {
+    public void removeUserRole(String userId, UserRole role) {
 
         // get the RoleRepresentation
         RoleRepresentation roleRepresentation = getClientResource().roles().get(role.getRoleText()).toRepresentation();
 
-        // get the UsersResource
-        UsersResource usersResource = getKeycloakRealmResource().users();
+        // Get UserResource
+        UserResource userResource = getUserResource(userId);
 
-        // get userId
-        String userId = usersResource.search(email, true).get(0).getId();
+        try {
+            // remove role for the user
+            userResource.roles()
+                    .clientLevel(getClientRepresentation().getId())
+                    .remove(Arrays.asList(roleRepresentation));
 
-        // remove role for the user
-        usersResource.get(userId)
-                .roles()
-                .clientLevel(getClientRepresentation().getId())
-                .remove(Arrays.asList(roleRepresentation));
+        } catch (NotFoundException e) {
+            log.error("Could not find user {} in keycloak", userId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find user in keycloak");
+        }
+
     }
 
-    public UserRole getUserRole(String email) {
-        // get the UsersResource
-        UsersResource usersResource = getKeycloakRealmResource().users();
+    public UserRole getUserRole(String userId) {
+        // Get UserResource
+        UserResource userResource = getUserResource(userId);
 
-        // get userId
-        String userId = usersResource.search(email, true).get(0).getId();
+        List<String> clientRoles = null;
 
-        List<String> clientRoles = usersResource.get(userId)
-                .roles()
-                .clientLevel(getClientRepresentation().getId())
-                .listEffective()
-                .stream()
-                .map(roleRepresentation -> roleRepresentation.getName())
-                .collect(Collectors.toList());
+        try {
+            // fetch client level roles for user
+            clientRoles = userResource.roles()
+                    .clientLevel(getClientRepresentation().getId())
+                    .listEffective()
+                    .stream()
+                    .map(roleRepresentation -> roleRepresentation.getName())
+                    .collect(Collectors.toList());
+
+        } catch (NotFoundException e) {
+            log.error("Could not find user {} in keycloak", userId);
+            return null;
+        }
 
         if(clientRoles.contains(UserRole.SUPER_ADMIN.toString())) {
             return UserRole.SUPER_ADMIN;
