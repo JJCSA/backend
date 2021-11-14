@@ -39,14 +39,14 @@ public class SuperAdminUserController {
     private final AdminActionRepository adminActionRepository;
 
     @PostMapping(path = "{userId}/role")
-    public ResponseEntity addUserRole(@PathVariable UUID userId, @RequestBody UpdateUserRole updateUserRole, KeycloakAuthenticationToken authenticationToken) {
+    public ResponseEntity addUserRole(@PathVariable String userId, @RequestBody UpdateUserRole updateUserRole, KeycloakAuthenticationToken authenticationToken) {
 
         User user = userService.getUserById(userId);
         if(isNull(user)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id not found");
 
         AdminAction adminAction = initAdminAction(authenticationToken, userId);
 
-        keycloakService.addUserRole(user.getEmail(), updateUserRole.getRole());
+        keycloakService.addUserRole(user.getId(), updateUserRole.getRole());
 
         if(updateUserRole.getRole().equals(UserRole.ADMIN)) {
             adminAction.setAction(Action.PROMOTE_USER_TO_ADMIN);
@@ -58,14 +58,14 @@ public class SuperAdminUserController {
     }
 
     @DeleteMapping(path = "{userId}/role/{role}")
-    public ResponseEntity removeUserRole(@PathVariable UUID userId, @PathVariable UserRole role, KeycloakAuthenticationToken authenticationToken) {
+    public ResponseEntity removeUserRole(@PathVariable String userId, @PathVariable UserRole role, KeycloakAuthenticationToken authenticationToken) {
 
         User user = userService.getUserById(userId);
         if(isNull(user)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id not found");
 
         AdminAction adminAction = initAdminAction(authenticationToken, userId);
 
-        keycloakService.removeUserRole(user.getEmail(), role);
+        keycloakService.removeUserRole(user.getId(), role);
 
         if(role.equals(UserRole.ADMIN)) {
             adminAction.setAction(Action.DEMOTE_ADMIN_TO_USER);
@@ -77,10 +77,10 @@ public class SuperAdminUserController {
     }
 
     private AdminAction initAdminAction(KeycloakAuthenticationToken authenticationToken,
-                                        UUID userId) {
+                                        String userId) {
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
-        User supAdminUser = userService.getUser(token.getEmail());
+        User supAdminUser = userService.getUserById(token.getSubject());
 
         AdminAction adminAction = new AdminAction();
         adminAction.setFromUserId(supAdminUser.getId());

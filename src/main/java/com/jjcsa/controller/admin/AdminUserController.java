@@ -35,10 +35,13 @@ public class AdminUserController {
      * @returns the message on successful deletion of user
      */
     @DeleteMapping(path = "/{userId}")
-    public String deleteUser(@PathVariable UUID userId){
+    public String deleteUser(@PathVariable String userId){
 
         log.info("Delete User invoked for userId:{}", userId);
         User user = userService.getUserById(userId);
+        if(isNull(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        }
         userService.deleteUser(user);
         return "User successfully deleted";
     }
@@ -50,7 +53,7 @@ public class AdminUserController {
     }
 
     @PutMapping(path = "/status")
-    public boolean updateUserStatus(@RequestParam UUID userId, @RequestParam UserStatus status, KeycloakAuthenticationToken authenticationToken) {
+    public boolean updateUserStatus(@RequestParam String userId, @RequestParam UserStatus status, KeycloakAuthenticationToken authenticationToken) {
 
         log.info("Find User for userId: {}", userId);
         User user = userService.getUserById(userId);
@@ -62,7 +65,7 @@ public class AdminUserController {
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
 
-        User adminUser = userService.getUser(token.getEmail());
+        User adminUser = userService.getUserById(token.getSubject());
         AdminAction adminAction = new AdminAction();
         adminAction.setFromUserId(adminUser.getId());
         adminAction.setToUserId(userId);

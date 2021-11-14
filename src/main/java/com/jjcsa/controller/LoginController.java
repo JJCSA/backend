@@ -86,29 +86,7 @@ public class LoginController {
 
         AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
 
-        // Save the new user in our db
-        final User user = userMapper.toUserProfile(addNewUser);
-
-        log.info("Saving user for '{}' ...", addNewUser.getEmail());
-        userService.saveUser(user, jainProofDoc, profPicture);
-        log.info("UserProfile [{}] stored successfully", user);
-        log.info(user.toString());
-
-        // Create the new user in keycloak
-        boolean userCreatedInKeycloak = false;
-        try {
-            userCreatedInKeycloak = keycloakService.createNewUser(addNewUser);
-        } catch (BadRequestException e) {
-            userCreatedInKeycloak = false;
-            throw e;
-        } finally {
-            if(!userCreatedInKeycloak) {
-                log.error("Creating User in Keycloak failed! Deleting from our db");
-                // TODO: Throw exception
-                // Delete the record from our db
-                userService.deleteUserInDbOnly(user);
-            }
-        }
+        userService.saveUser(addNewUser, jainProofDoc, profPicture);
 
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }

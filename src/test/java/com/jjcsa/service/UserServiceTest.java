@@ -1,11 +1,10 @@
 package com.jjcsa.service;
 
-import com.jjcsa.exception.BadRequestException;
+import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.UnknownServerErrorException;
+import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
 import com.jjcsa.repository.UserRepository;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,28 +30,23 @@ import static org.mockito.Mockito.when;
 
 @Profile("test")
 @ExtendWith(MockitoExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserServiceTest {
     @Mock private UserRepository userRepository;
     @Mock private AWSS3Service awss3Service;
     @Mock private KeycloakService keycloakService;
+    @Mock private UserMapper userMapper;
 
     @Spy @InjectMocks private UserService userService;
 
-    private User sampleUser;
-    private MultipartFile jainProofDoc;
-    private MultipartFile profPicture;
-
-    @BeforeAll
-    public void loadData() {
-        sampleUser = generateSampleUser();
-        jainProofDoc = generateSampleJainProofDoc();
-        profPicture = generateSampleProfPic();
-    }
-
     private User generateSampleUser() {
         return new User().builder()
-                .id(UUID.randomUUID())
+                .id(UUID.randomUUID().toString())
+                .email("test@test.com")
+                .build();
+    }
+
+    private AddNewUser generateSampleUserDTO() {
+        return AddNewUser.builder()
                 .email("test@test.com")
                 .build();
     }
@@ -78,11 +73,18 @@ public class UserServiceTest {
 
     @Test
     public void shouldSaveValidUser() {
+
+        User sampleUser = generateSampleUser();
+        MultipartFile jainProofDoc = generateSampleJainProofDoc();
+        MultipartFile profPicture = generateSampleProfPic();
+
+        when(keycloakService.createNewUser(any())).thenReturn(sampleUser.getId());
         when(userRepository.save(any())).thenReturn(sampleUser);
+        when(userMapper.toUserProfile(any())).thenReturn(sampleUser);
         doReturn("jainproof.jpg").when(userService).saveJainProofForUserProfile(any(), any());
         doReturn("profpic.jpg").when(userService).saveProfilePictureForUserProfile(any(), any());
 
-        User response = userService.saveUser(sampleUser, jainProofDoc, profPicture);
+        User response = userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture);
         assertNotNull(response);
         assertEquals(response.getId(), sampleUser.getId());
         assertEquals(response.getEmail(), sampleUser.getEmail());
@@ -90,38 +92,69 @@ public class UserServiceTest {
         assertEquals(response.getProfilePicture(), "profpic.jpg");
     }
 
-    @Test
-    public void shouldValidateErrorIfUserAlreadyExists() {
-        when(userRepository.findUserByEmail(any())).thenReturn(sampleUser);
-
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
-        assertEquals(exception.getMessage(), "User already exists");
-    }
+//    TODO: Move this test to keycloak service
+//    @Test
+//    public void shouldValidateErrorIfUserAlreadyExists() {
+//        when(userRepository.findUserByEmail(any())).thenReturn(sampleUser);
+//
+//        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
+//        assertEquals(exception.getMessage(), "User already exists");
+//    }
 
     @Test
     public void shouldValidateErrorInUserSave() {
+        User sampleUser = generateSampleUser();
+        MultipartFile jainProofDoc = generateSampleJainProofDoc();
+        MultipartFile profPicture = generateSampleProfPic();
+
+        when(keycloakService.createNewUser(any())).thenReturn(sampleUser.getId());
+        when(userMapper.toUserProfile(any())).thenReturn(sampleUser);
         when(userRepository.save(any())).thenReturn(null);
 
-        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
+        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
         assertEquals(exception.getMessage(), "Unable to store user profile");
     }
 
     @Test
+    public void shouldValidateErrorInUserSaveFromKeycloak() {
+        User sampleUser = generateSampleUser();
+        MultipartFile jainProofDoc = generateSampleJainProofDoc();
+        MultipartFile profPicture = generateSampleProfPic();
+
+        when(keycloakService.createNewUser(any())).thenReturn(null);
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
+        assertEquals(exception.getReason(), "Unable to create user in Keycloak");
+    }
+
+    @Test
     public void shouldValidateJainProofURLOnSaveUser() {
+        User sampleUser = generateSampleUser();
+        MultipartFile jainProofDoc = generateSampleJainProofDoc();
+        MultipartFile profPicture = generateSampleProfPic();
+
+        when(keycloakService.createNewUser(any())).thenReturn(sampleUser.getId());
         when(userRepository.save(any())).thenReturn(sampleUser);
+        when(userMapper.toUserProfile(any())).thenReturn(sampleUser);
         doReturn(null).when(userService).saveJainProofForUserProfile(any(), any());
 
-        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
+        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
         assertEquals(exception.getMessage(), "Unable to save Jain Proof Doc to S3");
     }
 
     @Test
     public void shouldValidateProfPictureURLOnSaveUser() {
+        User sampleUser = generateSampleUser();
+        MultipartFile jainProofDoc = generateSampleJainProofDoc();
+        MultipartFile profPicture = generateSampleProfPic();
+
+        when(keycloakService.createNewUser(any())).thenReturn(sampleUser.getId());
         when(userRepository.save(any())).thenReturn(sampleUser);
+        when(userMapper.toUserProfile(any())).thenReturn(sampleUser);
         doReturn("jainproof.jpg").when(userService).saveJainProofForUserProfile(any(), any());
         doReturn(null).when(userService).saveProfilePictureForUserProfile(any(), any());
 
-        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(sampleUser, jainProofDoc, profPicture));
+        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
         assertEquals(exception.getMessage(), "Unable to save Profile Picture to S3");
     }
 }

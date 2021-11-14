@@ -19,11 +19,11 @@ public @Data class AdminAction{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID actionId;
 
-    @Column(name="from_user_id", columnDefinition = "uuid")
-    private UUID fromUserId;
+    @Column(name="from_user_id")
+    private String fromUserId;
 
-    @Column(name="to_user_id", columnDefinition = "uuid")
-    private UUID toUserId;
+    @Column(name="to_user_id")
+    private String toUserId;
 
 	@JsonFormat(pattern = "dd/MM/yyyy")
     @Column(columnDefinition = "TIMESTAMPTZ")

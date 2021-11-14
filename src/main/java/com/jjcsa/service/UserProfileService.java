@@ -30,8 +30,8 @@ public class UserProfileService {
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
 
-    public UserProfile getUserProfile(String email) {
-        User user = userService.getUser(email);
+    public UserProfile getUserProfile(String userId) {
+        User user = userService.getUserById(userId);
         if(user == null)
             throw new BadRequestException(
                     "User Profile does not exist",
@@ -47,16 +47,19 @@ public class UserProfileService {
             );
         }
 
-        user.setEducationList(educationRepository.findAllByUser(user));
-        user.setWorkExperience(workExRepository.findAllByUser(user));
+//        user.setEducationList(educationRepository.findAllByUser(user));
+//        user.setWorkExperience(workExRepository.findAllByUser(user));
 
-        UserRole userRole = keycloakService.getUserRole(email);
+        UserRole userRole = keycloakService.getUserRole(user.getId());
+        if(isNull(userRole)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in Keycloak");
+        }
 
         return userProfileMapper.toUserProfile(user, userRole);
     }
 
-    public UserProfile updateUserProfile(String userEmail, UserProfile updatedUserProfile) {
-        User user = userService.getUser(userEmail);
+    public UserProfile updateUserProfile(String userId, UserProfile updatedUserProfile) {
+        User user = userService.getUserById(userId);
 
         if(isNull(user)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not have a profile");
 
@@ -90,7 +93,10 @@ public class UserProfileService {
 
         User savedUser = userRepository.save(user);
 
-        UserRole userRole = keycloakService.getUserRole(userEmail);
+        UserRole userRole = keycloakService.getUserRole(user.getId());
+        if(isNull(userRole)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in Keycloak");
+        }
 
         return userProfileMapper.toUserProfile(savedUser, userRole);
     }
@@ -101,7 +107,10 @@ public class UserProfileService {
         user.setProfilePicture(userService.saveProfilePictureForUserProfile(user, profPicture));
         User savedUser = userRepository.save(user);
 
-        UserRole userRole = keycloakService.getUserRole(savedUser.getEmail());
+        UserRole userRole = keycloakService.getUserRole(user.getId());
+        if(isNull(userRole)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in Keycloak");
+        }
 
         return userProfileMapper.toUserProfile(savedUser, userRole);
     }
