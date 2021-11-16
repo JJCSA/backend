@@ -6,13 +6,7 @@ server:
 spring:
   jpa:
     database: POSTGRESQL
-    hibernate:
-      ddl-auto: update
-      jdbc:
-        lob:
-          non_contextual_creation: true
   datasource:
-    platform: postgres
     username: admin
     password: jjcsa
 
