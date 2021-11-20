@@ -9,7 +9,7 @@ spring:
         lob:
           non_contextual_creation: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/jjcsa
+    url: jdbc:postgresql://postgres-keycloak:5432/jjcsa
     username: admin
     password: jjcsa
 
@@ -17,7 +17,7 @@ security:
   enabled: false
 
 keycloak:
-  auth-server-url: http://localhost:8080/auth
+  auth-server-url: http://keycloak:8080/auth
 
 cloud:
   aws:
