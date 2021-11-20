@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserProfile {
-    private UUID id;
+    private String id;
     @NotNull
     private String email;
     private String firstName;

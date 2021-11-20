@@ -24,8 +24,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private String id;
 
     private String email;
 
