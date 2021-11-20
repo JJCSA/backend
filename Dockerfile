@@ -1,6 +1,8 @@
+ARG ARCH=
+
 # FROM maven:3.6.3-openjdk-17 as BUILDER
 # FROM maven:3.6.3-openjdk-11 as BUILDER
-FROM maven:3.6.3-openjdk-8 as BUILDER
+FROM ${ARCH}/maven:3.8.3-openjdk-8 as BUILDER
 
 COPY src /home/app/src
 COPY pom.xml /home/app
@@ -9,7 +11,7 @@ RUN mvn -f /home/app/pom.xml clean package -DskipTests
 
 # FROM openjdk:17-jdk-alpine as PRODUCTION
 # FROM openjdk:11-jre-slim
-FROM openjdk:8-jdk-alpine as PRODUCTION
+FROM ${ARCH}/openjdk:8-jdk-alpine as PRODUCTION
 
 ARG server_port=9080
 ENV SERVER_PORT=${server_port}
