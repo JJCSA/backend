@@ -1,0 +1,768 @@
+{
+	"info": {
+		"_postman_id": "87aabf8f-8a2d-40c4-a75c-8b121f138d71",
+		"name": "JJCSA Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "super-admin",
+			"item": [
+				{
+					"name": "GET User List (admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/admin/users",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT user status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/admin/users/status?userId=ec6fd0f8-d3ad-4ce1-9e6c-4f3b51aa62c8&status=NewUser",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"status"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "ec6fd0f8-d3ad-4ce1-9e6c-4f3b51aa62c8"
+								},
+								{
+									"key": "status",
+									"value": "NewUser"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"ADMIN\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/super-admin/user/503987a8-8919-4c89-b33a-06338726d85f/role",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"super-admin",
+								"user",
+								"503987a8-8919-4c89-b33a-06338726d85f",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DEL role",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJLWm9wa2xJNFRjWWxSemZka1pSZ0gyY20wWktGVXBqY1JZeVVhS2l2NmNZIn0.eyJleHAiOjE2MzAxNzk4OTAsImlhdCI6MTYzMDE3OTU5MCwianRpIjoiMDEyNTljZWQtZDkwZS00NzJiLTgyYjEtYmY4NGE4MTI5NjlmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2F1dGgvcmVhbG1zL2pqY3NhLXNlcnZpY2VzIiwic3ViIjoiZGQ4NjVlMDYtOTU0MC00MDQzLThkMTktYWNiNDM5M2IzODM0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiampjc2EiLCJzZXNzaW9uX3N0YXRlIjoiZWZjZTE0MmQtYTdlMi00YmNkLWJhOTItY2FmZDg1YWNiMzIzIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtMzZkMDE1ZjktYjRhMS00OWYyLWIxYTEtNTVmNmE5ZjhmM2E5Il19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiampjc2EiOnsicm9sZXMiOlsiU1VQRVJfQURNSU4iLCJBRE1JTiIsIlVTRVIiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJUZWphcyBTaGFoIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic3VwZXJhZG1pbjVAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6IlRlamFzIiwiZmFtaWx5X25hbWUiOiJTaGFoIiwiZW1haWwiOiJzdXBlcmFkbWluNUBnbWFpbC5jb20ifQ.raO6Pwr0VcC37lQ7LtHvHHUv5Y8siWEEAjMfQgd19PkwbYykebUS1MFNUq5wNVB5TAMp3dlahe_uedmH87dcV2Jh7NxuxFDIy0WHeb4a11z70wBCuZGZ2KOMLWpTZmfzKw_5uU44G3t2UnrSH8HVoFZC9n4uo_w0cXlYyFi_3M1QUuQlxn_jDxWScSkJ1cwVrmERSIfbXPWMUbpKAp5x0Q1UQXoWK5kzBTBR-p9XDu2AmEqRG1SMCxxXkiNU4VDpRhbdMn00FATISEF1cDbataZxV7k65rs7rxuoit6x96B_Hm2BX1U6MqeKD0kDf8c5IldP-GYISuaWFCjIgWyKrg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/super-admin/user/503987a8-8919-4c89-b33a-06338726d85f/role/ADMIN",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"super-admin",
+								"user",
+								"503987a8-8919-4c89-b33a-06338726d85f",
+								"role",
+								"ADMIN"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Keycloak Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "super-admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "super-admin",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "jjcsa",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{KEYCLOAK_HOST}}/auth/realms/jjcsa-services/protocol/openid-connect/token",
+							"host": [
+								"{{KEYCLOAK_HOST}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"jjcsa-services",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{supAdminToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const echoPostRequest = {",
+							"  url: pm.environment.get('KEYCLOAK_HOST') + '/auth/realms/jjcsa-services/protocol/openid-connect/token',",
+							"  method: 'POST',",
+							"  header: {",
+							"        'Accept': 'application/json',",
+							"        'Content-Type': 'application/x-www-form-urlencoded'",
+							"      },",
+							"  body: {",
+							"    mode: 'urlencoded',",
+							"    urlencoded: [",
+							"                    { key: \"client_id\", value: 'jjcsa' },",
+							"                    { key: \"username\", value: pm.environment.get('SUPER_ADMIN_USERNAME') },",
+							"                    { key: \"password\", value: pm.environment.get('SUPER_ADMIN_PASSWORD') },",
+							"                    { key: \"grant_type\", value: 'password' },",
+							"            ]",
+							"  }",
+							"};",
+							"var getToken = true;",
+							"",
+							"if (!pm.environment.get('supAdminTokenExpiry') || ",
+							"    !pm.environment.get('supAdminToken')) {",
+							"    console.log('Token or expiry date are missing')",
+							"} else if (pm.environment.get('supAdminTokenExpiry') <= (new Date()).getTime()) {",
+							"    console.log('Token is expired')",
+							"} else {",
+							"    getToken = false;",
+							"    console.log('Token and expiry date are all good');",
+							"}",
+							"",
+							"if (getToken === true) {",
+							"    pm.sendRequest(echoPostRequest, function (err, res) {",
+							"    console.log(err ? err : res.json());",
+							"        if (err === null) {",
+							"            console.log('Saving the token and expiry date')",
+							"            var responseJson = res.json();",
+							"            pm.environment.set('supAdminToken', responseJson.access_token)",
+							"    ",
+							"            var expiryDate = new Date();",
+							"            expiryDate.setSeconds(expiryDate.getSeconds() + responseJson.expires_in);",
+							"            pm.environment.set('supAdminTokenExpiry', expiryDate.getTime());",
+							"        }",
+							"    });",
+							"}"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "GET User List (admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/admin/users",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Keycloak Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "jjcsa",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{KEYCLOAK_HOST}}/auth/realms/jjcsa-services/protocol/openid-connect/token",
+							"host": [
+								"{{KEYCLOAK_HOST}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"jjcsa-services",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT user status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/admin/users/status?userId=ec6fd0f8-d3ad-4ce1-9e6c-4f3b51aa62c8&status=NewUser",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"status"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "ec6fd0f8-d3ad-4ce1-9e6c-4f3b51aa62c8"
+								},
+								{
+									"key": "status",
+									"value": "NewUser"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{adminToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const echoPostRequest = {",
+							"  url: pm.environment.get('KEYCLOAK_HOST') + '/auth/realms/jjcsa-services/protocol/openid-connect/token',",
+							"  method: 'POST',",
+							"  header: {",
+							"        'Accept': 'application/json',",
+							"        'Content-Type': 'application/x-www-form-urlencoded'",
+							"      },",
+							"  body: {",
+							"    mode: 'urlencoded',",
+							"    urlencoded: [",
+							"                    { key: \"client_id\", value: 'jjcsa' },",
+							"                    { key: \"username\", value: pm.environment.get('ADMIN_USERNAME') },",
+							"                    { key: \"password\", value: pm.environment.get('ADMIN_PASSWORD') },",
+							"                    { key: \"grant_type\", value: 'password' },",
+							"            ]",
+							"  }",
+							"};",
+							"var getToken = true;",
+							"",
+							"if (!pm.environment.get('adminTokenExpiry') || ",
+							"    !pm.environment.get('adminToken')) {",
+							"    console.log('Token or expiry date are missing')",
+							"} else if (pm.environment.get('adminTokenExpiry') <= (new Date()).getTime()) {",
+							"    console.log('Token is expired')",
+							"} else {",
+							"    getToken = false;",
+							"    console.log('Token and expiry date are all good');",
+							"}",
+							"",
+							"if (getToken === true) {",
+							"    pm.sendRequest(echoPostRequest, function (err, res) {",
+							"    console.log(err ? err : res.json());",
+							"        if (err === null) {",
+							"            console.log('Saving the token and expiry date')",
+							"            var responseJson = res.json();",
+							"            pm.environment.set('adminToken', responseJson.access_token)",
+							"    ",
+							"            var expiryDate = new Date();",
+							"            expiryDate.setSeconds(expiryDate.getSeconds() + responseJson.expires_in);",
+							"            pm.environment.set('adminTokenExpiry', expiryDate.getTime());",
+							"        }",
+							"    });",
+							"}"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "UserProfileController",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/user/profile",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT User Profile ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJLWm9wa2xJNFRjWWxSemZka1pSZ0gyY20wWktGVXBqY1JZeVVhS2l2NmNZIn0.eyJleHAiOjE2MzAxNzk1NDIsImlhdCI6MTYzMDE3OTI0MiwianRpIjoiMGI2MGNiZjgtMWFlMi00MTI1LTg1NzUtMzIwOWFkY2Q3ZDVhIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2F1dGgvcmVhbG1zL2pqY3NhLXNlcnZpY2VzIiwic3ViIjoiMDA0ODcyNjAtODMxMS00OGY5LThkYmMtYzgxMzhjZTQxNTc2IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiampjc2EiLCJzZXNzaW9uX3N0YXRlIjoiMThlZWYyNGUtZTM5NS00MTllLWIwZmItYTMyMzA2ZWYxOWY4IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtMzZkMDE1ZjktYjRhMS00OWYyLWIxYTEtNTVmNmE5ZjhmM2E5Il19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJUZWphcyBTaGFoIiwicHJlZmVycmVkX3VzZXJuYW1lIjoidXNlcjU1QGdtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJUZWphcyIsImZhbWlseV9uYW1lIjoiU2hhaCIsImVtYWlsIjoidXNlcjU1QGdtYWlsLmNvbSJ9.X66eAl7vuedmVGi1eiLrVthvwYg-GUbuPw-SoLF8uiNUbxEnz7pu1BaHiRIgZe1XddO-zIXscrLv8q06XaJWdD39wU8isGKQuDZOVw-Q8ky3NQ7EkuoEn7GyM7A9mHBpoAZOLJgAk1XYmj_QP-knRfV78W_6weDEiXjk6_9ZpqSDBUh4B51gq2JOF3BHAKwzqOcS95UvQMdPkNBD71d-k6NU1sMIx0Ij77K8DsNZ5Fe9Bz4tkPkVqL9zkXFbhy_OCVf71S1F9P68XMmts11SH2NRnzQWzxll82WoZv0Nxa94f2cH8XlDial53x89MSz16QHOE0COFBqIxY-o_2M54g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"8bb8414c-e1c8-498d-ad9a-1ad86978a6f9\",\n    \"email\": \"user55@gmail.com\",\n    \"firstName\": \"Tejas\",\n    \"middleName\": null,\n    \"lastName\": \"Shah\",\n    \"mobileNumber\": \"4567890\",\n    \"contactMethod\": \"Email\",\n    \"communityName\": \"xyz\",\n    \"userStatus\": \"NewUser\",\n    \"street\": null,\n    \"city\": null,\n    \"state\": null,\n    \"zip\": null,\n    \"dateOfBirth\": null,\n    \"profilePicture\": \"profPicture\",\n    \"socialMediaPlatform\": null,\n    \"volunteeringInterest\": null,\n    \"linkedinUrl\": null,\n    \"education\": [],\n    \"workExperience\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/user/profile",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Keycloak Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "user1@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test@123",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "jjcsa",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{KEYCLOAK_HOST}}/auth/realms/jjcsa-services/protocol/openid-connect/token",
+							"host": [
+								"{{KEYCLOAK_HOST}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"jjcsa-services",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT User ProfPicture",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "profPicture",
+									"type": "file",
+									"src": "/home/tejas/Pictures/Screenshot from 2021-02-08 23-43-38.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BACKEND_HOST}}/api/user/profile/profPic",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"profile",
+								"profPic"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{currentAccessToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const echoPostRequest = {",
+							"  url: pm.environment.get('KEYCLOAK_HOST') + '/auth/realms/jjcsa-services/protocol/openid-connect/token',",
+							"  method: 'POST',",
+							"  header: {",
+							"        'Accept': 'application/json',",
+							"        'Content-Type': 'application/x-www-form-urlencoded'",
+							"      },",
+							"  body: {",
+							"    mode: 'urlencoded',",
+							"    urlencoded: [",
+							"                    { key: \"client_id\", value: 'jjcsa' },",
+							"                    { key: \"username\", value: pm.environment.get('USER_EMAIL') },",
+							"                    { key: \"password\", value: pm.environment.get('USER_PASSWORD') },",
+							"                    { key: \"grant_type\", value: 'password' },",
+							"            ]",
+							"  }",
+							"};",
+							"var getToken = true;",
+							"",
+							"if (!pm.environment.get('accessTokenExpiry') || ",
+							"    !pm.environment.get('currentAccessToken')) {",
+							"    console.log('Token or expiry date are missing')",
+							"} else if (pm.environment.get('accessTokenExpiry') <= (new Date()).getTime()) {",
+							"    console.log('Token is expired')",
+							"} else {",
+							"    getToken = false;",
+							"    console.log('Token and expiry date are all good');",
+							"}",
+							"",
+							"if (getToken === true) {",
+							"    pm.sendRequest(echoPostRequest, function (err, res) {",
+							"    console.log(err ? err : res.json());",
+							"        if (err === null) {",
+							"            console.log('Saving the token and expiry date')",
+							"            var responseJson = res.json();",
+							"            pm.environment.set('currentAccessToken', responseJson.access_token)",
+							"    ",
+							"            var expiryDate = new Date();",
+							"            expiryDate.setSeconds(expiryDate.getSeconds() + responseJson.expires_in);",
+							"            pm.environment.set('accessTokenExpiry', expiryDate.getTime());",
+							"        }",
+							"    });",
+							"}"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "KeyCloak",
+			"item": [
+				{
+					"name": "Keycloak Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "t2@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test@123",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "jjcsa",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{KEYCLOAK_HOST}}/auth/realms/jjcsa-services/protocol/openid-connect/token",
+							"host": [
+								"{{KEYCLOAK_HOST}}"
+							],
+							"path": [
+								"auth",
+								"realms",
+								"jjcsa-services",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Actuator",
+			"item": [
+				{
+					"name": "Health Status",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BACKEND_HOST}}/actuator/health",
+							"host": [
+								"{{BACKEND_HOST}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Register (New User)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "profPicture",
+							"type": "file",
+							"src": "/Users/tejasshah/Desktop/Screen Shot 2021-11-13 at 10.43.16 PM.png"
+						},
+						{
+							"key": "jainProof",
+							"type": "file",
+							"src": "/Users/tejasshah/Desktop/Screen Shot 2021-11-13 at 10.43.16 PM.png"
+						},
+						{
+							"key": "newUser",
+							"value": "{\n  \"firstName\": \"Tejas\",\n  \"lastName\": \"Shah\",\n  \"email\": \"t2@gmail.com\",\n  \"password\": \"Test@123\",\n  \"mobileNumber\": \"123456789\",\n  \"prefMethodOfContact\": \"Email\",\n  \"jainCommunity\": \"xyz\"\n}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BACKEND_HOST}}/api/users/register",
+					"host": [
+						"{{BACKEND_HOST}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
