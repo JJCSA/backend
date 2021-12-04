@@ -1,3 +1,6 @@
 spring:
   datasource:
     url: jdbc:postgresql://postgres-backend:5432/jjcsa
+
+keycloak:
+  auth-server-url: http://localhost:8080/auth
