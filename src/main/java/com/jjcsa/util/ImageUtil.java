@@ -2,11 +2,13 @@ package com.jjcsa.util;
 
 import com.jjcsa.model.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @Slf4j
 public class ImageUtil {
@@ -46,5 +48,17 @@ public class ImageUtil {
             log.error("Error converting multi-part file to file: " + ex.getMessage());
         }
         return file;
+    }
+
+    public static String saveFileLocally(File file, String fileKey) {
+        try {
+            String tmpdir = Files.createTempDirectory("jjcsaTmpDir").toFile().getAbsolutePath();
+            File tmpFile = new File(tmpdir + File.separator + fileKey);
+            FileUtils.copyFile(file, tmpFile);
+            return tmpFile.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
