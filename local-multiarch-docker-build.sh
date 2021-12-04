@@ -1,5 +1,7 @@
 #!/bin/bash -xe
 
+set -x
+
 ## AMD64
 # docker build -t jjcsa:1.0-amd64 --build-arg ARCH=amd64 --build-arg server_port=9080 --build-arg profiles_active=local,docker --no-cache .
 
