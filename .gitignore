@@ -32,7 +32,6 @@ hs_err_pid*
 
 ### AWS ###
 *.sh
-!local-multiarch-docker-build.sh
 ### AWS ###
 
 .DS_Store
