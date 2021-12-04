@@ -4,3 +4,6 @@ spring:
 
 keycloak:
   auth-server-url: http://keycloak:8080/auth
+
+security:
+  enabled: true
