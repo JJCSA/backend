@@ -1,5 +1,7 @@
 #!/bin/bash -xe
 
+# bash local-multiarch-docker-build.sh
+
 set -x
 
 
