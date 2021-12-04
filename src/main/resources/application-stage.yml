@@ -13,6 +13,8 @@ spring:
     # Will be set by aws parameter store variables.
     # for username it should be /config/application_stage(for whole application with stage profile)/spring.datasource.username
     # Same for PW.
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-stage.yml
 
 cors:
   allowed-origin-patterns: 'http://*.jjcsausa.com'
