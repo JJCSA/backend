@@ -32,7 +32,7 @@ For resources on various documentation and references, please refer [Resources](
 4. Start the application:
 
    ```shell
-   docker-compose down && docker-compose pull && docker-compose up -d
+   docker-compose up
    ```
 
 5. You can test the App heath status by going to http://localhost:9080/actuator/health
