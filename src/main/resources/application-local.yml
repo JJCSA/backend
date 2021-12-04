@@ -12,6 +12,8 @@ spring:
     url: jdbc:postgresql://postgres-keycloak:5432/jjcsa
     username: admin
     password: jjcsa
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-local.yml
 
 security:
   enabled: false

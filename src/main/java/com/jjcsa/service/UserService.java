@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -113,7 +114,7 @@ public class UserService {
                 // Delete file if already present
                 deleteCommunityDocumentForUserProfile(user);
             }
-            String fileKey = user.getId() + "/" + ImageUtil.generateCommunityDocumentName(jainProofDoc);
+            String fileKey = user.getId() + File.separator + ImageUtil.generateCommunityDocumentName(jainProofDoc);
             jainProofDocURL = awss3Service.saveFile(fileKey, jainProofDoc);
             log.info("(S3 upload) Jain Proof Doc for user email {} uploaded", user.getEmail());
         } catch (Exception e) {

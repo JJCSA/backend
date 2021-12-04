@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changelogs/2021115-tejas-create-tables.sql
+  - include:
+      file: db/changelog/changelogs/20211117-tejas-modify-url-fields.sql

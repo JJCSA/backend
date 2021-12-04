@@ -1,9 +1,0 @@
-spring:
-  application:
-    name:
-      jjcsa-backend
-
-# Application will not start if application can not retrieve the configs from aws parameter store
-aws:
-  paramstore:
-    failFast: true

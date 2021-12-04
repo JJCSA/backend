@@ -34,7 +34,7 @@ public class AWSS3Service {
         File file = ImageUtil.convertMultiPartFileToFile(multipartFile);
         try {
             if(activeProfiles.contains("local")) {
-                return file.getName();
+                return ImageUtil.saveFileLocally(file, objectKey);
             }
 
             if (!amazonS3Client.doesBucketExist(bucketName)) {
