@@ -19,6 +19,8 @@ ENV SERVER_PORT=${server_port}
 ARG profiles_active=stage
 ENV PROFILE_ACTIVE=${profiles_active}
 
+ENV JAVA_TOOL_OPTIONS "-Dlog4j2.formatMsgNoLookups=true"
+
 COPY --from=BUILDER /home/app/target/jjcsa-*.jar /usr/local/lib/jjcsa.jar
 EXPOSE ${server_port}
 
