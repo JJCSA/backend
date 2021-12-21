@@ -5,10 +5,8 @@ import com.amazonaws.services.simpleemail.model.*;
 import com.google.common.collect.Lists;
 import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,9 +15,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class EmailSenderService {
-
-    @Value("${email.ses.from-email:newsletter@jjcsausa.com}")
-    private String fromEmailAddress;
 
     private final AmazonSimpleEmailService emailService;
     private final SendEmailRequest sendEmailRequest;
@@ -50,29 +45,12 @@ public class EmailSenderService {
         return destinationList.size() * batchSize;
     }
 
-    /**
-     * Sends an email to user when particular event triggers. No CC or bcc added.
-     * @param user user to whom need to send an email.
-     * @param emailEvent event for which email should be triggered
-     * @return the number of failed email deliveries.
-     */
-    public int sendEmail(User user, Event emailEvent){
-        return this.sendEmail(user, emailEvent,Collections.EMPTY_LIST,Collections.EMPTY_LIST);
-    }
-
-    /**
-     * Sends an email to user when particular event triggers
-     * @param user user to whom need to send an email.
-     * @param emailEvent event for which email should be triggered
-     * @param ccAddressList cc email Address
-     * @param bccAddressList bcc email Address
-     * @return the number of failed email deliveries.
-     */
-    public int sendEmail(User user, Event emailEvent, List<String> ccAddressList, List<String> bccAddressList) {
-        List<Destination> destinationList = this.resolveDestination(bccAddressList,ccAddressList,Collections.singletonList(user.getEmail()));
-        Message message = this.resolveMessage(user, emailEvent.name());
+    public int sendEmail(User user, String fromAddress, String emailFor,
+                          List<String> toAddressList, List<String> ccAddressList, List<String> bccAddressList) {
+        List<Destination> destinationList = this.resolveDestination(bccAddressList,ccAddressList,toAddressList);
+        Message message = this.resolveMessage(user, emailFor);
         log.info("Message resolved:{}", message);
-        int failed = this.sendEmail(destinationList, message, fromEmailAddress);
+        int failed = this.sendEmail(destinationList, message, fromAddress);
         log.info("Email Failures:{}",failed);
         return failed;
     }
