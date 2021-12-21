@@ -10,6 +10,7 @@ import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.EmailTemplate;
 import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.EmailSenderService;
 import com.jjcsa.service.UserService;
@@ -55,11 +56,11 @@ public class LoginController {
         return "test2";
     }
 
-    @PostMapping(path="/send-email")
-    public String sendEmail(@RequestBody List<String> emails){
+    @GetMapping(path="/send-email")
+    public String sendEmail(){
         User user = User.builder().firstName("Developer").lastName("Dev").build();
-        int failed = emailSenderService.sendEmail(user,"newsletter@jjcsausa.com", "registration",
-                emails, Collections.singletonList("jjcsausawebdev@gmail.com"),emails);
+        int failed = emailSenderService.sendEmail(user,"newsletter@jjcsausa.com", "REGISTRATION",
+                Collections.singletonList("jjcsausawebdev@gmail.com"), Collections.EMPTY_LIST,Collections.EMPTY_LIST);
         return "Sent email failed: " + failed;
     }
     // This method is for test
@@ -86,8 +87,10 @@ public class LoginController {
 
         AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
 
-        userService.saveUser(addNewUser, jainProofDoc, profPicture);
+        User user = userService.saveUser(addNewUser, jainProofDoc, profPicture);
 
+        emailSenderService.sendEmail(user,"newsletter@jjcsausa.com", EmailTemplate.REGISTRATION.name(),Collections.singletonList(user.getEmail())
+                ,Collections.singletonList("jjcsausawebdev@gmail.com"),Collections.EMPTY_LIST);
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }
 
