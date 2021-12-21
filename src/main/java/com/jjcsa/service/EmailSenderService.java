@@ -24,10 +24,10 @@ public class EmailSenderService {
     private static final int batchSize = 50;
 
     private int sendEmail(List<Destination> destinationList, Message message, String fromAddress){
-        int failedCount = 0;
         log.info("Destination List:{}, size:{}", destinationList, destinationList.size());
         sendEmailRequest.setMessage(message);
         sendEmailRequest.setSource(fromAddress);
+        List<Destination> failedDestination = new ArrayList<>();
         for(Destination destination: destinationList) {
             sendEmailRequest.setDestination(destination);
             try{
@@ -36,18 +36,20 @@ public class EmailSenderService {
             }
             // TODO catch specific error and exception
             catch (Exception exception){
+                // TODO maintain AUDIT of failed email destinations via DB or file
                 log.info("Email sent failed for destination:{} with error:{}, stacktrace:{}", destination, exception.getMessage(), exception.getStackTrace());
-                failedCount += 1;
+                failedDestination.add(destination);
             }
         }
-        log.info("Failed Count:{}", failedCount);
-        return failedCount * batchSize;
+        log.info("Failed Count:{}, Destinations Failed:{}", failedDestination.size() * batchSize, failedDestination);
+        return destinationList.size() * batchSize;
     }
 
     public int sendEmail(User user, String fromAddress, String emailFor,
                           List<String> toAddressList, List<String> ccAddressList, List<String> bccAddressList) {
         List<Destination> destinationList = this.resolveDestination(bccAddressList,ccAddressList,toAddressList);
         Message message = this.resolveMessage(user, emailFor);
+        log.info("Message resolved:{}", message);
         int failed = this.sendEmail(destinationList, message, fromAddress);
         log.info("Email Failures:{}",failed);
         return failed;
