@@ -19,6 +19,7 @@ ENV SERVER_PORT=${server_port}
 ARG profiles_active=stage
 ENV PROFILE_ACTIVE=${profiles_active}
 
+# Vulnerability CVE https://www.docker.com/blog/apache-log4j-2-cve-2021-44228/
 ENV JAVA_TOOL_OPTIONS "-Dlog4j2.formatMsgNoLookups=true"
 
 COPY --from=BUILDER /home/app/target/jjcsa-*.jar /usr/local/lib/jjcsa.jar
