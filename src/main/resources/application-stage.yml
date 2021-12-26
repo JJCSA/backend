@@ -26,3 +26,5 @@ aws:
   paramstore:
     region: us-east-2
     enabled: true
+  s3:
+    bucketname: stage-jjcsa-usa
