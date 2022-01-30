@@ -52,3 +52,8 @@ cloud:
 #      profile-name: default
 #      access-key:
 #      secret-key:
+
+email:
+  ses:
+    from-email: newsletter@jjcsausa.com
+

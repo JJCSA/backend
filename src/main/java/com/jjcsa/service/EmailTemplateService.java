@@ -26,6 +26,7 @@ public class EmailTemplateService {
         return templateEngine.process(template, context);
     }
 
+    // TODO create converter and use EmailTemplate enum while retrieving the template from DB.
     public EmailTemplateDto resolveTemplate(User user, String templateName){
         EmailTemplate template = emailTemplateRepository.findByTemplateName(templateName);
         String templateBody = template.getEmailBody();
