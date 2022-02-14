@@ -9,7 +9,7 @@ import org.mapstruct.NullValueCheckStrategy;
 import org.springframework.stereotype.Component;
 
 @Component
-@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     @Mappings({
