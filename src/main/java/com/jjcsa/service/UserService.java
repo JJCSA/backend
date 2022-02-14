@@ -1,6 +1,7 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.dto.JjcSearchDto;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
@@ -13,6 +14,7 @@ import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -257,4 +259,8 @@ public class UserService {
         return true;
     }
 
+    public List<JjcSearchDto> getAllJJCSearchUsers() {
+        List<JjcSearchDto> allUsers = userRepository.findAllJjcSearch();
+        return  allUsers;
+    }
 }
