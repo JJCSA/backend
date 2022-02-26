@@ -1,7 +1,6 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
-import com.jjcsa.dto.JjcSearchDto;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
@@ -14,7 +13,6 @@ import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Service
 @Slf4j
@@ -257,10 +253,5 @@ public class UserService {
      */
     private boolean hasUserCompletedOnboardingProfile(User user) {
         return true;
-    }
-
-    public List<JjcSearchDto> getAllJJCSearchUsers() {
-        List<JjcSearchDto> allUsers = userRepository.findAllJjcSearch();
-        return  allUsers;
     }
 }
