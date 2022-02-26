@@ -1,7 +1,8 @@
 package com.jjcsa.controller.user;
 
-import com.jjcsa.dto.JjcSearchDto;
-import com.jjcsa.service.UserService;
+import com.jjcsa.model.JJCSearch;
+import com.jjcsa.service.JJCSearchService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +16,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/user/jjcsearch")
 public class JJCSearchController {
-    private final UserService userService;
 
-    @GetMapping()
-    public List<JjcSearchDto> getJJCSearchData(){
-        return userService.getAllJJCSearchUsers();
+    @NonNull
+    private final JJCSearchService jjcSearchService;
+
+    @GetMapping
+    public List<JJCSearch> searchJJCUsers(){
+        return jjcSearchService.invokeJJCSearch();
     }
-
-
 
 }
