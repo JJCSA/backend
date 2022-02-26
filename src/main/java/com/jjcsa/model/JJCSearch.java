@@ -3,10 +3,7 @@ package com.jjcsa.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -15,7 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class JJCSearch implements Serializable {
 
     @Id
@@ -40,4 +36,8 @@ public class JJCSearch implements Serializable {
 
     @Column(name = "WORK_ROLE")
     private String workRole;
+
+    // This will be false as boolean does not support null values. Null will be treated as false
+    @Transient
+    private boolean isRegionalContact;
 }
