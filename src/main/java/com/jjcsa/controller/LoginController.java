@@ -1,15 +1,13 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.AddNewUser;
-import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.Event;
 import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.EmailSenderService;
 import com.jjcsa.service.UserService;
@@ -55,13 +53,6 @@ public class LoginController {
         return "test2";
     }
 
-    @PostMapping(path="/send-email")
-    public String sendEmail(@RequestBody List<String> emails){
-        User user = User.builder().firstName("Developer").lastName("Dev").build();
-        int failed = emailSenderService.sendEmail(user,"newsletter@jjcsausa.com", "registration",
-                emails, Collections.singletonList("jjcsausawebdev@gmail.com"),emails);
-        return "Sent email failed: " + failed;
-    }
     // This method is for test
 //    @PostMapping(path = "/login")
 //    public String login(@RequestBody @NonNull final User user) {
@@ -86,8 +77,9 @@ public class LoginController {
 
         AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
 
-        userService.saveUser(addNewUser, jainProofDoc, profPicture);
+        User user = userService.saveUser(addNewUser, jainProofDoc, profPicture);
 
+        emailSenderService.sendEmail(user, Event.REGISTRATION);
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }
 

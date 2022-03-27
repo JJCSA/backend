@@ -5,8 +5,10 @@ import com.amazonaws.services.simpleemail.model.*;
 import com.google.common.collect.Lists;
 import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,6 +18,9 @@ import java.util.*;
 @Slf4j
 public class EmailSenderService {
 
+    @Value("${email.ses.from-email:newsletter@jjcsausa.com}")
+    private String fromEmailAddress;
+
     private final AmazonSimpleEmailService emailService;
     private final SendEmailRequest sendEmailRequest;
     private final EmailTemplateService emailTemplateService;
@@ -24,10 +29,10 @@ public class EmailSenderService {
     private static final int batchSize = 50;
 
     private int sendEmail(List<Destination> destinationList, Message message, String fromAddress){
-        int failedCount = 0;
         log.info("Destination List:{}, size:{}", destinationList, destinationList.size());
         sendEmailRequest.setMessage(message);
         sendEmailRequest.setSource(fromAddress);
+        List<Destination> failedDestination = new ArrayList<>();
         for(Destination destination: destinationList) {
             sendEmailRequest.setDestination(destination);
             try{
@@ -36,19 +41,38 @@ public class EmailSenderService {
             }
             // TODO catch specific error and exception
             catch (Exception exception){
+                // TODO maintain AUDIT of failed email destinations via DB or file
                 log.info("Email sent failed for destination:{} with error:{}, stacktrace:{}", destination, exception.getMessage(), exception.getStackTrace());
-                failedCount += 1;
+                failedDestination.add(destination);
             }
         }
-        log.info("Failed Count:{}", failedCount);
-        return failedCount * batchSize;
+        log.info("Failed Count:{}, Destinations Failed:{}", failedDestination.size() * batchSize, failedDestination);
+        return destinationList.size() * batchSize;
     }
 
-    public int sendEmail(User user, String fromAddress, String emailFor,
-                          List<String> toAddressList, List<String> ccAddressList, List<String> bccAddressList) {
-        List<Destination> destinationList = this.resolveDestination(bccAddressList,ccAddressList,toAddressList);
-        Message message = this.resolveMessage(user, emailFor);
-        int failed = this.sendEmail(destinationList, message, fromAddress);
+    /**
+     * Sends an email to user when particular event triggers. No CC or bcc added.
+     * @param user user to whom need to send an email.
+     * @param emailEvent event for which email should be triggered
+     * @return the number of failed email deliveries.
+     */
+    public int sendEmail(User user, Event emailEvent){
+        return this.sendEmail(user, emailEvent,Collections.EMPTY_LIST,Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Sends an email to user when particular event triggers
+     * @param user user to whom need to send an email.
+     * @param emailEvent event for which email should be triggered
+     * @param ccAddressList cc email Address
+     * @param bccAddressList bcc email Address
+     * @return the number of failed email deliveries.
+     */
+    public int sendEmail(User user, Event emailEvent, List<String> ccAddressList, List<String> bccAddressList) {
+        List<Destination> destinationList = this.resolveDestination(bccAddressList,ccAddressList,Collections.singletonList(user.getEmail()));
+        Message message = this.resolveMessage(user, emailEvent.name());
+        log.info("Message resolved:{}", message);
+        int failed = this.sendEmail(destinationList, message, fromEmailAddress);
         log.info("Email Failures:{}",failed);
         return failed;
     }
