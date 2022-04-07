@@ -31,7 +31,7 @@ public class UserProfileMapperTest {
     private List<Education> generateEducationData() {
         return Arrays.asList(
                 new Education().builder()
-                    .educationId(1)
+                    .educationId(UUID.randomUUID())
                     .universityName("XYZ")
                     .gradMonth(1)
                     .gradYear(2020)
@@ -44,7 +44,7 @@ public class UserProfileMapperTest {
     private List<WorkEx> generateWorkExData() {
         return Arrays.asList(
                 new WorkEx().builder()
-                    .expId(1)
+                    .expId(UUID.randomUUID())
                     .companyName("XYZ")
                     .role("SDE")
                     .location("NYC")
@@ -107,7 +107,7 @@ public class UserProfileMapperTest {
 
         Education respEducation = response.getEducation().get(0);
         assertNotNull(respEducation);
-        assertEquals(respEducation.getEducationId(), 1);
+        assertEquals(respEducation.getEducationId(), user.getEducationList().get(0).getEducationId());
         assertEquals(respEducation.getUniversityName(), "XYZ");
         assertEquals(respEducation.getGradMonth(), 1);
         assertEquals(respEducation.getGradYear(), 2020);
@@ -116,7 +116,7 @@ public class UserProfileMapperTest {
 
         WorkEx respWorkEx = response.getWorkExperience().get(0);
         assertNotNull(respWorkEx);
-        assertEquals(respWorkEx.getExpId(), 1);
+        assertEquals(respWorkEx.getExpId(), user.getWorkExperience().get(0).getExpId());
         assertEquals(respWorkEx.getCompanyName(), "XYZ");
         assertEquals(respWorkEx.getRole(), "SDE");
         assertEquals(respWorkEx.getLocation(), "NYC");
@@ -178,7 +178,7 @@ public class UserProfileMapperTest {
 
         Education respEducation = response.getEducationList().get(0);
         assertNotNull(respEducation);
-        assertEquals(respEducation.getEducationId(), 1);
+        assertEquals(respEducation.getEducationId(), userProfile.getEducation().get(0).getEducationId());
         assertEquals(respEducation.getUniversityName(), "XYZ");
         assertEquals(respEducation.getGradMonth(), 1);
         assertEquals(respEducation.getGradYear(), 2020);
@@ -187,7 +187,7 @@ public class UserProfileMapperTest {
 
         WorkEx respWorkEx = response.getWorkExperience().get(0);
         assertNotNull(respWorkEx);
-        assertEquals(respWorkEx.getExpId(), 1);
+        assertEquals(respWorkEx.getExpId(), userProfile.getWorkExperience().get(0).getExpId());
         assertEquals(respWorkEx.getCompanyName(), "XYZ");
         assertEquals(respWorkEx.getRole(), "SDE");
         assertEquals(respWorkEx.getLocation(), "NYC");

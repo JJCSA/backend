@@ -3,6 +3,7 @@ package com.jjcsa.service;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
+import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
 import com.jjcsa.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +22,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -156,5 +160,35 @@ public class UserServiceTest {
 
         UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
         assertEquals(exception.getMessage(), "Unable to save Profile Picture to S3");
+    }
+
+    @Test
+    public void shouldReturnFalseOnUserCompleteness() {
+        User sampleUser = generateSampleUser();
+        boolean result = userService.hasUserCompletedOnboardingProfile(sampleUser);
+        assertFalse(result);
+    }
+
+    @Test
+    public void shouldReturnTrueOnUserCompleteness() {
+        User sampleUser = generateSampleUser();
+        sampleUser.setFirstName("Firstname");
+        sampleUser.setLastName("Lastname");
+        sampleUser.setStreet("Street Address");
+        sampleUser.setState("State");
+        sampleUser.setCity("City");
+        sampleUser.setZip("123456");
+        sampleUser.setEmail("blah@blah.com");
+        sampleUser.setLinkedinUrl("xyz.com");
+        sampleUser.setDateOfBirth(new Date());
+        sampleUser.setUserStudent(true);
+
+        Education education = new Education();
+        education.setUniversityName("University");
+        education.setDegree("Degree");
+        sampleUser.setEducationList(new ArrayList(){{add(education);}});
+
+        boolean result = userService.hasUserCompletedOnboardingProfile(sampleUser);
+        assertTrue(result);
     }
 }

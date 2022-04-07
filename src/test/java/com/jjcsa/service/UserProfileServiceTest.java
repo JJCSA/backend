@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +50,7 @@ public class UserProfileServiceTest {
     private List<Education> generateEducationData() {
         return Arrays.asList(
                 new Education().builder()
-                    .educationId(1)
+                    .educationId(UUID.randomUUID())
                     .build()
         );
     }
@@ -57,7 +58,7 @@ public class UserProfileServiceTest {
     private List<WorkEx> generateWorkExData() {
         return Arrays.asList(
                 new WorkEx().builder()
-                    .expId(1)
+                    .expId(UUID.randomUUID())
                     .build()
         );
     }

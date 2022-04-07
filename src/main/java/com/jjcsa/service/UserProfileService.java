@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -87,9 +88,25 @@ public class UserProfileService {
         user.setSocialMediaPlatform(updatedUserProfile.getSocialMediaPlatform());
         user.setVolunteeringInterest(updatedUserProfile.getVolunteeringInterest());
         user.setLinkedinUrl(updatedUserProfile.getLinkedinUrl());
-        user.setEducationList(updatedUserProfile.getEducation());
-        user.setWorkExperience(updatedUserProfile.getWorkExperience());
         user.setUserStudent(updatedUserProfile.isUserStudent());
+
+        if (!CollectionUtils.isEmpty(updatedUserProfile.getEducation())) {
+            updatedUserProfile.getEducation().forEach(e -> e.setUser(user));
+            user.setEducationList(updatedUserProfile.getEducation());
+        }
+
+        if (!CollectionUtils.isEmpty(updatedUserProfile.getWorkExperience())) {
+            updatedUserProfile.getWorkExperience().forEach(w -> w.setUser(user));
+            user.setWorkExperience(updatedUserProfile.getWorkExperience());
+        }
+
+        // If user has status NewUser and has updated all the required fields, change status to Active
+        if (UserStatus.NewUser.equals(user.getUserStatus())
+                && userService.hasUserCompletedOnboardingProfile(user)
+        ) {
+            log.info("User with email {} completed their profile, changing UserStatus to Active", user.getEmail());
+            user.setUserStatus(UserStatus.Active);
+        }
 
         log.info("Updating User profile for email {}", user.getEmail());
 
