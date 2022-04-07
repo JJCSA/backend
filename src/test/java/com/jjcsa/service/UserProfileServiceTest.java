@@ -79,7 +79,8 @@ public class UserProfileServiceTest {
 //        when(educationRepository.findAllByUser(any())).thenReturn(generateEducationData());
 //        when(workExRepository.findAllByUser(any())).thenReturn(generateWorkExData());
         when(keycloakService.getUserRole(any())).thenReturn(UserRole.USER);
-        when(userProfileMapper.toUserProfile(any(), any())).thenReturn(generateUserProfile());
+        UserProfile userProfile = generateUserProfile();
+        when(userProfileMapper.toUserProfile(any(), any())).thenReturn(userProfile);
 
         UserProfile response = userProfileService.getUserProfile("1");
         assertNotNull(response);
@@ -87,9 +88,9 @@ public class UserProfileServiceTest {
         assertEquals(response.getEmail(), "test@test.com");
         assertEquals(response.getUserRole(), UserRole.USER);
         assertEquals(response.getEducation().size(), 1);
-        assertEquals(response.getEducation().get(0).getEducationId(), 1);
+        assertEquals(response.getEducation().get(0).getEducationId(), userProfile.getEducation().get(0).getEducationId());
         assertEquals(response.getWorkExperience().size(), 1);
-        assertEquals(response.getWorkExperience().get(0).getExpId(), 1);
+        assertEquals(response.getWorkExperience().get(0).getExpId(), userProfile.getWorkExperience().get(0).getExpId());
     }
 
     @Test
