@@ -3,10 +3,8 @@ databaseChangeLog:
       file: db/changelog/changelogs_common/V0_1_2021115__tejas_create_tables.sql
   - include:
       file: db/changelog/changelogs_common/V0_2_20211117__tejas_modify_url_fields.sql
+#  - include:
+#      file: db/changelog/changelogs_data/V0_1_20211204__SEED_REG_EMAIL.sql
   - include:
-      file: db/changelog/changelogs_common/V0_3_20220406__tejas_db_id_default_uuid.sql
-  - include:
-      file: db/changelog/changelogs_data/V0_1_20211204__SEED_REG_EMAIL.sql
-  - include:
-      file: db/changelog/changelogs_data/db/changelog/changelogs_common/V0_4_20220406__tejas_user_account_new_fields.sql
+      file: db/changelog/changelogs_common/V0_4_20220406__tejas_user_account_new_fields.sql
 
