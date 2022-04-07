@@ -114,6 +114,12 @@ public class User {
     @Column(name = "contact_share", columnDefinition = "boolean default false")
     private boolean contactShared;
 
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "is_user_student")
+    private boolean userStudent;
+
     @Transient
     private UserRole userRole;
 }   

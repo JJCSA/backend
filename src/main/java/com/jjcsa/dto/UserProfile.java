@@ -35,12 +35,14 @@ public class UserProfile {
     private String street;
     private String city;
     private String state;
+    private String country;
     private String zip;
     private Date dateOfBirth;
     private String profilePicture;
     private String socialMediaPlatform;
     private VolunteeringInterest volunteeringInterest;
     private String linkedinUrl;
+    private boolean userStudent;
 
     private List<Education> education;
     private List<WorkEx> workExperience;

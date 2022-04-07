@@ -81,6 +81,7 @@ public class UserProfileService {
         user.setStreet(updatedUserProfile.getStreet());
         user.setCity(updatedUserProfile.getCity());
         user.setState(updatedUserProfile.getState());
+        user.setCountry(updatedUserProfile.getCountry());
         user.setZip(updatedUserProfile.getZip());
         user.setDateOfBirth(updatedUserProfile.getDateOfBirth());
         user.setSocialMediaPlatform(updatedUserProfile.getSocialMediaPlatform());
@@ -88,6 +89,7 @@ public class UserProfileService {
         user.setLinkedinUrl(updatedUserProfile.getLinkedinUrl());
         user.setEducationList(updatedUserProfile.getEducation());
         user.setWorkExperience(updatedUserProfile.getWorkExperience());
+        user.setUserStudent(updatedUserProfile.isUserStudent());
 
         log.info("Updating User profile for email {}", user.getEmail());
 
