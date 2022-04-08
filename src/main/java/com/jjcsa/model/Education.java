@@ -1,11 +1,13 @@
 package com.jjcsa.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "education")
@@ -18,7 +20,7 @@ public class Education{
     @Id
     @Column(name="educ_id", columnDefinition = "uuid")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int educationId;
+    private UUID educationId;
 
     @Column(name="university_name", columnDefinition = "varchar(45) default ''")
     private String universityName;
@@ -35,8 +37,9 @@ public class Education{
     @Column(columnDefinition = "varchar(100) default ''")
     private String degree;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
 }
