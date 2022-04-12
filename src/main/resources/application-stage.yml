@@ -28,3 +28,8 @@ aws:
     enabled: true
   s3:
     bucketname: stage-jjcsa-usa
+
+cloud:
+  aws:
+    s3:
+      region: us-east-2
