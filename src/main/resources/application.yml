@@ -55,5 +55,5 @@ cloud:
 
 email:
   ses:
-    from-email: newsletter@jjcsausa.com
+    from-email: noreply@jjcsausa.com
 
