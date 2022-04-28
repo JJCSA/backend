@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user/jjcsearch")
+@RequestMapping("/api/user/search")
 public class JJCSearchController {
 
     @NonNull
@@ -22,6 +22,7 @@ public class JJCSearchController {
 
     @GetMapping
     public List<JJCSearch> searchJJCUsers(){
+        log.info("Invoking JJC Search!");
         return jjcSearchService.invokeJJCSearch();
     }
 
