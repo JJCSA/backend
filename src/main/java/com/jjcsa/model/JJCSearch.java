@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "JJC_SEARCH_VIEW")
+@Table(name = "V_JJC_SEARCH")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,20 +19,20 @@ public class JJCSearch implements Serializable {
     @JsonIgnore
     private String userId;
 
-    @Column(name = "FULL_NAME")
-    private String fullName;
+    @Column(name = "NAME")
+    private String name;
 
-    @Column(name = "LIVING_STATE")
-    private String livingState;
+    @Column(name = "STATE")
+    private String state;
 
-    @Column(name = "LIVING_CITY")
-    private String livingCity;
+    @Column(name = "CITY")
+    private String city;
 
-    @Column(name = "WORK_SPECIALIZATION")
-    private String workSpecialization;
+    @Column(name = "SPECIALIZATION")
+    private String specialization;
 
-    @Column(name = "UNIVERSITY")
-    private String university;
+    @Column(name = "UNIVERSITY_NAME")
+    private String universityName;
 
     @Column(name = "WORK_ROLE")
     private String workRole;
