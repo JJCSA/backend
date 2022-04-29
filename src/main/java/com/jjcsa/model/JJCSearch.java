@@ -2,12 +2,14 @@ package com.jjcsa.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "V_JJC_SEARCH")
+@Immutable
+@Table(name = "JJC_SEARCH_V")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
