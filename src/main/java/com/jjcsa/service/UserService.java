@@ -5,7 +5,9 @@ import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.AdminAction;
+import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
+import com.jjcsa.model.WorkEx;
 import com.jjcsa.model.enumModel.Action;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.AdminActionRepository;
@@ -13,13 +15,19 @@ import com.jjcsa.repository.UserRepository;
 import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -249,9 +257,56 @@ public class UserService {
 
     /*
      * Checks if User finished on-boarding profile
-     * TODO: Add fields to check for on-boarding
      */
-    private boolean hasUserCompletedOnboardingProfile(User user) {
+    public boolean hasUserCompletedOnboardingProfile(User user) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date defaultDate = new Date();
+        try {
+            defaultDate = simpleDateFormat.parse("1900-01-01");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (StringUtils.isEmpty(user.getFirstName())
+                || StringUtils.isEmpty(user.getLastName())
+                || StringUtils.isEmpty(user.getStreet())
+                || StringUtils.isEmpty(user.getState())
+                || StringUtils.isEmpty(user.getCity())
+                || StringUtils.isEmpty(user.getZip())
+                || StringUtils.isEmpty(user.getEmail())
+                || StringUtils.isEmpty(user.getLinkedinUrl())
+                || defaultDate.compareTo(user.getDateOfBirth()) >= 0 // compare user's dob with default date
+        ) {
+            return false;
+        }
+
+        // validate education
+        List<Education> educationList = user.getEducationList();
+        if (CollectionUtils.isEmpty(educationList)) return false;
+        Education education = educationList.get(0);
+        if (StringUtils.isEmpty(education.getUniversityName())
+            || StringUtils.isEmpty(education.getDegree())
+        ) {
+            return false;
+        }
+
+        // validate work exp
+        if (!user.isUserStudent()) {
+            List<WorkEx> workExperiences = user.getWorkExperience();
+            if (CollectionUtils.isEmpty(workExperiences)) return false;
+
+            // validate each work exp
+            for (WorkEx workEx : workExperiences) {
+                if (StringUtils.isEmpty(workEx.getCompanyName())
+                    || StringUtils.isEmpty(workEx.getRole())
+                    || StringUtils.isEmpty(workEx.getLocation())
+                ) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 }

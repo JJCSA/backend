@@ -12,12 +12,14 @@ public interface UserProfileMapper {
 
     @Mappings({
             @Mapping(source = "user.educationList", target = "education"),
-            @Mapping(source = "userRole", target = "userRole")
+            @Mapping(source = "userRole", target = "userRole"),
+            @Mapping(source = "user.userStudent", target = "userStudent")
     })
     UserProfile toUserProfile(User user, UserRole userRole);
 
     @Mappings({
-            @Mapping(source = "userProfile.education", target = "educationList")
+            @Mapping(source = "userProfile.education", target = "educationList"),
+            @Mapping(source = "userProfile.userStudent", target = "userStudent")
     })
     User toUser(UserProfile userProfile);
 

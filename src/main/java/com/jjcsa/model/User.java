@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jjcsa.model.enumModel.ContactMethod;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
@@ -32,10 +33,12 @@ public class User {
         this.email = email;
     }
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Education> educationList;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<WorkEx> workExperience;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -113,6 +116,12 @@ public class User {
     
     @Column(name = "contact_share", columnDefinition = "boolean default false")
     private boolean contactShared;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "is_user_student")
+    private boolean userStudent;
 
     @Transient
     private UserRole userRole;

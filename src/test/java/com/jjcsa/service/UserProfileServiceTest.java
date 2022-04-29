@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +50,7 @@ public class UserProfileServiceTest {
     private List<Education> generateEducationData() {
         return Arrays.asList(
                 new Education().builder()
-                    .educationId(1)
+                    .educationId(UUID.randomUUID())
                     .build()
         );
     }
@@ -57,7 +58,7 @@ public class UserProfileServiceTest {
     private List<WorkEx> generateWorkExData() {
         return Arrays.asList(
                 new WorkEx().builder()
-                    .expId(1)
+                    .expId(UUID.randomUUID())
                     .build()
         );
     }
@@ -78,7 +79,8 @@ public class UserProfileServiceTest {
 //        when(educationRepository.findAllByUser(any())).thenReturn(generateEducationData());
 //        when(workExRepository.findAllByUser(any())).thenReturn(generateWorkExData());
         when(keycloakService.getUserRole(any())).thenReturn(UserRole.USER);
-        when(userProfileMapper.toUserProfile(any(), any())).thenReturn(generateUserProfile());
+        UserProfile userProfile = generateUserProfile();
+        when(userProfileMapper.toUserProfile(any(), any())).thenReturn(userProfile);
 
         UserProfile response = userProfileService.getUserProfile("1");
         assertNotNull(response);
@@ -86,9 +88,9 @@ public class UserProfileServiceTest {
         assertEquals(response.getEmail(), "test@test.com");
         assertEquals(response.getUserRole(), UserRole.USER);
         assertEquals(response.getEducation().size(), 1);
-        assertEquals(response.getEducation().get(0).getEducationId(), 1);
+        assertEquals(response.getEducation().get(0).getEducationId(), userProfile.getEducation().get(0).getEducationId());
         assertEquals(response.getWorkExperience().size(), 1);
-        assertEquals(response.getWorkExperience().get(0).getExpId(), 1);
+        assertEquals(response.getWorkExperience().get(0).getExpId(), userProfile.getWorkExperience().get(0).getExpId());
     }
 
     @Test
