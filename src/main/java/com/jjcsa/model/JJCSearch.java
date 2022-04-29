@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Entity
 @Immutable
-@Table(name = "JJC_SEARCH_V")
+@Table(name = "V_JJC_SEARCH")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
