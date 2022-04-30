@@ -53,22 +53,6 @@ public class LoginController {
         return "test2";
     }
 
-    // This method is for test
-//    @PostMapping(path = "/login")
-//    public String login(@RequestBody @NonNull final User user) {
-//
-//        if(user.getEmail().isEmpty() || user.getPassword().isEmpty()) {
-//            throw new IllegalArgumentException("Email or password is empty. Username and password are mandatory");
-//        }
-//        log.info("Getting token for '{}' ...", user.getEmail());
-//        final Keycloak keycloakMovieApp = KeycloakBuilder.builder().serverUrl(keycloakServerUrl)
-//                .realm(KeycloakUtil.JJCSA_REALM_NAME).username(user.getEmail()).password(user.getPassword())
-//                .clientId(KeycloakUtil.JJCSA_CLIENT_ID).build();
-//        final String token = keycloakMovieApp.tokenManager().getAccessToken().getToken();
-//        log.info("'{}' logged in successfully", user.getEmail());
-//        return token;
-//    }
-
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(
             @RequestParam("newUser") @NonNull final String newUserJSONString,
@@ -82,7 +66,4 @@ public class LoginController {
         emailSenderService.sendEmail(user, Event.REGISTRATION);
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }
-
-    // JJC Search Method
-
 }
