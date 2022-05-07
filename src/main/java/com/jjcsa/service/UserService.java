@@ -29,10 +29,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Service
 @Slf4j
@@ -311,5 +309,4 @@ public class UserService {
 
         return true;
     }
-
 }
