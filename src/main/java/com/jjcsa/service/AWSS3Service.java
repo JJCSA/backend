@@ -1,7 +1,14 @@
 package com.jjcsa.service;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.DefaultRequest;
+import com.amazonaws.HttpMethod;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.net.URL;
+import java.time.Instant;
 
 @Slf4j
 @Service
@@ -24,6 +33,9 @@ public class AWSS3Service {
 
     @Value("${spring.profiles.active:local}")
     private String activeProfiles;
+
+    @Value("${aws.s3.region}")
+    private String bucketRegion;
 
     private void createBucket() {
         log.debug("Creating S3 bucker with name: {}", bucketName);
@@ -55,6 +67,42 @@ public class AWSS3Service {
         }
 
         return amazonS3Client.getUrl(bucketName, objectKey).toString();
+    }
+
+    public String generateSignedURLFromS3(String userId, String docType){
+        URL url = null;
+        String key = userId +"/"+docType;
+        try {
+            AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()
+                    .withRegion(bucketRegion)
+                    .withCredentials(new ProfileCredentialsProvider())
+                    .build();
+
+            // Set the presigned URL to expire after one hour.
+            java.util.Date expiration = new java.util.Date();
+            long expTimeMillis = Instant.now().toEpochMilli();
+            expTimeMillis += 1000 * 60 * 60;
+            expiration.setTime(expTimeMillis);
+
+            // Generate the presigned URL.
+            System.out.println("Generating pre-signed URL.");
+            GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                    new GeneratePresignedUrlRequest(bucketName, key)
+                            .withMethod(HttpMethod.GET)
+                            .withExpiration(expiration);
+             url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+
+            System.out.println("Pre-Signed URL: " + url.toString());
+        } catch (AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process
+            // it, so it returned an error response.
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+        }
+        return url.toString();
     }
 
     public void deleteFile(String objectKey) {
