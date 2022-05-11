@@ -182,7 +182,10 @@ public class UserService {
     public List<User> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
         // If role is not found in keycloak it will be set to null
-        allUsers.forEach(user -> user.setUserRole(keycloakService.getUserRole(user.getId())));
+        allUsers.forEach(user -> {
+            user.setUserRole(keycloakService.getUserRole(user.getId()));
+            user.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getId(),"PROFILE_PICTURE.PNG"));
+        });
         return allUsers;
     }
 
