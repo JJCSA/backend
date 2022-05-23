@@ -1,6 +1,9 @@
 package com.jjcsa.service;
 
+import com.jjcsa.dto.UserResetPassword;
 import com.jjcsa.exception.BadRequestException;
+import com.jjcsa.exception.UnknownServerErrorException;
+import com.jjcsa.model.User;
 import com.jjcsa.model.UserTempPassword;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.repository.UserTempPasswordRepository;
@@ -17,9 +20,10 @@ import static java.util.Objects.nonNull;
 @Service
 @RequiredArgsConstructor
 public class UserForgotPasswordService {
-    private UserTempPasswordRepository userTempPasswordRepository;
-    private UserRepository userRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserTempPasswordRepository userTempPasswordRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final KeycloakService keycloakService;
 
     public Boolean generateTempPasswordForEmail(String email) {
 
@@ -65,7 +69,21 @@ public class UserForgotPasswordService {
         return true;
     }
 
-    public Boolean changeUserPasswordForTempPassword(String email, String tempPassword) {
+    public Boolean changeUserPasswordForTempPassword(UserResetPassword userResetPassword) {
+
+        String email = userResetPassword.getEmail();
+        String tempPassword = userResetPassword.getTempPassword();
+        String newPassword = userResetPassword.getNewPassword();
+
+        //check if email exists
+        User user = userRepository.findUserByEmail(email);
+        if(isNull(user)) {
+            throw new BadRequestException("Email does not exist",
+                    "No account found with the entered email",
+                    "",
+                    "",
+                    "");
+        }
 
         // check if user requested for password change
         UserTempPassword userTempPassword = userTempPasswordRepository.findByEmail(email);
@@ -95,7 +113,15 @@ public class UserForgotPasswordService {
                     "");
         }
 
-        //TODO: call keycloak to change password for email
+        // Update password in keycloak
+        Boolean passwordChanged = keycloakService.resetUserPassword(user.getId(), newPassword);
+        if (!passwordChanged) {
+            throw new UnknownServerErrorException("Unable to reset password",
+                    "Resetting password in Keycloak failed",
+                    "",
+                    "",
+                    "");
+        }
 
         // Delete temp password record
         userTempPasswordRepository.delete(userTempPassword);
