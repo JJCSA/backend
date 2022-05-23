@@ -60,7 +60,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         super.configure(http);
         if(isSecurityEnabled) {
             http.authorizeRequests()
-                    .antMatchers("/api/users/login", "/api/users/register", "/actuator/**", "/test/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**")
+                    .antMatchers("/api/user-password/**", "/api/users/login", "/api/users/register", "/actuator/**", "/test/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**")
                     .permitAll()
                     .antMatchers("/api/super-admin/**").hasRole(UserRole.SUPER_ADMIN.getRoleText())
                     .antMatchers("/api/admin/**").hasRole(UserRole.ADMIN.getRoleText())
