@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.Event;
+import liquibase.pro.packaged.D;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,6 +73,21 @@ public class EmailSenderService {
         List<Destination> destinationList = this.resolveDestination(bccAddressList,ccAddressList,Collections.singletonList(user.getEmail()));
         Message message = this.resolveMessage(user, emailEvent.name());
         log.info("Message resolved:{}", message);
+        int failed = this.sendEmail(destinationList, message, fromEmailAddress);
+        log.info("Email Failures:{}",failed);
+        return failed;
+    }
+
+    public int sendEmailForForgotPassword(String email, String link) {
+        EmailTemplateDto resolvedTemplate = emailTemplateService.resolveTemplateForForgotPasswordEmail(email, link);
+        Body body = new Body();
+        body.setHtml(this.getContent(resolvedTemplate.getBody()));
+        Message message = new Message();
+        message.setSubject(this.getContent(resolvedTemplate.getSubject()));
+        message.setBody(body);
+
+        List<Destination> destinationList = this.resolveDestination(Collections.emptyList(), Collections.emptyList(), Collections.singletonList(email));
+
         int failed = this.sendEmail(destinationList, message, fromEmailAddress);
         log.info("Email Failures:{}",failed);
         return failed;

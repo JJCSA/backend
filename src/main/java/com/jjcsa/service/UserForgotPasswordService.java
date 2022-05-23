@@ -24,6 +24,7 @@ public class UserForgotPasswordService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final KeycloakService keycloakService;
+    private final EmailSenderService emailSenderService;
 
     public Boolean generateTempPasswordForEmail(String email) {
 
@@ -55,7 +56,8 @@ public class UserForgotPasswordService {
         // generate new temp password
         String rawPw = StringUtil.generateRandomString(6);
 
-        // TODO: send user email with temp password
+        String resetPasswordLink = StringUtil.generateForgotPasswordLink(email, rawPw);
+        emailSenderService.sendEmailForForgotPassword(email, resetPasswordLink);
 
         // Save temp password to db
         UserTempPassword newTempPassword = new UserTempPassword();
