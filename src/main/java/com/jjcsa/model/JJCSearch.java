@@ -39,6 +39,9 @@ public class JJCSearch implements Serializable {
     @Column(name = "WORK_ROLE")
     private String workRole;
 
+    @Column(name = "LINKEDIN_URL")
+    private String linkedinUrl;
+
     // This will be false as boolean does not support null values. Null will be treated as false
     @Transient
     private boolean isRegionalContact;

@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/changelogs_common/V0_3_20220406__tejas_db_id_default_uuid.sql
   - include:
       file: db/changelog/changelogs_common/V0_4_20220406__tejas_user_account_new_fields.sql
+  - include:
+      file: db/changelog/changelogs_common/V0_5_20220518__sanket_update_search_view.sql
