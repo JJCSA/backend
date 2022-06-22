@@ -1,5 +1,6 @@
 package com.jjcsa.controller.admin;
 
+import com.jjcsa.dto.UserDTO;
 import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.UserStatus;
@@ -47,7 +48,7 @@ public class AdminUserController {
     }
 
     @GetMapping(path = "")
-    public List<User> getUsersList() {
+    public List<UserDTO> getUsersList() {
         log.info("Getting User List");
         return userService.getAllUsers();
     }

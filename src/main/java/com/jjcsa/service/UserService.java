@@ -1,6 +1,7 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.dto.UserDTO;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
@@ -120,7 +121,7 @@ public class UserService {
                 // Delete file if already present
                 deleteCommunityDocumentForUserProfile(user);
             }
-            String fileKey = user.getId() + File.separator + ImageUtil.generateCommunityDocumentName(jainProofDoc);
+            String fileKey = user.getId() + File.separator + "COMMUNITY_PROOF" +  File.separator  + ImageUtil.generateCommunityDocumentName(jainProofDoc);
             jainProofDocURL = awss3Service.saveFile(fileKey, jainProofDoc);
             log.info("(S3 upload) Jain Proof Doc for user email {} uploaded", user.getEmail());
         } catch (Exception e) {
@@ -140,7 +141,7 @@ public class UserService {
                 // Delete file if already present
                 deleteProfilePictureForUserProfile(user);
             }
-            String fileKey = user.getId() + "/" + ImageUtil.generateProfilePictureName(profPicture);
+            String fileKey = user.getId() + File.separator  + "PROFILE_PICTURE" + File.separator + ImageUtil.generateProfilePictureName(profPicture);
             profPictureURL = awss3Service.saveFile(fileKey, profPicture);
             log.info("(S3 upload) Profile Picture for user email {} uploaded", user.getEmail());
         } catch (Exception e) {
@@ -179,14 +180,11 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
         // If role is not found in keycloak it will be set to null
-        allUsers.forEach(user -> {
-            user.setUserRole(keycloakService.getUserRole(user.getId()));
-            user.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getId(),"PROFILE_PICTURE.PNG"));
-        });
-        return allUsers;
+        allUsers.forEach(user -> user.setUserRole(keycloakService.getUserRole(user.getId())));
+        return userMapper.toUser(allUsers);
     }
 
     /*
