@@ -1,14 +1,15 @@
 package com.jjcsa.service;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.DefaultRequest;
-import com.amazonaws.HttpMethod;
-import com.amazonaws.SdkClientException;
+import com.amazonaws.*;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.time.Instant;
 
@@ -34,7 +38,7 @@ public class AWSS3Service {
     @Value("${spring.profiles.active:local}")
     private String activeProfiles;
 
-    @Value("${aws.s3.region}")
+    @Value("${cloud.aws.s3.region}")
     private String bucketRegion;
 
     private void createBucket() {
@@ -69,30 +73,48 @@ public class AWSS3Service {
         return amazonS3Client.getUrl(bucketName, objectKey).toString();
     }
 
-    public String generateSignedURLFromS3(String userId, String docType){
-        URL url = null;
-        String key = userId +"/"+docType;
+    public byte[] getImageFromS3(String userId, String fileType){
         try {
-            AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()
-                    .withRegion(bucketRegion)
-                    .withCredentials(new ProfileCredentialsProvider())
-                    .build();
+            byte[] content;
 
-            // Set the presigned URL to expire after one hour.
+            String keyName = userId + File.separator + fileType;
+
+            S3Object s3object = amazonS3Client.getObject(new GetObjectRequest(bucketName, keyName));
+
+            final S3ObjectInputStream stream = s3object.getObjectContent();
+            content = IOUtils.toByteArray(stream);
+            s3object.close();
+            return content;
+        } catch (IOException ioException) {
+            log.error("IOException: " + ioException.getMessage());
+        } catch (AmazonServiceException serviceException) {
+            log.error("AmazonServiceException Message:    " + serviceException.getMessage());
+            throw serviceException;
+        } catch (AmazonClientException clientException) {
+            log.error("AmazonClientException Message: " + clientException.getMessage());
+            throw clientException;
+        }
+        return null;
+    }
+
+    public String generateSignedURLFromS3(String userId, String s3Url){
+        URL url = null;
+        String documentName[] = s3Url.split("/");
+        String key = userId + "/" + documentName[documentName.length - 1];
+        try {
+            // Set the presigned URL to expire after 10 sec.
             java.util.Date expiration = new java.util.Date();
-            long expTimeMillis = Instant.now().toEpochMilli();
-            expTimeMillis += 1000 * 60 * 60;
+            long expTimeMillis = expiration.getTime();
+            expTimeMillis += 10 * 30 * 40;
             expiration.setTime(expTimeMillis);
 
             // Generate the presigned URL.
-            System.out.println("Generating pre-signed URL.");
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucketName, key)
                             .withMethod(HttpMethod.GET)
                             .withExpiration(expiration);
-             url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+             url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
 
-            System.out.println("Pre-Signed URL: " + url.toString());
         } catch (AmazonServiceException e) {
             // The call was transmitted successfully, but Amazon S3 couldn't process
             // it, so it returned an error response.
