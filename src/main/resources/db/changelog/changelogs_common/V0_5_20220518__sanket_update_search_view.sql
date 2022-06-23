@@ -14,4 +14,5 @@ CREATE VIEW V_JJC_SEARCH AS
        LEFT OUTER JOIN EDUCATION e
             ON e.USER_ID = u.ID
        LEFT OUTER JOIN WORK_EX w
-            ON w.USER_ID = u.ID;
+            ON w.USER_ID = u.ID
+       WHERE u.user_status = 'Active';
