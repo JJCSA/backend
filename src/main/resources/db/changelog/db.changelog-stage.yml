@@ -13,3 +13,7 @@ databaseChangeLog:
       file: db/changelog/changelogs_common/V0_4_20220406__tejas_user_account_new_fields.sql
   - include:
       file: db/changelog/changelogs_common/V0_5_20220518__sanket_update_search_view.sql
+  - include:
+      file: db/changelog/changelogs_common/V0_5_20220514__tejas_new_table_forgot_password.sql
+  - include:
+      file: db/changelog/changelogs_data/V0_2_20220521__FORGOT_PASSWORD_EMAIL_TEMPLATE.sql

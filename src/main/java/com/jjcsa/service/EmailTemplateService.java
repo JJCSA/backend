@@ -3,6 +3,7 @@ package com.jjcsa.service;
 import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.EmailTemplate;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.Event;
 import com.jjcsa.repository.EmailTemplateRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,25 @@ public class EmailTemplateService {
         String resolvedBody = this.resolveTemplate(context, templateBody);
 
         log.info("User:{} , Resoled Body:{}, params:{}", user.getFirstName(), resolvedBody, params);
+        return EmailTemplateDto.builder()
+                .body(resolvedBody)
+                .subject(template.getEmailSubject())
+                .build();
+    }
+
+    public EmailTemplateDto resolveTemplateForForgotPasswordEmail(String email, String link) {
+        EmailTemplate template = emailTemplateRepository.findByTemplateName(Event.FORGOT_PASSWORD.name());
+        String templateBody = template.getEmailBody();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", email);
+        params.put("link", link);
+
+        Context context = new Context();
+        context.setLocale(Locale.ENGLISH);
+        context.setVariables(params);
+        String resolvedBody = this.resolveTemplate(context, templateBody);
+
         return EmailTemplateDto.builder()
                 .body(resolvedBody)
                 .subject(template.getEmailSubject())

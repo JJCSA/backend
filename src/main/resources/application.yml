@@ -57,3 +57,5 @@ email:
   ses:
     from-email: noreply@jjcsausa.com
 
+frontend:
+  forgotPasswordURL: localhost:5000/forgot-password-reset

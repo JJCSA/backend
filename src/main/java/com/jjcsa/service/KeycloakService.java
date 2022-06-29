@@ -256,4 +256,20 @@ public class KeycloakService {
 
         return UserRole.USER;
     }
+
+    public Boolean resetUserPassword(String userId, String newPassword) {
+        // Get UserResource
+        UserResource userResource = getUserResource(userId);
+
+        // Create password credential
+        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+        credentialRepresentation.setTemporary(false);
+        credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+        credentialRepresentation.setValue(newPassword);
+
+        // set password credential
+        userResource.resetPassword(credentialRepresentation);
+
+        return true;
+    }
 }
