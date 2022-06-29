@@ -20,9 +20,5 @@ public interface UserMapper {
     })
     User toUserProfile(AddNewUser addNewUser);
 
-    @Mappings({
-            @Mapping(source = "addNewUser.prefMethodOfContact", target = "contactMethod"),
-            @Mapping(source = "addNewUser.jainCommunity", target = "communityName")
-    })
-    List<UserDTO> toUser(List<User> User);
+    UserDTO toUserDTO(User user);
 }

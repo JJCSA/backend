@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -182,9 +183,21 @@ public class UserService {
 
     public List<UserDTO> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
+
+        return allUsers.stream()
+                .map(this::toUserDTO)
+                .collect(Collectors.toList());
+
+    }
+
+    private UserDTO toUserDTO(User user) {
+        UserDTO userDTO = userMapper.toUserDTO(user);
         // If role is not found in keycloak it will be set to null
-        allUsers.forEach(user -> user.setUserRole(keycloakService.getUserRole(user.getId())));
-        return userMapper.toUser(allUsers);
+        userDTO.setUserRole(keycloakService.getUserRole(user.getId()));
+        //TODO: set Presigned URLs
+//        userDTO.setProfilePictureURL();
+//        userDTO.setCommunityDocURL();
+        return userDTO;
     }
 
     /*
