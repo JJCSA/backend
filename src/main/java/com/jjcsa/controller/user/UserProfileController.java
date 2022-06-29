@@ -12,6 +12,7 @@ import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -68,7 +69,7 @@ public class UserProfileController {
 
         return updatedUserProfile;
     }
-    @GetMapping("/profPicture")
+    @GetMapping(value = "/profPicture", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getProfilePicture(KeycloakAuthenticationToken authenticationToken){
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
