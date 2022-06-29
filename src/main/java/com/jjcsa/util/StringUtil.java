@@ -1,6 +1,5 @@
 package com.jjcsa.util;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.security.SecureRandom;
@@ -10,9 +9,6 @@ public class StringUtil {
     static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     static SecureRandom rnd = new SecureRandom();
 
-    @Value("${frontend.forgotPasswordURL}")
-    static String forgotPasswordURL;
-
     // https://stackoverflow.com/a/157202
     public static String generateRandomString(int length) {
         StringBuilder sb = new StringBuilder(length);
@@ -21,7 +17,7 @@ public class StringUtil {
         return sb.toString();
     }
 
-    public static String generateForgotPasswordLink(String email, String tempPassword) {
+    public static String generateForgotPasswordLink(String forgotPasswordURL, String email, String tempPassword) {
         return UriComponentsBuilder.fromUriString(forgotPasswordURL)
                 .queryParam("email", email)
                 .queryParam("tempPassword", tempPassword)

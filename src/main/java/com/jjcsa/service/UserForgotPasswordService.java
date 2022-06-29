@@ -9,6 +9,7 @@ import com.jjcsa.repository.UserRepository;
 import com.jjcsa.repository.UserTempPasswordRepository;
 import com.jjcsa.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,9 @@ public class UserForgotPasswordService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final KeycloakService keycloakService;
     private final EmailSenderService emailSenderService;
+
+    @Value("${frontend.forgotPasswordURL}")
+    private String forgotPasswordURL;
 
     public Boolean generateTempPasswordForEmail(String email) {
 
@@ -55,8 +59,9 @@ public class UserForgotPasswordService {
 
         // generate new temp password
         String rawPw = StringUtil.generateRandomString(6);
+        System.out.println("generated random pw: " + rawPw);
 
-        String resetPasswordLink = StringUtil.generateForgotPasswordLink(email, rawPw);
+        String resetPasswordLink = StringUtil.generateForgotPasswordLink(forgotPasswordURL, email, rawPw);
         emailSenderService.sendEmailForForgotPassword(email, resetPasswordLink);
 
         // Save temp password to db

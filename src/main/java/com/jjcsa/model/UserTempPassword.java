@@ -2,10 +2,7 @@ package com.jjcsa.model;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class UserTempPassword {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     private String email;
