@@ -2,7 +2,8 @@ package com.jjcsa.model.enumModel;
 
 public enum Event {
 
-    REGISTRATION("REGISTRATION");
+    REGISTRATION("REGISTRATION"),
+    FORGOT_PASSWORD("FORGOT_PASSWORD");
 
     private String name;
 
