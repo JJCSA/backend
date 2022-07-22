@@ -96,25 +96,24 @@ public class AWSS3Service {
         }
         return null;
     }
-
-    public String generateSignedURLFromS3(String userId, String s3Url){
-        URL url = null;
-        String documentName[] = s3Url.split("/");
-        String key = userId + "/" + documentName[documentName.length - 1];
+    /*
+        documentURL corresponds to user profile pic/community proof
+        To-do: Need to come up with better name
+     */
+    public String generateSignedURLFromS3(String userId, String documentURL){
+          URL url = null;
         try {
             // Set the presigned URL to expire after 10 sec.
             java.util.Date expiration = new java.util.Date();
             long expTimeMillis = expiration.getTime();
             expTimeMillis += 10 * 30 * 40;
             expiration.setTime(expTimeMillis);
-
             // Generate the presigned URL.
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucketName, key)
+                    new GeneratePresignedUrlRequest(bucketName, documentURL)
                             .withMethod(HttpMethod.GET)
                             .withExpiration(expiration);
              url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
         } catch (AmazonServiceException e) {
             // The call was transmitted successfully, but Amazon S3 couldn't process
             // it, so it returned an error response.
