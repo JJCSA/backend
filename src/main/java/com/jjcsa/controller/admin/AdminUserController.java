@@ -53,6 +53,11 @@ public class AdminUserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping(path="/{userId}/communityProof")
+    public String getCommunityProof(@PathVariable String userId){
+        log.info("Getting community proof for userId");
+        return userService.getCommunityProof(userId);
+    }
     @PutMapping(path = "/status")
     public boolean updateUserStatus(@RequestParam String userId, @RequestParam UserStatus status, KeycloakAuthenticationToken authenticationToken) {
 
