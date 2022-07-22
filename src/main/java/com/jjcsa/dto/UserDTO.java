@@ -55,4 +55,5 @@ public class UserDTO {
     private String country;
     private boolean userStudent;
     private UserRole userRole;
+    private String profilePicture;
 }
