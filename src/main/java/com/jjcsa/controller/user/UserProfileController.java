@@ -2,8 +2,10 @@ package com.jjcsa.controller.user;
 
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.model.User;
+import com.jjcsa.service.AWSS3Service;
 import com.jjcsa.service.UserProfileService;
 import com.jjcsa.service.UserService;
+import com.jjcsa.util.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
 
 import static java.util.Objects.isNull;
 
@@ -24,6 +27,7 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
     private final UserService userService;
+    private final AWSS3Service awss3Service;
 
     @GetMapping()
     public UserProfile getUserProfile(KeycloakAuthenticationToken authenticationToken) {
@@ -56,13 +60,24 @@ public class UserProfileController {
         if(isNull(user)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find user");
         }
-        if(!token.getEmail().equalsIgnoreCase(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update profile picture for another User");
-        }
-
+        
         UserProfile updatedUserProfile = userProfileService.updateUserProfilePicture(user, profPicture);
 
         return updatedUserProfile;
+    }
+    @GetMapping("/profPicture")
+    public byte[] getProfilePicture(KeycloakAuthenticationToken authenticationToken){
+        SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
+        AccessToken token = account.getKeycloakSecurityContext().getToken();
+
+        User user = userService.getUserById(token.getSubject());
+        if(isNull(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find user");
+        }
+        if(!token.getEmail().equalsIgnoreCase(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update profile picture for another User");
+        }
+        return awss3Service.getImageFromS3(user.getId(), ApplicationConstants.FILE_TYPE_PROFILE);
     }
 
 }

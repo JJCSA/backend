@@ -1,6 +1,7 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.dto.UserDTO;
 import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
@@ -16,7 +17,6 @@ import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -113,6 +114,7 @@ public class UserService {
 
     public String saveJainProofForUserProfile(User user, MultipartFile jainProofDoc) {
         String jainProofDocURL = null;
+        String fileKey = null;
         try {
             // Save MultipartFile to S3
             if (user.getCommunityDocumentURL() != null
@@ -120,19 +122,21 @@ public class UserService {
                 // Delete file if already present
                 deleteCommunityDocumentForUserProfile(user);
             }
-            String fileKey = user.getId() + File.separator + ImageUtil.generateCommunityDocumentName(jainProofDoc);
+            //Store the key in User DB
+            fileKey = user.getId() + File.separator + ImageUtil.generateCommunityDocumentName(jainProofDoc);
             jainProofDocURL = awss3Service.saveFile(fileKey, jainProofDoc);
             log.info("(S3 upload) Jain Proof Doc for user email {} uploaded", user.getEmail());
         } catch (Exception e) {
             log.error("Error while saving Jain Proof Doc to S3");
             log.error(e.getMessage());
         } finally {
-            return jainProofDocURL;
+            return fileKey;
         }
     }
 
     public String saveProfilePictureForUserProfile(User user, MultipartFile profPicture) {
         String profPictureURL = null;
+        String fileKey = null;
         try {
             // Save MultipartFile to S3
             if (user.getProfilePicture() != null
@@ -140,14 +144,14 @@ public class UserService {
                 // Delete file if already present
                 deleteProfilePictureForUserProfile(user);
             }
-            String fileKey = user.getId() + "/" + ImageUtil.generateProfilePictureName(profPicture);
+            fileKey = user.getId() + File.separator + ImageUtil.generateProfilePictureName(profPicture);
             profPictureURL = awss3Service.saveFile(fileKey, profPicture);
             log.info("(S3 upload) Profile Picture for user email {} uploaded", user.getEmail());
         } catch (Exception e) {
             log.error("Error while saving Profile Picture to S3");
             log.error(e.getMessage());
         } finally {
-            return profPictureURL;
+            return fileKey;
         }
     }
 
@@ -179,13 +183,19 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
-        // If role is not found in keycloak it will be set to null
-        allUsers.forEach(user -> user.setUserRole(keycloakService.getUserRole(user.getId())));
-        return allUsers;
+        return allUsers.stream()
+                .map(this::toUserDTO)
+                .collect(Collectors.toList());
     }
 
+    private UserDTO toUserDTO(User user) {
+        UserDTO userDTO = userMapper.toUserDTO(user);
+        userDTO.setUserRole(keycloakService.getUserRole(user.getId()));
+        userDTO.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getId(),user.getProfilePicture()));
+        return userDTO;
+    }
     /*
      * Updates user's status with the given status
      * returns true if successful
@@ -308,5 +318,21 @@ public class UserService {
         }
 
         return true;
+    }
+
+    public String getCommunityProof(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if(isNull(user)) {
+            log.error("Unable to find user with userId {}", userId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to find user");
+        }
+        String communityProofUrl = null;
+        communityProofUrl = awss3Service.generateSignedURLFromS3(userId,user.getCommunityDocumentURL());
+        if(isNull(communityProofUrl)){
+            log.error("Unable to fetch community proof for userId {}", userId);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to fetch community proof");
+        }
+        log.info("community proof" + communityProofUrl);
+        return communityProofUrl;
     }
 }

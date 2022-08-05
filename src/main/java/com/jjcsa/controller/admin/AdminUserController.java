@@ -1,5 +1,6 @@
 package com.jjcsa.controller.admin;
 
+import com.jjcsa.dto.UserDTO;
 import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.UserStatus;
@@ -47,11 +48,16 @@ public class AdminUserController {
     }
 
     @GetMapping(path = "")
-    public List<User> getUsersList() {
+    public List<UserDTO> getUsersList() {
         log.info("Getting User List");
         return userService.getAllUsers();
     }
 
+    @GetMapping(path="/{userId}/communityProof")
+    public String getCommunityProof(@PathVariable String userId){
+        log.info("Getting community proof for userId");
+        return userService.getCommunityProof(userId);
+    }
     @PutMapping(path = "/status")
     public boolean updateUserStatus(@RequestParam String userId, @RequestParam UserStatus status, KeycloakAuthenticationToken authenticationToken) {
 
