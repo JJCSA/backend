@@ -60,10 +60,7 @@ public class UserProfileController {
         if(isNull(user)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find user");
         }
-        if(!token.getEmail().equalsIgnoreCase(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update profile picture for another User");
-        }
-
+        
         UserProfile updatedUserProfile = userProfileService.updateUserProfilePicture(user, profPicture);
 
         return updatedUserProfile;
