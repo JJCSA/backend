@@ -5,7 +5,10 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.util.ImageUtil;
@@ -31,6 +34,9 @@ public class AWSS3Service {
 
     @Value("${spring.profiles.active:local}")
     private String activeProfiles;
+
+    @Value("${cloud.aws.s3.region}")
+    private String bucketRegion;
 
     private void createBucket() {
         log.debug("Creating S3 bucker with name: {}", bucketName);
@@ -87,35 +93,23 @@ public class AWSS3Service {
         }
         return null;
     }
-    /*
-        documentURL corresponds to user profile pic/community proof
-        To-do: Need to come up with better name
+
+    /**
+     * Method to generate pre-signed url from S3.
+     * @param documentURL url from the DB user. It will be combination of userId + profile picture.
+     * @return generated pre-signed URL from S3
      */
     public String generateSignedURLFromS3(String documentURL) {
         Date expiration = new Date();
         expiration.setTime(expiration.getTime() + 10 * 30 * 40);
         try{
-            if (documentURL == null) {
-                throw new IllegalArgumentException("documentURL must not be null!");
-            }
-
-            String extension = "";
-
-            int index = documentURL.lastIndexOf('.');
-            if (index > 0) {
-                extension = documentURL.substring(index + 1);
-            }
-            ResponseHeaderOverrides responseHeaders = new ResponseHeaderOverrides();
-            responseHeaders.setContentType("image/" +extension);
-            // Generate the presigned URL.
-            GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucketName, documentURL)
-                            .withMethod(HttpMethod.GET)
-                            .withExpiration(expiration);
-
-            generatePresignedUrlRequest.setResponseHeaders(responseHeaders);
-
-            return (amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString());
+            return
+                    amazonS3Client
+                            .generatePresignedUrl(
+                                    new GeneratePresignedUrlRequest(bucketName, documentURL)
+                                            .withMethod(HttpMethod.GET)
+                                            .withExpiration(expiration)
+                            ).toString();
         } catch (SdkClientException sdkClientException) {
             log.info("Error Occurred while getting pre-signed URL :{}, stack trace: {}" ,
                     sdkClientException.getMessage(), sdkClientException.getStackTrace());

@@ -12,7 +12,9 @@ import com.jjcsa.repository.EducationRepository;
 import com.jjcsa.repository.WorkExRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,7 @@ public class UserProfileServiceTest {
     @Mock private WorkExRepository workExRepository;
     @Mock private UserProfileMapper userProfileMapper;
     @Mock private KeycloakService keycloakService;
+    @Mock private AWSS3Service awss3Service;
 
     @Spy @InjectMocks private UserProfileService userProfileService;
 
@@ -64,7 +67,8 @@ public class UserProfileServiceTest {
     }
 
     private UserProfile generateUserProfile() {
-        return new UserProfile().builder()
+        return UserProfile
+                .builder()
                 .id("1")
                 .email("test@test.com")
                 .education(generateEducationData())
