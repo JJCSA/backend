@@ -5,10 +5,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.util.ImageUtil;
@@ -103,13 +100,27 @@ public class AWSS3Service {
         Date expiration = new Date();
         expiration.setTime(expiration.getTime() + 10 * 30 * 40);
         try{
-            return
-                    amazonS3Client
-                            .generatePresignedUrl(
-                                    new GeneratePresignedUrlRequest(bucketName, documentURL)
-                                            .withMethod(HttpMethod.GET)
-                                            .withExpiration(expiration)
-                            ).toString();
+            if (documentURL == null) {
+                throw new IllegalArgumentException("documentURL must not be null!");
+            }
+
+            String extension = "";
+
+            int index = documentURL.lastIndexOf('.');
+            if (index > 0) {
+                extension = documentURL.substring(index + 1);
+            }
+            ResponseHeaderOverrides responseHeaders = new ResponseHeaderOverrides();
+            responseHeaders.setContentType("image/" +extension);
+            // Generate the presigned URL.
+            GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                    new GeneratePresignedUrlRequest(bucketName, documentURL)
+                            .withMethod(HttpMethod.GET)
+                            .withExpiration(expiration);
+
+            generatePresignedUrlRequest.setResponseHeaders(responseHeaders);
+
+           return (amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString());
         } catch (SdkClientException sdkClientException) {
             log.info("Error Occurred while getting pre-signed URL :{}, stack trace: {}" ,
                     sdkClientException.getMessage(), sdkClientException.getStackTrace());

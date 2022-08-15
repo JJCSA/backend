@@ -195,7 +195,7 @@ public class UserService {
     private UserDTO toUserDTO(User user) {
         UserDTO userDTO = userMapper.toUserDTO(user);
         userDTO.setUserRole(keycloakService.getUserRole(user.getId()));
-        userDTO.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getId(),user.getProfilePicture()));
+        userDTO.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getProfilePicture()));
         return userDTO;
     }
     /*
