@@ -1,5 +1,6 @@
 package com.jjcsa.controller.admin;
 
+import com.jjcsa.dto.UpdateUserStatusDto;
 import com.jjcsa.dto.UserDTO;
 import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.User;
@@ -59,10 +60,10 @@ public class AdminUserController {
         return userService.getCommunityProof(userId);
     }
     @PutMapping(path = "/status")
-    public boolean updateUserStatus(@RequestParam String userId, @RequestParam UserStatus status, KeycloakAuthenticationToken authenticationToken) {
+    public boolean updateUserStatus(@RequestBody UpdateUserStatusDto updateUserStatusDto, KeycloakAuthenticationToken authenticationToken) {
 
-        log.info("Find User for userId: {}", userId);
-        User user = userService.getUserById(userId);
+        log.info("Find User for userId: {}", updateUserStatusDto.getUserId());
+        User user = userService.getUserById(updateUserStatusDto.getUserId());
 
         if(isNull(user)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find user");
@@ -74,9 +75,9 @@ public class AdminUserController {
         User adminUser = userService.getUserById(token.getSubject());
         AdminAction adminAction = new AdminAction();
         adminAction.setFromUserId(adminUser.getId());
-        adminAction.setToUserId(userId);
+        adminAction.setToUserId(updateUserStatusDto.getUserId());
         adminAction.setDateOfAction(new Date());
 
-        return userService.updateUserStatus(user, status, adminAction);
+        return userService.updateUserStatus(user, updateUserStatusDto.getStatus(), adminAction);
     }
 }
