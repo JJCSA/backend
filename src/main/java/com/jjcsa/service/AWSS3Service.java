@@ -38,9 +38,6 @@ public class AWSS3Service {
     @Value("${spring.profiles.active:local}")
     private String activeProfiles;
 
-    @Value("${cloud.aws.s3.region}")
-    private String bucketRegion;
-
     private void createBucket() {
         log.debug("Creating S3 bucker with name: {}", bucketName);
         amazonS3Client.createBucket(bucketName);
