@@ -7,9 +7,9 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UpdateUserStatusDto {
-    @NotBlank
+    @NotBlank(message = "userId cannot be empty")
     private String userId;
 
-    @NotBlank
+    @NotBlank(message = "status should be a valid UserStatus -> Pending, NewUser, Active or Rejected")
     private UserStatus status;
 }
