@@ -23,6 +23,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -55,9 +58,9 @@ public class LoginController {
 
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(
-            @RequestParam("newUser") @NonNull final String newUserJSONString,
-            @RequestParam("jainProof") @NonNull final MultipartFile jainProofDoc,
-            @RequestParam("profPicture") @NonNull final MultipartFile profPicture) throws JsonProcessingException {
+            @RequestParam("newUser") @NotBlank(message = "newUser should not be blank") final String newUserJSONString,
+            @RequestParam("jainProof") @NotNull(message = "jainProofDoc cannot be null") final MultipartFile jainProofDoc,
+            @RequestParam("profPicture") @NotNull(message = "profPicture cannot be null") final MultipartFile profPicture) throws JsonProcessingException {
 
         AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
 
