@@ -30,6 +30,7 @@ public class UserProfileService {
     private final UserProfileMapper userProfileMapper;
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
+    private final AWSS3Service awss3Service;
 
     public UserProfile getUserProfile(String userId) {
         User user = userService.getUserById(userId);
@@ -56,7 +57,10 @@ public class UserProfileService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in Keycloak");
         }
 
-        return userProfileMapper.toUserProfile(user, userRole);
+        String profileS3Url = awss3Service.generateSignedURLFromS3(user.getProfilePicture());
+        log.info("Generated Pre Signed URL for Profile: {}", profileS3Url);
+
+        return userProfileMapper.toUserProfile(user, userRole, profileS3Url);
     }
 
     public UserProfile updateUserProfile(String userId, UserProfile updatedUserProfile) {
@@ -117,7 +121,9 @@ public class UserProfileService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in Keycloak");
         }
 
-        return userProfileMapper.toUserProfile(savedUser, userRole);
+        String profileS3Url = awss3Service.generateSignedURLFromS3(savedUser.getProfilePicture());
+        log.info("Generated pre signed URL :{} for user :{}", profileS3Url, savedUser.getFirstName());
+        return userProfileMapper.toUserProfile(savedUser, userRole, profileS3Url);
     }
 
     public UserProfile updateUserProfilePicture(User user, MultipartFile profPicture) {
@@ -131,6 +137,9 @@ public class UserProfileService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in Keycloak");
         }
 
-        return userProfileMapper.toUserProfile(savedUser, userRole);
+        String profileS3Url = awss3Service.generateSignedURLFromS3(savedUser.getProfilePicture());
+        log.info("Generated pre signed URL :{} for user :{}", profileS3Url, savedUser.getFirstName());
+
+        return userProfileMapper.toUserProfile(savedUser, userRole, profileS3Url);
     }
 }

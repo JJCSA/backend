@@ -193,7 +193,7 @@ public class UserService {
     private UserDTO toUserDTO(User user) {
         UserDTO userDTO = userMapper.toUserDTO(user);
         userDTO.setUserRole(keycloakService.getUserRole(user.getId()));
-        userDTO.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getId(),user.getProfilePicture()));
+        userDTO.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getProfilePicture()));
         return userDTO;
     }
     /*
@@ -327,7 +327,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to find user");
         }
         String communityProofUrl = null;
-        communityProofUrl = awss3Service.generateSignedURLFromS3(userId,user.getCommunityDocumentURL());
+        communityProofUrl = awss3Service.generateSignedURLFromS3(user.getCommunityDocumentURL());
         if(isNull(communityProofUrl)){
             log.error("Unable to fetch community proof for userId {}", userId);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to fetch community proof");
