@@ -80,7 +80,7 @@ public class UserProfileServiceTest {
 //        when(workExRepository.findAllByUser(any())).thenReturn(generateWorkExData());
         when(keycloakService.getUserRole(any())).thenReturn(UserRole.USER);
         UserProfile userProfile = generateUserProfile();
-        when(userProfileMapper.toUserProfile(any(), any())).thenReturn(userProfile);
+        when(userProfileMapper.toUserProfile(any(), any(), any())).thenReturn(userProfile);
 
         UserProfile response = userProfileService.getUserProfile("1");
         assertNotNull(response);

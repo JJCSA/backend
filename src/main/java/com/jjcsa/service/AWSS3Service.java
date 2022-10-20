@@ -1,14 +1,11 @@
 package com.jjcsa.service;
 
-import com.amazonaws.*;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.HttpMethod;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.util.ImageUtil;
@@ -18,12 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.time.Instant;
+import java.util.Date;
 
 @Slf4j
 @Service
@@ -97,30 +91,36 @@ public class AWSS3Service {
         documentURL corresponds to user profile pic/community proof
         To-do: Need to come up with better name
      */
-    public String generateSignedURLFromS3(String userId, String documentURL){
-          URL url = null;
-        try {
-            // Set the presigned URL to expire after 10 sec.
-            java.util.Date expiration = new java.util.Date();
-            long expTimeMillis = expiration.getTime();
-            expTimeMillis += 10 * 30 * 40;
-            expiration.setTime(expTimeMillis);
+    public String generateSignedURLFromS3(String documentURL) {
+        Date expiration = new Date();
+        expiration.setTime(expiration.getTime() + 10 * 30 * 40);
+        try{
+            if (documentURL == null) {
+                throw new IllegalArgumentException("documentURL must not be null!");
+            }
+
+            String extension = "";
+
+            int index = documentURL.lastIndexOf('.');
+            if (index > 0) {
+                extension = documentURL.substring(index + 1);
+            }
+            ResponseHeaderOverrides responseHeaders = new ResponseHeaderOverrides();
+            responseHeaders.setContentType("image/" +extension);
             // Generate the presigned URL.
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucketName, documentURL)
                             .withMethod(HttpMethod.GET)
                             .withExpiration(expiration);
-             url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
-        } catch (AmazonServiceException e) {
-            // The call was transmitted successfully, but Amazon S3 couldn't process
-            // it, so it returned an error response.
-            e.printStackTrace();
-        } catch (SdkClientException e) {
-            // Amazon S3 couldn't be contacted for a response, or the client
-            // couldn't parse the response from Amazon S3.
-            e.printStackTrace();
+
+            generatePresignedUrlRequest.setResponseHeaders(responseHeaders);
+
+            return (amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString());
+        } catch (SdkClientException sdkClientException) {
+            log.info("Error Occurred while getting pre-signed URL :{}, stack trace: {}" ,
+                    sdkClientException.getMessage(), sdkClientException.getStackTrace());
         }
-        return url.toString();
+        return null;
     }
 
     public void deleteFile(String objectKey) {

@@ -13,9 +13,10 @@ public interface UserProfileMapper {
     @Mappings({
             @Mapping(source = "user.educationList", target = "education"),
             @Mapping(source = "userRole", target = "userRole"),
-            @Mapping(source = "user.userStudent", target = "userStudent")
+            @Mapping(source = "user.userStudent", target = "userStudent"),
+            @Mapping(source = "profileS3Url", target = "profilePicture")
     })
-    UserProfile toUserProfile(User user, UserRole userRole);
+    UserProfile toUserProfile(User user, UserRole userRole, String profileS3Url);
 
     @Mappings({
             @Mapping(source = "userProfile.education", target = "educationList"),
