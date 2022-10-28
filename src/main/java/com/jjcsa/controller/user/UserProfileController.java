@@ -1,5 +1,6 @@
 package com.jjcsa.controller.user;
 
+import com.jjcsa.dto.UpdateUserPictureDto;
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.model.User;
 import com.jjcsa.service.AWSS3Service;
@@ -51,7 +52,7 @@ public class UserProfileController {
     }
 
     @PutMapping("/profPicture")
-    public UserProfile updateUserProfilePicture(@RequestParam("profPicture") MultipartFile profPicture,
+    public UserProfile updateUserProfilePicture(@RequestBody UpdateUserPictureDto updateUserPictureDto,
                                                 KeycloakAuthenticationToken authenticationToken) {
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
@@ -61,7 +62,7 @@ public class UserProfileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find user");
         }
         
-        UserProfile updatedUserProfile = userProfileService.updateUserProfilePicture(user, profPicture);
+        UserProfile updatedUserProfile = userProfileService.updateUserProfilePicture(user, updateUserPictureDto.getProfPicture());
 
         return updatedUserProfile;
     }

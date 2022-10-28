@@ -81,7 +81,7 @@ public class UserProfileMapperTest {
         user.setEducationList(generateEducationData());
         user.setWorkExperience(generateWorkExData());
 
-        UserProfile response = mapper.toUserProfile(user, UserRole.USER);
+        UserProfile response = mapper.toUserProfile(user, UserRole.USER, user.getProfilePicture());
         assertNotNull(response);
         assertEquals(response.getId(), uuid);
         assertEquals(response.getEmail(), "test@test.com");
