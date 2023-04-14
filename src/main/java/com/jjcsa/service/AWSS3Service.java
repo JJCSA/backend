@@ -32,7 +32,7 @@ public class AWSS3Service {
     @Value("${spring.profiles.active:local}")
     private String activeProfiles;
 
-    @Value("${cloud.aws.s3.region}")
+    @Value("${cloud.aws.s3.region:us-east-2}")
     private String bucketRegion;
 
     private void createBucket() {
