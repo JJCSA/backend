@@ -28,7 +28,9 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -196,6 +198,23 @@ public class UserService {
         userDTO.setProfilePicture(awss3Service.generateSignedURLFromS3(user.getProfilePicture()));
         return userDTO;
     }
+
+    public Map<String, Integer> getStatusCountForAnalytics() {
+        List<UserDTO> users = getAllUsers();
+        Map<String, Integer> statusCount = new HashMap<>();
+        for (UserDTO user : users) {
+            String status = user.getUserStatus().toString();
+            if (statusCount.containsKey(status)) {
+                statusCount.put(status, statusCount.get(status) + 1);
+            } else {
+                statusCount.put(status, 1);
+            }
+        }
+        statusCount.put("Total", users.size());
+        return statusCount;
+    }
+
+
     /*
      * Updates user's status with the given status
      * returns true if successful
