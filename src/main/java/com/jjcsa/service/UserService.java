@@ -10,6 +10,7 @@ import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
 import com.jjcsa.model.WorkEx;
 import com.jjcsa.model.enumModel.Action;
+import com.jjcsa.model.enumModel.Event;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.AdminActionRepository;
 import com.jjcsa.repository.UserRepository;
@@ -44,6 +45,7 @@ public class UserService {
     private final AdminActionRepository adminActionRepository;
     private final KeycloakService keycloakService;
     private final UserMapper userMapper;
+    private final EmailSenderService emailSenderService;
 
     public User getUser(String email) {
         return userRepository.findUserByEmail(email);
@@ -253,6 +255,8 @@ public class UserService {
 
                 deleteUser(user);
                 adminActionRepository.save(adminAction);
+
+                emailSenderService.sendEmail(user, Event.REJECTED);
                 return true;
         }
 
@@ -261,6 +265,16 @@ public class UserService {
         user.setUserStatus(status);
         userRepository.save(user);
         adminActionRepository.save(adminAction);
+
+        Event event = Event.resolveEmailEventUsingAdminAction(adminAction.getAction());
+
+        if(event != null) {
+            log.info("Sending Email for Event: {} for user:{}", event, user.getFirstName());
+            // Send an email notification for Approved User
+            emailSenderService.sendEmail(user, event);
+        } else {
+            log.info("Can not resolve email event for admin action :{}", adminAction.getAction());
+        }
 
         return true;
     }
