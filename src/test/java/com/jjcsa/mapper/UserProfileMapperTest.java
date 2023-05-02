@@ -28,6 +28,8 @@ public class UserProfileMapperTest {
 
     @Spy UserProfileMapperImpl mapper;
 
+    private static final String MOCK_S3_URL = "mock-url";
+
     private List<Education> generateEducationData() {
         return Arrays.asList(
                 new Education().builder()
@@ -43,7 +45,7 @@ public class UserProfileMapperTest {
 
     private List<WorkEx> generateWorkExData() {
         return Arrays.asList(
-                new WorkEx().builder()
+                WorkEx.builder()
                     .expId(UUID.randomUUID())
                     .companyName("XYZ")
                     .role("SDE")
@@ -58,7 +60,7 @@ public class UserProfileMapperTest {
         String uuid = UUID.randomUUID().toString();
         Date date = new Date();
 
-        User user = new User().builder()
+        User user = User.builder()
                 .id(uuid)
                 .email("test@test.com")
                 .firstName("fname")
@@ -98,7 +100,7 @@ public class UserProfileMapperTest {
         assertEquals(response.getState(), "test state");
         assertEquals(response.getZip(), "123456");
         assertEquals(response.getDateOfBirth(), date);
-        assertEquals(response.getProfilePicture(), "xyz.com/prof.jpg");
+        assertEquals(response.getProfilePicture(), MOCK_S3_URL);
         assertEquals(response.getSocialMediaPlatform(), "Facebook");
         assertEquals(response.getVolunteeringInterest(), VolunteeringInterest.Yes);
         assertEquals(response.getLinkedinUrl(), "linked.com/xyz");
