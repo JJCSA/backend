@@ -18,6 +18,7 @@ import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,9 @@ public class UserService {
     private final KeycloakService keycloakService;
     private final UserMapper userMapper;
     private final EmailSenderService emailSenderService;
+
+    @Value("${show-community-proof:false}")
+    private boolean showCommunityProof;
 
     public User getUser(String email) {
         return userRepository.findUserByEmail(email);
@@ -89,15 +93,19 @@ public class UserService {
                     "",
                     "");
 
-        String jainProofDocURL = saveJainProofForUserProfile(user, jainProofDoc);
-        if (jainProofDocURL == null) {
-            throw new UnknownServerErrorException(
-                    "Unable to save Jain Proof Doc to S3",
-                    "Jain Proof Doc upload failed!",
-                    "Please try again later",
-                    "Please retry action later",
-                    "");
+        if(showCommunityProof){
+            String jainProofDocURL = saveJainProofForUserProfile(user, jainProofDoc);
+            if (jainProofDocURL == null) {
+                throw new UnknownServerErrorException(
+                        "Unable to save Jain Proof Doc to S3",
+                        "Jain Proof Doc upload failed!",
+                        "Please try again later",
+                        "Please retry action later",
+                        "");
+            }
+            user.setCommunityDocumentURL(jainProofDocURL);
         }
+
 
         String profPictureURL = saveProfilePictureForUserProfile(user, profPicture);
         if (profPictureURL == null) {
@@ -109,7 +117,6 @@ public class UserService {
                     "");
         }
 
-        user.setCommunityDocumentURL(jainProofDocURL);
         user.setProfilePicture(profPictureURL);
         return user;
     }
