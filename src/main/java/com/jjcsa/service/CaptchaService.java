@@ -19,7 +19,7 @@ import java.net.URLEncoder;
 @RequiredArgsConstructor
 public class CaptchaService {
 
-    @Value("${google.recaptcha.secret}")
+    @Value("${google.recaptcha.secret:}")
     private String reCaptchaSecret;
 
     public boolean verifyCaptcha(String recaptchaToken) throws IOException {
