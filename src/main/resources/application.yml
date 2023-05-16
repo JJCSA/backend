@@ -62,3 +62,7 @@ frontend:
 
 feature-flag:
   show-community-proof : false
+
+google:
+  recaptcha:
+    secret:
