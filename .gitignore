@@ -36,7 +36,3 @@ hs_err_pid*
 ### AWS ###
 
 .DS_Store
-
-####
-application-local.yml
-application-stage.yml
