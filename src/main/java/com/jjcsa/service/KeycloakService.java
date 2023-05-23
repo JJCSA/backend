@@ -6,6 +6,7 @@ import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.util.KeycloakConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -151,6 +152,23 @@ public class KeycloakService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
         }
 
+        return true;
+    }
+
+    /**
+     * This method is only created to flush data for local development, please dont use this method for other purposes
+     * @return Whether all users were deleted in keycloak
+     */
+    public Boolean deleteAllUsers() {
+        UsersResource usersResource = getKeycloakRealmResource().users();
+        List<UserRepresentation> allUsers = usersResource.list();
+        for (UserRepresentation u : allUsers) {
+            if (StringUtils.equalsIgnoreCase(u.getUsername(), keycloakUsername)) {
+                // skip deleting the admin user
+                continue;
+            }
+            usersResource.delete(u.getId());
+        }
         return true;
     }
 
