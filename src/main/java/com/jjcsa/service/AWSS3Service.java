@@ -97,6 +97,11 @@ public class AWSS3Service {
      * @return generated pre-signed URL from S3
      */
     public String generateSignedURLFromS3(String documentURL) {
+
+        if(activeProfiles.contains("local")) {
+            return "localUrl";
+        }
+
         Date expiration = new Date();
         expiration.setTime(expiration.getTime() + 10 * 30 * 40);
         try{
