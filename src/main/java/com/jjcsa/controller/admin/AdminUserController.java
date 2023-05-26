@@ -80,4 +80,28 @@ public class AdminUserController {
 
         return userService.updateUserStatus(user, updateUserStatusDto.getStatus(), adminAction);
     }
+
+    @PostMapping(path = "/{userId}/regional-contact")
+    public Boolean updateUserRegionalContact(@PathVariable String userId,
+                                             @RequestParam Boolean isRegionalContact,
+                                             KeycloakAuthenticationToken authToken) {
+
+        log.info("Find User for userId: {}", userId);
+        User user = userService.getUserById(userId);
+
+        if(isNull(user)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find user");
+        }
+
+        SimpleKeycloakAccount account = (SimpleKeycloakAccount) authToken.getDetails();
+        AccessToken token = account.getKeycloakSecurityContext().getToken();
+
+        User adminUser = userService.getUserById(token.getSubject());
+        AdminAction adminAction = new AdminAction();
+        adminAction.setFromUserId(adminUser.getId());
+        adminAction.setToUserId(userId);
+        adminAction.setDateOfAction(new Date());
+
+        return userService.updateUserRegionalContact(user, isRegionalContact, adminAction);
+    }
 }
