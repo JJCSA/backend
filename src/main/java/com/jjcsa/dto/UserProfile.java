@@ -2,10 +2,7 @@ package com.jjcsa.dto;
 
 import com.jjcsa.model.Education;
 import com.jjcsa.model.WorkEx;
-import com.jjcsa.model.enumModel.ContactMethod;
-import com.jjcsa.model.enumModel.UserRole;
-import com.jjcsa.model.enumModel.UserStatus;
-import com.jjcsa.model.enumModel.VolunteeringInterest;
+import com.jjcsa.model.enumModel.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,7 +39,9 @@ public class UserProfile {
     private String socialMediaPlatform;
     private VolunteeringInterest volunteeringInterest;
     private String linkedinUrl;
-    private boolean userStudent;
+    private Boolean userStudent;
+    private Gender gender;
+    private String aboutMe;
 
     private List<Education> education;
     private List<WorkEx> workExperience;
