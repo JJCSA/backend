@@ -290,4 +290,45 @@ public class KeycloakService {
 
         return true;
     }
+
+    // hacky way to validate user password by trying to login using the provided credentials
+    private Boolean verifyUserPassword(String email, String password) {
+        try {
+            Keycloak keycloak = KeycloakBuilder.builder()
+                    .serverUrl(keycloakServerUrl)
+                    .realm(KeycloakConstants.KEYCLOAK_REALM_NAME)
+                    .username(email)
+                    .password(password)
+                    .clientId(KeycloakConstants.KEYCLOAK_CLIENT)
+                    .build();
+            String token = keycloak.tokenManager().getAccessToken().getToken();
+            return token != null;
+        } catch (Exception ex) {
+            return false;
+        }
+
+    }
+
+    public Boolean verifyAndUpdateUserPassword(User user, String oldPassword, String newPassword) {
+
+        // Validate old password
+        boolean oldPasswordMatch = verifyUserPassword(user.getEmail(), oldPassword);
+
+        if (!oldPasswordMatch) {
+            log.error("User's {} old password does not match", user.getId());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Old password does not match");
+        }
+
+        // Update password
+        UserResource userResource = getUserResource(user.getId());
+
+        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+        credentialRepresentation.setTemporary(false);
+        credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+        credentialRepresentation.setValue(newPassword);
+
+        userResource.resetPassword(credentialRepresentation);
+
+        return true;
+    }
 }
