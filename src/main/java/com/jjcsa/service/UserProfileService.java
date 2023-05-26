@@ -76,6 +76,12 @@ public class UserProfileService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pending User cannot update Profile");
         }
 
+        // Validate Gender
+        if (user.getGender() != null && !user.getGender().equals(updatedUserProfile.getGender())) {
+            // once set cannot update gender
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update gender once set");
+        }
+
         // Update user
         user.setFirstName(updatedUserProfile.getFirstName());
         user.setMiddleName(updatedUserProfile.getMiddleName());
@@ -92,7 +98,9 @@ public class UserProfileService {
         user.setSocialMediaPlatform(updatedUserProfile.getSocialMediaPlatform());
         user.setVolunteeringInterest(updatedUserProfile.getVolunteeringInterest());
         user.setLinkedinUrl(updatedUserProfile.getLinkedinUrl());
-        user.setUserStudent(updatedUserProfile.isUserStudent());
+        user.setUserStudent(updatedUserProfile.getUserStudent());
+        user.setAboutMe(updatedUserProfile.getAboutMe());
+        user.setGender(updatedUserProfile.getGender());
 
         if (!CollectionUtils.isEmpty(updatedUserProfile.getEducation())) {
             updatedUserProfile.getEducation().forEach(e -> e.setUser(user));
