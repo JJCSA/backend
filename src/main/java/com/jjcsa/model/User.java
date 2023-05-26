@@ -114,6 +114,9 @@ public class User {
     @Transient
     private UserRole userRole;
 
+    @Column(name = "is_regional_contact")
+    private Boolean isRegionalContact;
+
     // *********************************************** //
     // Enumerations
     // *********************************************** //
