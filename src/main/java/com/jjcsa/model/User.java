@@ -7,10 +7,7 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.jjcsa.model.enumModel.ContactMethod;
-import com.jjcsa.model.enumModel.UserRole;
-import com.jjcsa.model.enumModel.UserStatus;
-import com.jjcsa.model.enumModel.VolunteeringInterest;
+import com.jjcsa.model.enumModel.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,22 +21,22 @@ import javax.validation.constraints.Pattern;
 @Data
 @Builder
 public class User {
-    @Id
-    private String id;
 
-    private String email;
+    // *********************************************** //
+    // Constructors
+    // *********************************************** //
 
     public User(String email) {
         this.email = email;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Education> educationList;
+    // *********************************************** //
+    // Properties
+    // *********************************************** //
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<WorkEx> workExperience;
+    @Id
+    private String id;
+    private String email;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "last_updated_date", columnDefinition = "varchar(45) default '11/11/1111'")
@@ -48,7 +45,7 @@ public class User {
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "date_approved", columnDefinition = "varchar(45) default '11/11/1111'")
     private Date approvedDate;
-    
+
     @Column(name = "first_name", columnDefinition = "varchar(45) default ''")
     private String firstName;
 
@@ -61,19 +58,11 @@ public class User {
     @Column(name = "mobile", columnDefinition = "varchar(20) default '9999999999'")
     private String mobileNumber;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "contact_method", columnDefinition = "varchar(45) default 'Whatsapp'")
-    private ContactMethod contactMethod;
-
     @Column(name = "community_name", columnDefinition = "varchar(100) default ''")
     private String communityName;
 
     @Column(name = "community_document_url", columnDefinition = "varchar(100) default ''")
     private String communityDocumentURL;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_status", columnDefinition = "varchar(45) default 'Pending'")
-    private UserStatus userStatus;
 
     @Column(columnDefinition = "varchar(45) default ''")
     private String street;
@@ -98,10 +87,6 @@ public class User {
     @Column(name = "socialmedia_platform", columnDefinition = "varchar(45) default ''")
     private String socialMediaPlatform;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "volunteering_interest", columnDefinition = "varchar(45) default 'No'")
-    private VolunteeringInterest volunteeringInterest;
-
     @Column(name = "loan_taken", columnDefinition = "boolean default false")
     private boolean loanTaken;
 
@@ -113,7 +98,7 @@ public class User {
 
     @Column(columnDefinition = "varchar(256) default ''")
     private String description;
-    
+
     @Column(name = "contact_share", columnDefinition = "boolean default false")
     private boolean contactShared;
 
@@ -121,8 +106,47 @@ public class User {
     private String country;
 
     @Column(name = "is_user_student")
-    private boolean userStudent;
+    private Boolean userStudent;
+
+    @Column(name = "about_me")
+    private String aboutMe;
 
     @Transient
     private UserRole userRole;
+
+    @Column(name = "is_regional_contact")
+    private Boolean isRegionalContact;
+
+    // *********************************************** //
+    // Enumerations
+    // *********************************************** //
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "contact_method", columnDefinition = "varchar(45) default 'Whatsapp'")
+    private ContactMethod contactMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_status", columnDefinition = "varchar(45) default 'Pending'")
+    private UserStatus userStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "volunteering_interest", columnDefinition = "varchar(45) default 'No'")
+    private VolunteeringInterest volunteeringInterest;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
+    private Gender gender;
+
+    // *********************************************** //
+    // Relations
+    // *********************************************** //
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Education> educationList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<WorkEx> workExperience;
+
 }   

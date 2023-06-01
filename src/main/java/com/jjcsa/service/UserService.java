@@ -287,6 +287,33 @@ public class UserService {
     }
 
     /*
+     * Updates user's is_regional_contact column
+     * returns true if successful
+     */
+    public boolean updateUserRegionalContact(User user, Boolean isRegionalContact, AdminAction adminAction) {
+
+        if (isRegionalContact) {
+            adminAction.setAction(Action.SET_USER_AS_REGIONAL_CONTACT);
+            adminAction.setDescrip(
+                    String.format("User with email %s set as Regional Contact by Admin %s",
+                            user.getEmail(), adminAction.getFromUserId()));
+        } else {
+            adminAction.setAction(Action.UNSET_USER_AS_REGIONAL_CONTACT);
+            adminAction.setDescrip(
+                    String.format("User with email %s removed as Regional Contact by Admin %s",
+                            user.getEmail(), adminAction.getFromUserId()));
+        }
+
+        log.info("Updating user's is_regional_contact from {} to {}", user.getIsRegionalContact(), isRegionalContact);
+
+        user.setIsRegionalContact(isRegionalContact);
+        userRepository.save(user);
+        adminActionRepository.save(adminAction);
+
+        return true;
+    }
+
+    /*
      * Checks if User finished on-boarding profile
      */
     public boolean hasUserCompletedOnboardingProfile(User user) {
@@ -323,7 +350,8 @@ public class UserService {
         }
 
         // validate work exp
-        if (!user.isUserStudent()) {
+        if (user.getUserStudent() == null
+            || (user.getUserStudent() != null && !user.getUserStudent())) {
             List<WorkEx> workExperiences = user.getWorkExperience();
             if (CollectionUtils.isEmpty(workExperiences)) return false;
 
