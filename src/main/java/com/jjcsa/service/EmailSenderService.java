@@ -5,8 +5,7 @@ import com.amazonaws.services.simpleemail.model.*;
 import com.google.common.collect.Lists;
 import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.Event;
-import liquibase.pro.packaged.D;
+import com.jjcsa.model.enumModel.EmailEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +47,7 @@ public class EmailSenderService {
             }
         }
         log.info("Failed Count:{}, Destinations Failed:{}", failedDestination.size() * batchSize, failedDestination);
-        return destinationList.size() * batchSize;
+        return failedDestination.size() * batchSize;
     }
 
     /**
@@ -57,8 +56,9 @@ public class EmailSenderService {
      * @param emailEvent event for which email should be triggered
      * @return the number of failed email deliveries.
      */
-    public int sendEmail(User user, Event emailEvent){
-        return this.sendEmail(user, emailEvent,Collections.EMPTY_LIST,Collections.EMPTY_LIST);
+    public int sendEmail(User user, EmailEvent emailEvent){
+        log.info("Triggering Email Event:{} for user:{}(Id:{})", emailEvent, user.getEmail(), user.getId());
+        return this.sendEmail(user, emailEvent,Collections.emptyList(),Collections.emptyList());
     }
 
     /**
@@ -69,9 +69,9 @@ public class EmailSenderService {
      * @param bccAddressList bcc email Address
      * @return the number of failed email deliveries.
      */
-    public int sendEmail(User user, Event emailEvent, List<String> ccAddressList, List<String> bccAddressList) {
+    public int sendEmail(User user, EmailEvent emailEvent, List<String> ccAddressList, List<String> bccAddressList) {
         List<Destination> destinationList = this.resolveDestination(bccAddressList,ccAddressList,Collections.singletonList(user.getEmail()));
-        Message message = this.resolveMessage(user, emailEvent.name());
+        Message message = this.resolveMessage(user, emailEvent.getName());
         log.info("Message resolved:{}", message);
         int failed = this.sendEmail(destinationList, message, fromEmailAddress);
         log.info("Email Failures:{}",failed);
@@ -116,19 +116,19 @@ public class EmailSenderService {
         List<Destination> destinationList = new ArrayList<>();
         List<List<String>> bccAddressBatches = Lists.partition(bccAddressList, batchSize);
         for(List<String> address: bccAddressBatches) {
-            destinationList.add(this.getDestination(address,Collections.EMPTY_LIST, Collections.EMPTY_LIST));
+            destinationList.add(this.getDestination(address,Collections.emptyList(), Collections.emptyList()));
         }
         if(ccAddressList.size() + toAddressList.size() <= batchSize){
-            destinationList.add(this.getDestination(Collections.EMPTY_LIST, ccAddressList, toAddressList));
+            destinationList.add(this.getDestination(Collections.emptyList(), ccAddressList, toAddressList));
             return destinationList;
         }
         List<List<String>> ccAddressBatches = Lists.partition(ccAddressList, batchSize);
         List<List<String>> toAddressBatches = Lists.partition(toAddressList, batchSize);
         for(List<String> address: toAddressBatches) {
-            destinationList.add(this.getDestination(Collections.EMPTY_LIST, Collections.EMPTY_LIST, address));
+            destinationList.add(this.getDestination(Collections.emptyList(), Collections.emptyList(), address));
         }
         for(List<String> address: ccAddressBatches) {
-            destinationList.add(this.getDestination(Collections.EMPTY_LIST, address, Collections.EMPTY_LIST));
+            destinationList.add(this.getDestination(Collections.emptyList(), address, Collections.emptyList()));
         }
         return destinationList;
     }

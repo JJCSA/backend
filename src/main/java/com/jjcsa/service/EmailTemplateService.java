@@ -3,7 +3,7 @@ package com.jjcsa.service;
 import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.EmailTemplate;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.Event;
+import com.jjcsa.model.enumModel.EmailEvent;
 import com.jjcsa.repository.EmailTemplateRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class EmailTemplateService {
         context.setVariables(params);
         String resolvedBody = this.resolveTemplate(context, templateBody);
 
-        log.info("User:{} , Resoled Body:{}, params:{}", user.getFirstName(), resolvedBody, params);
+        log.info("User:{} , Resolved Body:{}, params:{}", user.getFirstName(), resolvedBody, params);
         return EmailTemplateDto.builder()
                 .body(resolvedBody)
                 .subject(template.getEmailSubject())
@@ -50,7 +50,7 @@ public class EmailTemplateService {
     }
 
     public EmailTemplateDto resolveTemplateForForgotPasswordEmail(String email, String link) {
-        EmailTemplate template = emailTemplateRepository.findByTemplateName(Event.FORGOT_PASSWORD.name());
+        EmailTemplate template = emailTemplateRepository.findByTemplateName(EmailEvent.FORGOT_PW.getName());
         String templateBody = template.getEmailBody();
 
         Map<String, Object> params = new HashMap<>();
@@ -61,6 +61,8 @@ public class EmailTemplateService {
         context.setLocale(Locale.ENGLISH);
         context.setVariables(params);
         String resolvedBody = this.resolveTemplate(context, templateBody);
+
+        log.info("User:{}, Resolved Body:{}", email, resolvedBody);
 
         return EmailTemplateDto.builder()
                 .body(resolvedBody)

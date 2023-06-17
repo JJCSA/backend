@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
-import com.jjcsa.model.enumModel.Event;
+import com.jjcsa.model.enumModel.EmailEvent;
 import com.jjcsa.service.KeycloakService;
 import com.jjcsa.service.EmailSenderService;
 import com.jjcsa.service.UserService;
@@ -66,7 +66,7 @@ public class LoginController {
 
         User user = userService.saveUser(addNewUser, jainProofDoc, profPicture);
 
-        emailSenderService.sendEmail(user, Event.REGISTRATION);
+        emailSenderService.sendEmail(user, EmailEvent.REGISTRATION);
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }
 }
