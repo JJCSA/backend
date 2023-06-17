@@ -3,10 +3,8 @@ package com.jjcsa.controller.user;
 import com.jjcsa.dto.UpdateUserPictureDto;
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.model.User;
-import com.jjcsa.service.AWSS3Service;
-import com.jjcsa.service.KeycloakService;
-import com.jjcsa.service.UserProfileService;
-import com.jjcsa.service.UserService;
+import com.jjcsa.model.enumModel.EmailEvent;
+import com.jjcsa.service.*;
 import com.jjcsa.util.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +30,7 @@ public class UserProfileController {
     private final UserService userService;
     private final AWSS3Service awss3Service;
     private final KeycloakService keycloakService;
+    private final EmailSenderService emailSenderService;
 
     @GetMapping()
     public UserProfile getUserProfile(KeycloakAuthenticationToken authenticationToken) {
@@ -49,9 +48,7 @@ public class UserProfileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update email address");
         }
 
-        UserProfile updatedUserProfile = userProfileService.updateUserProfile(token.getSubject(), userProfile);
-
-        return updatedUserProfile;
+        return userProfileService.updateUserProfile(token.getSubject(), userProfile);
     }
 
     @PutMapping("/profPicture")
@@ -65,10 +62,9 @@ public class UserProfileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find user");
         }
         
-        UserProfile updatedUserProfile = userProfileService.updateUserProfilePicture(user, updateUserPictureDto.getProfPicture());
-
-        return updatedUserProfile;
+        return userProfileService.updateUserProfilePicture(user, updateUserPictureDto.getProfPicture());
     }
+
     @GetMapping("/profPicture")
     public byte[] getProfilePicture(KeycloakAuthenticationToken authenticationToken){
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
@@ -101,7 +97,10 @@ public class UserProfileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot find user");
         }
 
-        return keycloakService.verifyAndUpdateUserPassword(user, oldPassword, newPassword);
+        boolean pwUpdated = keycloakService.verifyAndUpdateUserPassword(user, oldPassword, newPassword);
+        emailSenderService.sendEmail(user, pwUpdated ? EmailEvent.PW_UPDATE : EmailEvent.PW_UPDATE_FAILED);
+
+        return pwUpdated;
     }
 
 }

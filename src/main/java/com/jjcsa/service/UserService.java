@@ -8,7 +8,7 @@ import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
 import com.jjcsa.model.WorkEx;
 import com.jjcsa.model.enumModel.Action;
-import com.jjcsa.model.enumModel.Event;
+import com.jjcsa.model.enumModel.EmailEvent;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.AdminActionRepository;
 import com.jjcsa.repository.UserRepository;
@@ -208,6 +208,7 @@ public class UserService {
 
                 adminAction.setAction(Action.APPROVE_USER);
                 adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));
+                emailSenderService.sendEmail(user, EmailEvent.APPROVED);
                 break;
             case Active:
                 if (currentStatus.equals(UserStatus.Pending)
@@ -230,7 +231,7 @@ public class UserService {
                 deleteUser(user);
                 adminActionRepository.save(adminAction);
 
-                emailSenderService.sendEmail(user, Event.REJECTED);
+                emailSenderService.sendEmail(user, EmailEvent.REJECTED);
                 return true;
         }
 
@@ -240,12 +241,12 @@ public class UserService {
         userRepository.save(user);
         adminActionRepository.save(adminAction);
 
-        Event event = Event.resolveEmailEventUsingAdminAction(adminAction.getAction());
+        EmailEvent emailEvent = EmailEvent.resolveEmailEventUsingAdminAction(adminAction.getAction());
 
-        if(event != null) {
-            log.info("Sending Email for Event: {} for user:{}", event, user.getFirstName());
+        if(emailEvent != null) {
+            log.info("Sending Email for Event: {} for user:{}", emailEvent, user.getFirstName());
             // Send an email notification for Approved User
-            emailSenderService.sendEmail(user, event);
+            emailSenderService.sendEmail(user, emailEvent);
         } else {
             log.info("Can not resolve email event for admin action :{}", adminAction.getAction());
         }
