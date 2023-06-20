@@ -22,7 +22,7 @@ public class JJCSearchDTO {
     private String universityName;
     private String workRole;
     private String linkedinUrl;
-    private boolean isRegionalContact;
+    private Boolean isRegionalContact;
     private String aboutMe;
     private String profilePicture;
 
