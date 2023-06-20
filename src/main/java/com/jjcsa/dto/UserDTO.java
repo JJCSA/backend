@@ -43,7 +43,7 @@ public class UserDTO {
     private String zip;
     private Date dateOfBirth;
     private String socialMediaPlatform;
-    private VolunteeringInterest volunteeringInterest;
+    private String volunteeringInterest;
     private Boolean loanTaken;
     private String loanOrganization;
     private String linkedinUrl;

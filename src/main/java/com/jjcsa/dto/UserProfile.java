@@ -37,7 +37,7 @@ public class UserProfile {
     private Date dateOfBirth;
     private String profilePicture;
     private String socialMediaPlatform;
-    private VolunteeringInterest volunteeringInterest;
+    private String volunteeringInterest;
     private String linkedinUrl;
     private Boolean userStudent;
     private Gender gender;

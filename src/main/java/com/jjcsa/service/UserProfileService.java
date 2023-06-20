@@ -11,11 +11,15 @@ import com.jjcsa.repository.UserRepository;
 import com.jjcsa.repository.WorkExRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Arrays;
+import java.util.Set;
 
 import static java.util.Objects.isNull;
 
@@ -31,6 +35,8 @@ public class UserProfileService {
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
     private final AWSS3Service awss3Service;
+
+    private final static Set<String> VOLUNTEERINGINTEREST = Set.of("WEBSITE","MARKETING","STUDENTWELFARE","ALUMNIWELFARE","ADMIN");
 
     public UserProfile getUserProfile(String userId) {
         User user = userService.getUserById(userId);
@@ -81,6 +87,21 @@ public class UserProfileService {
             // once set cannot update gender
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update gender once set");
         }
+
+        // Validate Volunteering Interest
+        if(StringUtils.isNotEmpty(updatedUserProfile.getVolunteeringInterest())){
+            for (String v : updatedUserProfile.getVolunteeringInterest().split(",")) {
+                log.info("V {}", v);
+                if (!VOLUNTEERINGINTEREST.contains(v)) {
+                    throw new BadRequestException("Volunteering Interest not valid",
+                            "No Volunteering Interest found ",
+                            "",
+                            "",
+                            "");
+                }
+            }
+        }
+
 
         // Update user
         user.setFirstName(updatedUserProfile.getFirstName());
