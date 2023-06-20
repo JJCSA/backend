@@ -18,7 +18,6 @@ public class JJCSearch implements Serializable {
 
     @Id
     @Column(name = "USER_ID")
-    @JsonIgnore
     private String userId;
 
     @Column(name = "NAME")
@@ -42,7 +41,12 @@ public class JJCSearch implements Serializable {
     @Column(name = "LINKEDIN_URL")
     private String linkedinUrl;
 
-    // This will be false as boolean does not support null values. Null will be treated as false
-    @Transient
+    @Column(name = "IS_REGIONAL_CONTACT")
     private boolean isRegionalContact;
+
+    @Column(name = "ABOUT_ME")
+    private String aboutMe;
+
+    @Column(name = "profile_picture_url")
+    private String profilePicture;
 }

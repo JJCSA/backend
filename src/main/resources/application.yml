@@ -60,8 +60,7 @@ email:
 frontend:
   forgotPasswordURL: localhost:5000/forgot-password-reset
 
-feature-flag:
-  show-community-proof : false
+show-community-proof : false
 
 google:
   recaptcha:
