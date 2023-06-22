@@ -7,7 +7,6 @@ import com.jjcsa.model.WorkEx;
 import com.jjcsa.model.enumModel.ContactMethod;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
-import com.jjcsa.model.enumModel.VolunteeringInterest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
@@ -75,9 +74,9 @@ public class UserProfileMapperTest {
                 .state("test state")
                 .zip("123456")
                 .dateOfBirth(date)
-                .profilePicture("xyz.com/prof.jpg")
+                .profilePicture(MOCK_S3_URL)
                 .socialMediaPlatform("Facebook")
-                .volunteeringInterest(VolunteeringInterest.Yes)
+                .volunteeringInterest("Website,Admin")
                 .linkedinUrl("linked.com/xyz")
                 .build();
         user.setEducationList(generateEducationData());
@@ -102,7 +101,7 @@ public class UserProfileMapperTest {
         assertEquals(response.getDateOfBirth(), date);
         assertEquals(response.getProfilePicture(), MOCK_S3_URL);
         assertEquals(response.getSocialMediaPlatform(), "Facebook");
-        assertEquals(response.getVolunteeringInterest(), VolunteeringInterest.Yes);
+        assertEquals(response.getVolunteeringInterest(), "Website,Admin");
         assertEquals(response.getLinkedinUrl(), "linked.com/xyz");
         assertEquals(response.getEducation().size(), 1);
         assertEquals(response.getWorkExperience().size(), 1);
@@ -147,7 +146,7 @@ public class UserProfileMapperTest {
                 .dateOfBirth(date)
                 .profilePicture("xyz.com/prof.jpg")
                 .socialMediaPlatform("Facebook")
-                .volunteeringInterest(VolunteeringInterest.Yes)
+                .volunteeringInterest("Website,Admin")
                 .linkedinUrl("linked.com/xyz")
                 .userRole(UserRole.USER)
                 .build();
@@ -172,7 +171,7 @@ public class UserProfileMapperTest {
         assertEquals(response.getDateOfBirth(), date);
         assertEquals(response.getProfilePicture(), "xyz.com/prof.jpg");
         assertEquals(response.getSocialMediaPlatform(), "Facebook");
-        assertEquals(response.getVolunteeringInterest(), VolunteeringInterest.Yes);
+        assertEquals(response.getVolunteeringInterest(), "Website,Admin");
         assertEquals(response.getLinkedinUrl(), "linked.com/xyz");
         assertEquals(response.getUserRole(), UserRole.USER);
         assertEquals(response.getEducationList().size(), 1);

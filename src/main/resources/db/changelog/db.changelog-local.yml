@@ -21,3 +21,9 @@ databaseChangeLog:
       file: db/changelog/changelogs_data/V0_3_20220813__sanket_add_email_templates.sql
   - include:
       file: db/changelog/changelogs_common/V0_6_20230525__tejas_user_account_new_fields.sql
+  - include:
+      file: db/changelog/changelogs_common/V0_7_20230607_nishit_update_search_view.sql
+  - include:
+      file: db/changelog/changelogs_common/V0_8_20230619_nishit_volunteering_interest_update.sql
+  - include:
+      file: db/changelog/changelogs_common/V0_9_20230620_nishit_update_search_view_profile.sql

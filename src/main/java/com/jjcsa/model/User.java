@@ -114,7 +114,7 @@ public class User {
     @Transient
     private UserRole userRole;
 
-    @Column(name = "is_regional_contact")
+    @Column(name = "is_regional_contact", columnDefinition = "boolean default false")
     private Boolean isRegionalContact;
 
     // *********************************************** //
@@ -129,9 +129,8 @@ public class User {
     @Column(name = "user_status", columnDefinition = "varchar(45) default 'Pending'")
     private UserStatus userStatus;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "volunteering_interest", columnDefinition = "varchar(45) default 'No'")
-    private VolunteeringInterest volunteeringInterest;
+    @Column(name = "volunteering_interest")
+    private String volunteeringInterest;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")

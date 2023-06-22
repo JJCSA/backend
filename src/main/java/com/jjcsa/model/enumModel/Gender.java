@@ -2,8 +2,9 @@ package com.jjcsa.model.enumModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum Gender {
     MALE("Male"),
     FEMALE("Female"),
