@@ -1,5 +1,6 @@
 package com.jjcsa.controller.user;
 
+import com.jjcsa.dto.JJCSearchDTO;
 import com.jjcsa.model.JJCSearch;
 import com.jjcsa.service.JJCSearchService;
 import lombok.NonNull;
@@ -21,7 +22,7 @@ public class JJCSearchController {
     private final JJCSearchService jjcSearchService;
 
     @GetMapping
-    public List<JJCSearch> searchJJCUsers(){
+    public List<JJCSearchDTO> searchJJCUsers(){
         log.info("Invoking JJC Search!");
         return jjcSearchService.invokeJJCSearch();
     }

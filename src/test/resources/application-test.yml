@@ -38,3 +38,5 @@ aws:
   s3:
     bucketname: jjcsa-usa
   region: us-east-1
+
+show-community-proof: true
