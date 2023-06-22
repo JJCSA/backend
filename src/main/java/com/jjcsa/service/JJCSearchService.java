@@ -21,18 +21,16 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @RequiredArgsConstructor
 public class JJCSearchService {
-
-    @NonNull
     private final JJCSearchRepository jjcSearchRepository;
     private final AWSS3Service awss3Service;
     private  final JJCSearchMapper jjcSearchMapper;
     public List<JJCSearchDTO> invokeJJCSearch() {
         // TODO use pageable for Lazy initialization from server to client.
-        Iterable<JJCSearch>  jjcSearchResult = jjcSearchRepository.findAll();
+        List<JJCSearch> jjcSearchResult = jjcSearchRepository.findAll();
         if(jjcSearchResult == null) {
             return Lists.newArrayList();
         }
-        return StreamSupport.stream(jjcSearchResult.spliterator(), false)
+        return jjcSearchResult.stream()
                 .map(this::toJJCSearchDTO)
                 .collect(Collectors.toList());
     }
@@ -42,14 +40,4 @@ public class JJCSearchService {
         jjcSearchDTO.setProfilePicture(awss3Service.generateSignedURLFromS3(jjcSearch.getProfilePicture()));
         return jjcSearchDTO;
     }
-//    public List<JJCSearch> invokeJJCSearch(){
-//        // TODO use pageable for Lazy initialization from server to client.
-//        Iterable<JJCSearch> jjcSearchResult = jjcSearchRepository.findAll();
-//        if(jjcSearchResult == null) {
-//            return Lists.newArrayList();
-//        }
-//        return Lists.newArrayList(jjcSearchResult);
-//    }
-
-
 }
