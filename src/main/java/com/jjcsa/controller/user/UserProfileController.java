@@ -2,6 +2,7 @@ package com.jjcsa.controller.user;
 
 import com.jjcsa.dto.UpdateUserPictureDto;
 import com.jjcsa.dto.UserProfile;
+import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
 import com.jjcsa.service.AWSS3Service;
 import com.jjcsa.service.KeycloakService;
@@ -47,7 +48,11 @@ public class UserProfileController {
         AccessToken token = account.getKeycloakSecurityContext().getToken();
 
         if(!token.getEmail().equalsIgnoreCase(userProfile.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update email address");
+            throw new BadRequestException("Cannot update email address",
+                    "No account found with the entered email",
+                    "",
+                    "",
+                    "");
         }
 
         UserProfile updatedUserProfile = userProfileService.updateUserProfile(token.getSubject(), userProfile);

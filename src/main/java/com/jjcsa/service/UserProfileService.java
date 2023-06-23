@@ -65,20 +65,20 @@ public class UserProfileService {
     public UserProfile updateUserProfile(String userId, UserProfile updatedUserProfile) {
         User user = userService.getUserById(userId);
 
-        if(isNull(user)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not have a profile");
+        if(isNull(user)) throw new BadRequestException("User does not have a profile", "", "", "", "");
 
         // Validate User Status
         if(!updatedUserProfile.getUserStatus().equals(user.getUserStatus())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot update UserStatus");
+            throw new BadRequestException("User cannot update UserStatus", "", "", "", "");
         }
         if(user.getUserStatus().equals(UserStatus.Pending)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pending User cannot update Profile");
+            throw new BadRequestException("Pending User cannot update Profile", "", "", "", "");
         }
 
         // Validate Gender
         if (user.getGender() != null && !user.getGender().equals(updatedUserProfile.getGender())) {
             // once set cannot update gender
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update gender once set");
+            throw new BadRequestException("Cannot update gender once set", "", "", "", "");
         }
 
         // Validate Volunteering Interest
@@ -136,7 +136,7 @@ public class UserProfileService {
 
         UserRole userRole = keycloakService.getUserRole(user.getId());
         if(isNull(userRole)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in Keycloak");
+            throw new BadRequestException("User not found in Keycloak", "", "", "", "");
         }
 
         String profileS3Url = awss3Service.generateSignedURLFromS3(savedUser.getProfilePicture());
