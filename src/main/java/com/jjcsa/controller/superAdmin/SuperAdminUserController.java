@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class SuperAdminUserController {
     private final AdminActionRepository adminActionRepository;
 
     @PostMapping(path = "{userId}/role")
-    public ResponseEntity addUserRole(@PathVariable String userId, @RequestBody UpdateUserRole updateUserRole, KeycloakAuthenticationToken authenticationToken) {
+    public ResponseEntity addUserRole(@PathVariable String userId, @RequestBody @Valid UpdateUserRole updateUserRole, KeycloakAuthenticationToken authenticationToken) {
 
         User user = userService.getUserById(userId);
         if(isNull(user)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id not found");

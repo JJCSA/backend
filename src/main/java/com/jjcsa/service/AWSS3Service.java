@@ -7,13 +7,14 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,11 +55,7 @@ public class AWSS3Service {
             amazonS3Client.putObject(bucketName, objectKey, file);
         } catch (AmazonServiceException e) {
             log.error("Unable to save image to s3: " + e.getErrorMessage());
-            throw new UnknownServerErrorException("Error saving file",
-                    "Error saving file to S3",
-                    "Something went wrong with AWS S3 Service",
-                    "Please try again after some time",
-                    "");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving file to S3 - Something went wrong with AWS S3 Service");
         } finally {
             // delete the file created locally
             file.delete();

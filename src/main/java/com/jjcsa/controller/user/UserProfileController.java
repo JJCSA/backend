@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import javax.validation.Valid;
+
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -40,7 +42,7 @@ public class UserProfileController {
     }
 
     @PutMapping()
-    public UserProfile updateUserProfile(@RequestBody UserProfile userProfile, KeycloakAuthenticationToken authenticationToken) {
+    public UserProfile updateUserProfile(@RequestBody @Valid UserProfile userProfile, KeycloakAuthenticationToken authenticationToken) {
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();
 
@@ -54,7 +56,7 @@ public class UserProfileController {
     }
 
     @PutMapping("/profPicture")
-    public UserProfile updateUserProfilePicture(@RequestBody UpdateUserPictureDto updateUserPictureDto,
+    public UserProfile updateUserProfilePicture(@RequestBody @Valid UpdateUserPictureDto updateUserPictureDto,
                                                 KeycloakAuthenticationToken authenticationToken) {
         SimpleKeycloakAccount account = (SimpleKeycloakAccount) authenticationToken.getDetails();
         AccessToken token = account.getKeycloakSecurityContext().getToken();

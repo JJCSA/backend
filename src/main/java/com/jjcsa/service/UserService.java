@@ -2,8 +2,6 @@ package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.dto.UserDTO;
-import com.jjcsa.exception.BadRequestException;
-import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.Education;
@@ -86,22 +84,12 @@ public class UserService {
         user = userRepository.save(user);
 
         if (user == null)
-            throw new UnknownServerErrorException(
-                    "Unable to store user profile",
-                    "Error while store user profile in database",
-                    "Please try again later",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while store user profile in database");
 
         if(showCommunityProof){
             String jainProofDocURL = saveJainProofForUserProfile(user, jainProofDoc);
             if (jainProofDocURL == null) {
-                throw new UnknownServerErrorException(
-                        "Unable to save Jain Proof Doc to S3",
-                        "Jain Proof Doc upload failed!",
-                        "Please try again later",
-                        "Please retry action later",
-                        "");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Jain Proof Doc upload failed!");
             }
             user.setCommunityDocumentURL(jainProofDocURL);
         }
@@ -109,12 +97,7 @@ public class UserService {
 
         String profPictureURL = saveProfilePictureForUserProfile(user, profPicture);
         if (profPictureURL == null) {
-            throw new UnknownServerErrorException(
-                    "Unable to save Profile Picture to S3",
-                    "Profile Picture upload failed!",
-                    "Please try again later",
-                    "Please retry action later",
-                    "");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Profile Picture upload failed!");
         }
 
         user.setProfilePicture(profPictureURL);
@@ -217,11 +200,7 @@ public class UserService {
             case NewUser:
                 if (currentStatus.equals(UserStatus.Active)
                         || currentStatus.equals(UserStatus.Rejected)) {
-                    throw new BadRequestException("Cannot update UserStatus",
-                            "Cannot update UserStatus for Active or Rejected Users",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus for Active or Rejected Users");
                 }
 
                 // Enable user in keycloak
@@ -233,28 +212,16 @@ public class UserService {
             case Active:
                 if (currentStatus.equals(UserStatus.Pending)
                         || currentStatus.equals(UserStatus.Rejected)) {
-                    throw new BadRequestException("Cannot update UserStatus",
-                            "Cannot update UserStatus to Active for Pending or Rejected users",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus to Active for Pending or Rejected users");
                 }
                 if (!hasUserCompletedOnboardingProfile(user)) {
-                    throw new BadRequestException("Cannot update UserStatus to Active",
-                            "User has not completed on-boarding profile",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus to Active - User has not completed on-boarding profile");
                 }
                 break;
             case Rejected:
                 if (currentStatus.equals(UserStatus.NewUser)
                         || currentStatus.equals(UserStatus.Active)) {
-                    throw new BadRequestException("Cannot update UserStatus",
-                            "Cannot update UserStatus to Rejected for NewUser or Active users",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus to Rejected for NewUser or Active users");
                 }
                 log.info("Rejecting user with email {}", user.getEmail());
                 adminAction.setAction(Action.REJECT_USER);
