@@ -1,4 +1,4 @@
-package com.jjcsa.util;
+package com.jjcsa.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
