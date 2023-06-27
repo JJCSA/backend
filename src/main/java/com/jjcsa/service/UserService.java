@@ -2,7 +2,6 @@ package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.dto.UserDTO;
-import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.AdminAction;
@@ -217,11 +216,7 @@ public class UserService {
             case NewUser:
                 if (currentStatus.equals(UserStatus.Active)
                         || currentStatus.equals(UserStatus.Rejected)) {
-                    throw new BadRequestException("Cannot update UserStatus",
-                            "Cannot update UserStatus for Active or Rejected Users",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus for Active or Rejected Users");
                 }
 
                 // Enable user in keycloak
@@ -233,28 +228,16 @@ public class UserService {
             case Active:
                 if (currentStatus.equals(UserStatus.Pending)
                         || currentStatus.equals(UserStatus.Rejected)) {
-                    throw new BadRequestException("Cannot update UserStatus",
-                            "Cannot update UserStatus to Active for Pending or Rejected users",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus to Active for Pending or Rejected users");
                 }
                 if (!hasUserCompletedOnboardingProfile(user)) {
-                    throw new BadRequestException("Cannot update UserStatus to Active",
-                            "User has not completed on-boarding profile",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus to Active - User has not completed on-boarding profile");
                 }
                 break;
             case Rejected:
                 if (currentStatus.equals(UserStatus.NewUser)
                         || currentStatus.equals(UserStatus.Active)) {
-                    throw new BadRequestException("Cannot update UserStatus",
-                            "Cannot update UserStatus to Rejected for NewUser or Active users",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus to Rejected for NewUser or Active users");
                 }
                 log.info("Rejecting user with email {}", user.getEmail());
                 adminAction.setAction(Action.REJECT_USER);

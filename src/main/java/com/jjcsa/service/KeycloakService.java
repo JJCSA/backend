@@ -1,7 +1,6 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
-import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.util.KeycloakConstants;
@@ -113,11 +112,7 @@ public class KeycloakService {
         Response response = usersResource.create(user);
         if (response.getStatus() != HttpStatus.CREATED.value()) {
             if (response.getStatus() == HttpStatus.CONFLICT.value()) {
-                throw new BadRequestException("User already exists",
-                        "User with this email address already exists",
-                        "Please login",
-                        "Please try logging in with this email address",
-                        "");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
             } else {
                 log.error("Unable to create new user in Keycloak");
                 return null;

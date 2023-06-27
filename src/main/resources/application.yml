@@ -1,6 +1,8 @@
 # Specify port to start the app in
 server:
   port: 9080
+  error:
+    include-message: always # shows error message when ResponseStatusException is thrown
 
 # Database config
 spring:

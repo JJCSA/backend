@@ -1,7 +1,6 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.UserResetPassword;
-import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.model.User;
 import com.jjcsa.model.UserTempPassword;
@@ -10,8 +9,10 @@ import com.jjcsa.repository.UserTempPasswordRepository;
 import com.jjcsa.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -34,11 +35,8 @@ public class UserForgotPasswordService {
 
         //check if email exists
         if(!userRepository.existsByEmail(email)) {
-            throw new BadRequestException("Email does not exist",
-                    "No account found with the entered email",
-                    "",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email does not exist");
+
         }
 
         // check if user already requested for password
@@ -49,11 +47,8 @@ public class UserForgotPasswordService {
                 // old userTempPassword is expired
                 userTempPasswordRepository.delete(oldUserTempPassword);
             } else {
-                throw new BadRequestException("User already requested for new password, cannot generate another one",
-                        "Please check email for temp password",
-                        "",
-                        "",
-                        "");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already requested for new password, cannot generate another one");
+
             }
         }
 
@@ -85,39 +80,23 @@ public class UserForgotPasswordService {
         //check if email exists
         User user = userRepository.findUserByEmail(email);
         if(isNull(user)) {
-            throw new BadRequestException("Email does not exist",
-                    "No account found with the entered email",
-                    "",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email does not exist");
         }
 
         // check if user requested for password change
         UserTempPassword userTempPassword = userTempPasswordRepository.findByEmail(email);
         if(isNull(userTempPassword)) {
-            throw new BadRequestException("User did not request for password change",
-                    "Please request password change first",
-                    "",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User did not request for password change");
         }
 
         // check if temp password is expired?
         if(userTempPassword.getExpirationTime().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Temp password expired",
-                    "Please request password change again.",
-                    "",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Temp password expired");
         }
 
         // check if temp password matches
         if(!bCryptPasswordEncoder.matches(tempPassword, userTempPassword.getTempPassword())) {
-            throw new BadRequestException("Incorrect temp password",
-                    "Please enter correct password sent to your email.",
-                    "",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect temp password");
         }
 
         // Update password in keycloak

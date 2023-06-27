@@ -1,7 +1,6 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.UserProfile;
-import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
@@ -101,8 +100,8 @@ public class UserProfileServiceTest {
     public void testGetUserProfileFromInvalidEmail() {
         when(userService.getUserById(any())).thenReturn(null);
 
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> userProfileService.getUserProfile("xyz"));
-        assertEquals(exception.getMessage(), "User Profile does not exist");
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> userProfileService.getUserProfile("xyz"));
+        assertEquals(exception.getReason(), "User Profile does not exist");
     }
 
     @Test
