@@ -1,7 +1,6 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.UserProfile;
-import com.jjcsa.exception.BadRequestException;
 import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.UserRole;
@@ -41,13 +40,7 @@ public class UserProfileService {
     public UserProfile getUserProfile(String userId) {
         User user = userService.getUserById(userId);
         if(user == null)
-            throw new BadRequestException(
-                    "User Profile does not exist",
-                    "User's profile has not been created",
-                    "",
-                    "",
-                    ""
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Profile does not exist");
 
         if(UserStatus.Pending.equals(user.getUserStatus())) {
             throw new ResponseStatusException(
@@ -93,11 +86,7 @@ public class UserProfileService {
             for (String v : updatedUserProfile.getVolunteeringInterest().split(",")) {
                 log.info("V {}", v);
                 if (!VOLUNTEERINGINTEREST.contains(v)) {
-                    throw new BadRequestException("Volunteering Interest not valid",
-                            "No Volunteering Interest found ",
-                            "",
-                            "",
-                            "");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Volunteering Interest not valid");
                 }
             }
         }
