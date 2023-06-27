@@ -1,7 +1,6 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.UserResetPassword;
-import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.model.User;
 import com.jjcsa.model.UserTempPassword;
 import com.jjcsa.repository.UserRepository;
@@ -102,11 +101,7 @@ public class UserForgotPasswordService {
         // Update password in keycloak
         Boolean passwordChanged = keycloakService.resetUserPassword(user.getId(), newPassword);
         if (!passwordChanged) {
-            throw new UnknownServerErrorException("Unable to reset password",
-                    "Resetting password in Keycloak failed",
-                    "",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Resetting password in Keycloak failed");
         }
 
         // Delete temp password record

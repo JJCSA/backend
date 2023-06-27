@@ -2,7 +2,6 @@ package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
 import com.jjcsa.dto.UserDTO;
-import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.Education;
@@ -85,22 +84,12 @@ public class UserService {
         user = userRepository.save(user);
 
         if (user == null)
-            throw new UnknownServerErrorException(
-                    "Unable to store user profile",
-                    "Error while store user profile in database",
-                    "Please try again later",
-                    "",
-                    "");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while store user profile in database");
 
         if(showCommunityProof){
             String jainProofDocURL = saveJainProofForUserProfile(user, jainProofDoc);
             if (jainProofDocURL == null) {
-                throw new UnknownServerErrorException(
-                        "Unable to save Jain Proof Doc to S3",
-                        "Jain Proof Doc upload failed!",
-                        "Please try again later",
-                        "Please retry action later",
-                        "");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Jain Proof Doc upload failed!");
             }
             user.setCommunityDocumentURL(jainProofDocURL);
         }
@@ -108,12 +97,7 @@ public class UserService {
 
         String profPictureURL = saveProfilePictureForUserProfile(user, profPicture);
         if (profPictureURL == null) {
-            throw new UnknownServerErrorException(
-                    "Unable to save Profile Picture to S3",
-                    "Profile Picture upload failed!",
-                    "Please try again later",
-                    "Please retry action later",
-                    "");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Profile Picture upload failed!");
         }
 
         user.setProfilePicture(profPictureURL);

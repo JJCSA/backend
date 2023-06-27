@@ -1,14 +1,11 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
-import com.jjcsa.exception.UnknownServerErrorException;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.Education;
 import com.jjcsa.model.User;
 import com.jjcsa.repository.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -115,8 +111,8 @@ public class UserServiceTest {
         when(userMapper.toUserProfile(any())).thenReturn(sampleUser);
         when(userRepository.save(any())).thenReturn(null);
 
-        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
-        assertEquals(exception.getMessage(), "Unable to store user profile");
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
+        assertEquals(exception.getReason(), "Error while store user profile in database");
     }
 
     @Test
@@ -142,8 +138,8 @@ public class UserServiceTest {
         when(userMapper.toUserProfile(any())).thenReturn(sampleUser);
         doReturn(null).when(userService).saveJainProofForUserProfile(any(), any());
 
-        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
-        assertEquals(exception.getMessage(), "Unable to save Jain Proof Doc to S3");
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
+        assertEquals(exception.getReason(), "Jain Proof Doc upload failed!");
     }
 
    // @Test
@@ -158,8 +154,8 @@ public class UserServiceTest {
         doReturn("jainproof.jpg").when(userService).saveJainProofForUserProfile(any(), any());
         doReturn(null).when(userService).saveProfilePictureForUserProfile(any(), any());
 
-        UnknownServerErrorException exception = assertThrows(UnknownServerErrorException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
-        assertEquals(exception.getMessage(), "Unable to save Profile Picture to S3");
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> userService.saveUser(generateSampleUserDTO(), jainProofDoc, profPicture));
+        assertEquals(exception.getReason(), "Profile Picture upload failed!");
     }
 
     @Test
