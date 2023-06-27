@@ -176,7 +176,7 @@ public class UserServiceTest {
         sampleUser.setZip("123456");
         sampleUser.setEmail("blah@blah.com");
         sampleUser.setLinkedinUrl("xyz.com");
-        sampleUser.setDateOfBirth(new Date());
+        sampleUser.setDateOfBirth("2022-01-01");
         sampleUser.setUserStudent(true);
 
         Education education = new Education();

@@ -301,7 +301,7 @@ public class UserService {
                 || StringUtils.isEmpty(user.getZip())
                 || StringUtils.isEmpty(user.getEmail())
                 || StringUtils.isEmpty(user.getLinkedinUrl())
-                || defaultDate.compareTo(user.getDateOfBirth()) >= 0 // compare user's dob with default date
+                || StringUtils.isEmpty(user.getDateOfBirth())
         ) {
             return false;
         }

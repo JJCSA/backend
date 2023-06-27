@@ -77,9 +77,8 @@ public class User {
     @Column(columnDefinition = "varchar(10) default ''")
     private String zip;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    @Column(name = "dob", columnDefinition = "varchar(45) default '11/11/1111'")
-    private Date dateOfBirth;
+    @Column(name = "dob")
+    private String dateOfBirth;
 
     @Column(name = "profile_picture_url", columnDefinition = "varchar(100) default ''")
     private String profilePicture;

@@ -34,7 +34,7 @@ public class UserProfile {
     private String state;
     private String country;
     private String zip;
-    private Date dateOfBirth;
+    private String dateOfBirth;
     private String profilePicture;
     private String socialMediaPlatform;
     private String volunteeringInterest;
