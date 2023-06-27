@@ -17,7 +17,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import static java.util.Objects.isNull;
@@ -35,7 +34,8 @@ public class UserProfileService {
     private final KeycloakService keycloakService;
     private final AWSS3Service awss3Service;
 
-    private final static Set<String> VOLUNTEERINGINTEREST = Set.of("WEBSITE","MARKETING","STUDENTWELFARE","ALUMNIWELFARE","ADMIN");
+    private final static Set<String> VOLUNTEERINGINTEREST = Set.of("WEBSITE","MARKETING","STUDENTWELFARE",
+            "ALUMNIWELFARE","ADMIN", "EVENTS");
 
     public UserProfile getUserProfile(String userId) {
         User user = userService.getUserById(userId);

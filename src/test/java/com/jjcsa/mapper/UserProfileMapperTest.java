@@ -57,7 +57,6 @@ public class UserProfileMapperTest {
     @Test
     public void shouldMapUserToUserProfile() {
         String uuid = UUID.randomUUID().toString();
-        Date date = new Date();
 
         User user = User.builder()
                 .id(uuid)
@@ -73,7 +72,7 @@ public class UserProfileMapperTest {
                 .city("test city")
                 .state("test state")
                 .zip("123456")
-                .dateOfBirth(date)
+                .dateOfBirth("2022-01-01")
                 .profilePicture(MOCK_S3_URL)
                 .socialMediaPlatform("Facebook")
                 .volunteeringInterest("Website,Admin")
@@ -98,7 +97,7 @@ public class UserProfileMapperTest {
         assertEquals(response.getCity(), "test city");
         assertEquals(response.getState(), "test state");
         assertEquals(response.getZip(), "123456");
-        assertEquals(response.getDateOfBirth(), date);
+        assertEquals(response.getDateOfBirth(), "2022-01-01");
         assertEquals(response.getProfilePicture(), MOCK_S3_URL);
         assertEquals(response.getSocialMediaPlatform(), "Facebook");
         assertEquals(response.getVolunteeringInterest(), "Website,Admin");
@@ -127,7 +126,6 @@ public class UserProfileMapperTest {
     @Test
     public void shouldMapUserProfileToUser() {
         String uuid = UUID.randomUUID().toString();
-        Date date = new Date();
 
         UserProfile userProfile = new UserProfile().builder()
                 .id(uuid)
@@ -143,7 +141,7 @@ public class UserProfileMapperTest {
                 .city("test city")
                 .state("test state")
                 .zip("123456")
-                .dateOfBirth(date)
+                .dateOfBirth("2022-01-01")
                 .profilePicture("xyz.com/prof.jpg")
                 .socialMediaPlatform("Facebook")
                 .volunteeringInterest("Website,Admin")
@@ -168,7 +166,7 @@ public class UserProfileMapperTest {
         assertEquals(response.getCity(), "test city");
         assertEquals(response.getState(), "test state");
         assertEquals(response.getZip(), "123456");
-        assertEquals(response.getDateOfBirth(), date);
+        assertEquals(response.getDateOfBirth(), "2022-01-01");
         assertEquals(response.getProfilePicture(), "xyz.com/prof.jpg");
         assertEquals(response.getSocialMediaPlatform(), "Facebook");
         assertEquals(response.getVolunteeringInterest(), "Website,Admin");
