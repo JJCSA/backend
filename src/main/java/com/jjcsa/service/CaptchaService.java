@@ -30,7 +30,7 @@ public class CaptchaService {
     @Value("${google.recaptcha.secret:}")
     private String reCaptchaSecret;
 
-    private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
+    private static final Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
     public Boolean validateCaptcha(String token, String clientIp) {
         if(!responseSanityCheck(token)) {
