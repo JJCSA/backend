@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -60,7 +61,7 @@ public class AdminUserController {
         return userService.getCommunityProof(userId);
     }
     @PutMapping(path = "/status")
-    public boolean updateUserStatus(@RequestBody UpdateUserStatusDto updateUserStatusDto, KeycloakAuthenticationToken authenticationToken) {
+    public boolean updateUserStatus(@RequestBody @Valid UpdateUserStatusDto updateUserStatusDto, KeycloakAuthenticationToken authenticationToken) {
 
         log.info("Find User for userId: {}", updateUserStatusDto.getUserId());
         User user = userService.getUserById(updateUserStatusDto.getUserId());

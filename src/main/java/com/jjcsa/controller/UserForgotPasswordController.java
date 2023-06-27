@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class UserForgotPasswordController {
     }
 
     @PostMapping(path = "/reset-password")
-    public Boolean resetUserPassword(@RequestBody UserResetPassword userResetPassword) {
+    public Boolean resetUserPassword(@RequestBody @Valid UserResetPassword userResetPassword) {
         return userForgotPasswordService.changeUserPasswordForTempPassword(userResetPassword);
     }
 }
