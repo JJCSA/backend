@@ -66,4 +66,4 @@ show-community-proof : false
 
 google:
   recaptcha:
-    secret: 6LfA_E8lAAAAAOQNavNTak-bug4jPr-NuASqsgCp
+    secret:

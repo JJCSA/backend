@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
+
+// for testing recapta, try: https://codesandbox.io/s/recaptcha-v3-generate-response-token-forked-qmmd95?file=/src/index.js:1013-1053
 
 @Slf4j
 @RestController
@@ -31,10 +34,10 @@ public class ContactUsController {
         boolean isCaptchaValid = captchaService.validateCaptcha(contactUsRequest.captchaToken(), clientIp);
         log.info("isCaptchaValid {}",isCaptchaValid);
 
-        if (isCaptchaValid) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
+        if (!isCaptchaValid) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recaptcha token is invalid");
         }
+
+        return ResponseEntity.ok().build();
     }
 }
