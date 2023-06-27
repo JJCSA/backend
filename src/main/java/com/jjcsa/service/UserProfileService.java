@@ -34,7 +34,8 @@ public class UserProfileService {
     private final KeycloakService keycloakService;
     private final AWSS3Service awss3Service;
 
-    private final static Set<String> VOLUNTEERINGINTEREST = Set.of("WEBSITE","MARKETING","STUDENTWELFARE","ALUMNIWELFARE","ADMIN");
+    private final static Set<String> VOLUNTEERINGINTEREST = Set.of("WEBSITE","MARKETING","STUDENTWELFARE",
+            "ALUMNIWELFARE","ADMIN", "EVENTS");
 
     public UserProfile getUserProfile(String userId) {
         User user = userService.getUserById(userId);
