@@ -1,6 +1,5 @@
 package com.jjcsa.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.RecaptchaResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
