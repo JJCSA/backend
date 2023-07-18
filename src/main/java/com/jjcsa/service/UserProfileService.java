@@ -1,5 +1,6 @@
 package com.jjcsa.service;
 
+import com.google.common.collect.ImmutableSet;
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.User;
@@ -34,7 +35,7 @@ public class UserProfileService {
     private final KeycloakService keycloakService;
     private final AWSS3Service awss3Service;
 
-    private final static Set<String> VOLUNTEERINGINTEREST = Set.of("WEBSITE","MARKETING","STUDENTWELFARE",
+    private final static Set<String> VOLUNTEERINGINTEREST = ImmutableSet.of("WEBSITE","MARKETING","STUDENTWELFARE",
             "ALUMNIWELFARE","ADMIN", "EVENTS");
 
     public UserProfile getUserProfile(String userId) {
