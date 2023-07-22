@@ -98,7 +98,16 @@ public class UserProfileController {
         }
 
         boolean pwUpdated = keycloakService.verifyAndUpdateUserPassword(user, oldPassword, newPassword);
-        emailSenderService.sendEmail(user, pwUpdated ? EmailEvent.PW_UPDATE : EmailEvent.PW_UPDATE_FAILED);
+
+        // It will never be false. Change/Refactor verifyAndUpdateUserPassword to provide
+        // more info when update failed
+        if(pwUpdated) {
+            emailSenderService.sendEmail(user, EmailEvent.PW_UPDATE);
+        } else {
+            log.error("password update failed for user:{}, name:{}", user.getId(), user.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password Update Failed. Please contact jjcsausa@gmail.com");
+        }
+
 
         return pwUpdated;
     }
