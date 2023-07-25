@@ -1,14 +1,19 @@
 package com.jjcsa.controller;
 
+import com.jjcsa.dto.ContactUsRequest;
 import com.jjcsa.service.CaptchaService;
+import com.jjcsa.util.GeneralUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.io.IOException;
-import java.util.Map;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+// for testing recapta, try: https://codesandbox.io/s/recaptcha-v3-generate-response-token-forked-qmmd95?file=/src/index.js:1013-1053
 
 @Slf4j
 @RestController
@@ -16,23 +21,20 @@ import java.util.Map;
 @RequestMapping(path="/api/contactus", produces = "application/json")
 public class ContactUsController {
 
-    @Autowired
-    private CaptchaService captchaService;
+    private final CaptchaService captchaService;
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verify(@RequestBody Map<String, String> requestBody) throws IOException {
-        log.info("Inside Verify");
-        String recaptchaToken = requestBody.get("captchaToken");
-        if (recaptchaToken == null || recaptchaToken.isEmpty()) {
-            return ResponseEntity.badRequest().body("Response token is missing");
-        }
-        boolean isCaptchaValid = captchaService.verifyCaptcha(recaptchaToken);
-        log.info("isValid {}",isCaptchaValid);
+    public ResponseEntity verify(@RequestBody @Valid ContactUsRequest contactUsRequest, HttpServletRequest request) {
+        log.info("Verifying user captcha for contact us");
 
-        if (isCaptchaValid) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        String clientIp = GeneralUtil.getClientIp(request);
+        boolean isCaptchaValid = captchaService.validateCaptcha(contactUsRequest.captchaToken(), clientIp);
+        log.info("isCaptchaValid {}",isCaptchaValid);
+
+        if (!isCaptchaValid) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recaptcha token is invalid");
         }
+
+        return ResponseEntity.ok().build();
     }
 }
