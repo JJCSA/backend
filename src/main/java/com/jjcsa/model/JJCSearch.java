@@ -42,7 +42,7 @@ public class JJCSearch implements Serializable {
     private String linkedinUrl;
 
     @Column(name = "IS_REGIONAL_CONTACT")
-    private boolean isRegionalContact;
+    private Boolean isRegionalContact;
 
     @Column(name = "ABOUT_ME")
     private String aboutMe;

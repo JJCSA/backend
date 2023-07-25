@@ -28,7 +28,7 @@ aws:
     enabled: true
   s3:
     bucketname: stage-jjcsa-usa
-    
+
 cloud:
   aws:
     s3:

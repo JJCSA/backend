@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.jjcsa.dto.UserProfile;
 import com.jjcsa.mapper.UserProfileMapper;
 import com.jjcsa.model.User;
+import com.jjcsa.model.enumModel.EmailEvent;
 import com.jjcsa.model.enumModel.UserRole;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.repository.EducationRepository;
@@ -34,9 +35,18 @@ public class UserProfileService {
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
     private final AWSS3Service awss3Service;
+    private final EmailSenderService emailSenderService;
 
-    private final static Set<String> VOLUNTEERINGINTEREST = ImmutableSet.of("WEBSITE","MARKETING","STUDENTWELFARE",
-            "ALUMNIWELFARE","ADMIN", "EVENTS");
+    // TODO change it with Set.of() when we build with java 9 or latest
+    private final static Set<String> VOLUNTEERINGINTEREST =
+            ImmutableSet
+                .<String>builder()
+                    .add("WEBSITE")
+                    .add("MARKETING")
+                    .add("STUDENTWELFARE")
+                    .add("ALUMNIWELFARE")
+                    .add("ADMIN")
+                .build();
 
     public UserProfile getUserProfile(String userId) {
         User user = userService.getUserById(userId);
@@ -142,6 +152,7 @@ public class UserProfileService {
 
         String profileS3Url = awss3Service.generateSignedURLFromS3(savedUser.getProfilePicture());
         log.info("Generated pre signed URL :{} for user :{}", profileS3Url, savedUser.getFirstName());
+        emailSenderService.sendEmail(savedUser, EmailEvent.PROFILE_UPDATE);
         return userProfileMapper.toUserProfile(savedUser, userRole, profileS3Url);
     }
 

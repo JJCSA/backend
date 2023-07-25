@@ -3,10 +3,12 @@ package com.jjcsa.service;
 import com.jjcsa.dto.UserResetPassword;
 import com.jjcsa.model.User;
 import com.jjcsa.model.UserTempPassword;
+import com.jjcsa.model.enumModel.EmailEvent;
 import com.jjcsa.repository.UserRepository;
 import com.jjcsa.repository.UserTempPasswordRepository;
 import com.jjcsa.util.StringUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +22,7 @@ import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserForgotPasswordService {
     private final UserTempPasswordRepository userTempPasswordRepository;
     private final UserRepository userRepository;
@@ -53,11 +56,11 @@ public class UserForgotPasswordService {
 
         // generate new temp password
         String rawPw = StringUtil.generateRandomString(6);
-        System.out.println("generated random pw: " + rawPw);
+        log.info("generated random pw: " + rawPw);
 
         String resetPasswordLink = StringUtil.generateForgotPasswordLink(forgotPasswordURL, email, rawPw);
-        emailSenderService.sendEmailForForgotPassword(email, resetPasswordLink);
 
+        log.info("Generated Reset Password Link:{}", resetPasswordLink);
         // Save temp password to db
         UserTempPassword newTempPassword = new UserTempPassword();
         newTempPassword.setEmail(email);
@@ -66,6 +69,7 @@ public class UserForgotPasswordService {
         newTempPassword.setTempPassword(bCryptPasswordEncoder.encode(rawPw));
 
         userTempPasswordRepository.save(newTempPassword);
+        emailSenderService.sendEmailForForgotPassword(email, resetPasswordLink);
 
         return true;
     }
@@ -106,6 +110,7 @@ public class UserForgotPasswordService {
 
         // Delete temp password record
         userTempPasswordRepository.delete(userTempPassword);
+        emailSenderService.sendEmail(user, EmailEvent.PW_UPDATE);
 
         return true;
     }
