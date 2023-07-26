@@ -28,7 +28,7 @@ public class ContactUsController {
         log.info("Verifying user captcha for contact us");
 
         String clientIp = GeneralUtil.getClientIp(request);
-        boolean isCaptchaValid = captchaService.validateCaptcha(contactUsRequest.captchaToken(), clientIp);
+        boolean isCaptchaValid = captchaService.validateCaptcha(contactUsRequest.getCaptchaToken(), clientIp);
         log.info("isCaptchaValid {}",isCaptchaValid);
 
         if (!isCaptchaValid) {
