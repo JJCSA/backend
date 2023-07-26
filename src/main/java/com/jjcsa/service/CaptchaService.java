@@ -11,8 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 // created from https://www.baeldung.com/spring-security-registration-captcha
@@ -33,7 +31,7 @@ public class CaptchaService {
 
         URI verifyUri = URI.create(String.format(
                 "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s",
-                reCaptchaSecret, URLEncoder.encode(token, StandardCharsets.UTF_8), clientIp));
+                reCaptchaSecret, token, clientIp));
 
         RestTemplate restTemplate = new RestTemplate();
         RecaptchaResponse googleResponse = restTemplate.getForObject(verifyUri, RecaptchaResponse.class);
