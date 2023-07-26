@@ -2,7 +2,7 @@ ARG ARCH=
 
 # FROM maven:3.6.3-openjdk-17 as BUILDER
 # FROM maven:3.6.3-openjdk-11 as BUILDER
-FROM ${ARCH}/maven:3.8.3-openjdk-8 as BUILDER
+FROM ${ARCH}/maven:3.6.3-openjdk-17 as BUILDER
 
 COPY src /home/app/src
 COPY pom.xml /home/app
