@@ -17,10 +17,10 @@ spring:
     change-log: classpath:db/changelog/db.changelog-stage.yml
 
 cors:
-  allowed-origin-patterns: 'http://*.jjcsausa.com', 'https://*.jjcusa.org'
+  allowed-origin-patterns: https://*.jjcsausa.com, https://*.jjcusa.org
 
 keycloak:
-  auth-server-url: http://backend.stage.jjcusa.org:8080/auth/
+  auth-server-url: https://backend.stage.jjcusa.org:8080/auth/
 
 aws:
   paramstore:
