@@ -59,7 +59,7 @@ public class LoginController {
     @PostMapping(path = "/register")
     public ResponseEntity<AddNewUser> register(
             @RequestParam("newUser") @NotBlank(message = "newUser should not be blank") final String newUserJSONString,
-            @RequestParam("jainProof") @NotNull(message = "jainProofDoc cannot be null") final MultipartFile jainProofDoc,
+            @RequestParam(value = "jainProof", required = false) @NotNull(message = "jainProofDoc cannot be null") final MultipartFile jainProofDoc,
             @RequestParam("profPicture") @NotNull(message = "profPicture cannot be null") final MultipartFile profPicture) throws JsonProcessingException {
 
         AddNewUser addNewUser = objectMapper.readValue(newUserJSONString, AddNewUser.class);
