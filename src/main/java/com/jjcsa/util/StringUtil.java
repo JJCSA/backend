@@ -18,10 +18,12 @@ public class StringUtil {
     }
 
     public static String generateForgotPasswordLink(String forgotPasswordURL, String email, String tempPassword) {
-        return UriComponentsBuilder.fromUriString(forgotPasswordURL)
-                .queryParam("email", email)
-                .queryParam("tempPassword", tempPassword)
-                .build()
-                .toUriString();
+        return
+                UriComponentsBuilder
+                        .fromUriString(forgotPasswordURL)
+                        .queryParam("email", email)
+                        .queryParam("tempPassword", tempPassword)
+                        .build()
+                        .toUriString();
     }
 }

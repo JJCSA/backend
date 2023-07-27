@@ -15,6 +15,9 @@ spring:
   datasource:
     username: admin
     password: jjcsa
+  servlet:
+    multipart:
+      max-file-size: 100MB
 
 cors:
   allowed-origin-patterns: '*'
@@ -58,6 +61,7 @@ cloud:
 email:
   ses:
     from-email: noreply@jjcsausa.com
+    to-email: jjcsausa@gmail.com
 
 frontend:
   forgotPasswordURL: localhost:5000/forgot-password-reset

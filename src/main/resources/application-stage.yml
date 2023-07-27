@@ -22,6 +22,9 @@ cors:
 keycloak:
   auth-server-url: https://backend.stage.jjcusa.org:8080/auth/
 
+frontend:
+  forgotPasswordURL: https://backend.stage.jjcusa.org/ResetPassword
+
 aws:
   paramstore:
     region: us-east-2
