@@ -51,13 +51,15 @@ public class EmailTemplateService {
     }
 
     public EmailTemplateDto resolveTemplateForForgotPasswordEmail(String email,
-                                                                  String link) {
+                                                                  String link,
+                                                                  String tempPassword) {
         EmailTemplate template = emailTemplateRepository.findByTemplateName(EmailEvent.FORGOT_PW.getName());
         String templateBody = template.getEmailBody();
 
         Map<String, Object> params = new HashMap<>();
         params.put("email", email);
         params.put("link", link);
+        params.put("tempPassword", tempPassword);
 
         Context context = new Context();
         context.setLocale(Locale.ENGLISH);

@@ -81,8 +81,10 @@ public class EmailSenderService {
         return failed;
     }
 
-    public int sendEmailForForgotPassword(String email, String link) {
-        EmailTemplateDto resolvedTemplate = emailTemplateService.resolveTemplateForForgotPasswordEmail(email, link);
+    public int sendEmailForForgotPassword(String email,
+                                          String temporaryPassword,
+                                          String resetPasswordUrl) {
+        EmailTemplateDto resolvedTemplate = emailTemplateService.resolveTemplateForForgotPasswordEmail(email, resetPasswordUrl, temporaryPassword);
         Body body = new Body();
         body.setHtml(this.getContent(resolvedTemplate.getBody()));
         Message message = new Message();

@@ -17,12 +17,10 @@ public class StringUtil {
         return sb.toString();
     }
 
-    public static String generateForgotPasswordLink(String forgotPasswordURL, String email, String tempPassword) {
+    public static String generateForgotPasswordLink(String forgotPasswordURL) {
         return
                 UriComponentsBuilder
                         .fromUriString(forgotPasswordURL)
-                        .queryParam("email", email)
-                        .queryParam("tempPassword", tempPassword)
                         .build()
                         .toUriString();
     }
