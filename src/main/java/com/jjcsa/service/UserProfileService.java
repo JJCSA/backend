@@ -45,6 +45,7 @@ public class UserProfileService {
                     .add("MARKETING")
                     .add("STUDENTWELFARE")
                     .add("ALUMNIWELFARE")
+                    .add("EVENTS")
                     .add("ADMIN")
                 .build();
 

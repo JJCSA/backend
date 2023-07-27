@@ -20,14 +20,17 @@ cors:
   allowed-origin-patterns: 'http://*.jjcsausa.com'
 
 keycloak:
-  auth-server-url: http://backend.stage.jjcusa.org:8080/auth/
+  auth-server-url: https://www.jjcusa.org:8080/auth/
+
+frontend:
+  forgotPasswordURL: https://www.jjcusa.org/ResetPassword
 
 aws:
   paramstore:
     region: us-east-2
     enabled: true
   s3:
-    bucketname: stage-jjcsa-usa
+    bucketname: jjc-usa
 
 cloud:
   aws:
