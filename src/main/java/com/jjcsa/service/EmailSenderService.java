@@ -21,6 +21,9 @@ public class EmailSenderService {
     @Value("${email.ses.from-email:newsletter@jjcsausa.com}")
     private String fromEmailAddress;
 
+    @Value("${email.ses.to-email:jjcsausa@gmail.com}")
+    private String toEmailAddress;
+
     private final AmazonSimpleEmailService emailService;
     private final SendEmailRequest sendEmailRequest;
     private final EmailTemplateService emailTemplateService;
@@ -91,6 +94,28 @@ public class EmailSenderService {
         int failed = this.sendEmail(destinationList, message, fromEmailAddress);
         log.info("Email Failures:{}",failed);
         return failed;
+    }
+
+    public int invokeContactUsEmail(String userName,
+                                    String userEmail,
+                                    String userMessage) {
+
+        EmailTemplateDto resolvedTemplate =
+                emailTemplateService
+                        .resolveTemplateForContactUs(userName, userMessage, userEmail);
+        Body body = new Body();
+        body.setHtml(this.getContent(resolvedTemplate.getBody()));
+        Message message = new Message();
+        message.setSubject(this.getContent(resolvedTemplate.getSubject()));
+        message.setBody(body);
+
+        List<Destination> destinationList =
+                resolveDestination(Collections.emptyList(), Collections.emptyList(), Collections.singletonList(toEmailAddress));
+
+        int failed = sendEmail(destinationList, message, fromEmailAddress);
+        log.info("Email Failures:{}",failed);
+        return failed;
+
     }
 
     private Destination getDestination(final List<String> bccAddressList, final List<String> ccAddressList, final List<String> toAddressList) {

@@ -28,7 +28,8 @@ public class EmailTemplateService {
     }
 
     // TODO create converter and use EmailTemplate enum while retrieving the template from DB.
-    public EmailTemplateDto resolveTemplate(User user, String templateName){
+    public EmailTemplateDto resolveTemplate(User user,
+                                            String templateName){
         EmailTemplate template = emailTemplateRepository.findByTemplateName(templateName);
         String templateBody = template.getEmailBody();
 
@@ -49,7 +50,8 @@ public class EmailTemplateService {
                 .build();
     }
 
-    public EmailTemplateDto resolveTemplateForForgotPasswordEmail(String email, String link) {
+    public EmailTemplateDto resolveTemplateForForgotPasswordEmail(String email,
+                                                                  String link) {
         EmailTemplate template = emailTemplateRepository.findByTemplateName(EmailEvent.FORGOT_PW.getName());
         String templateBody = template.getEmailBody();
 
@@ -68,5 +70,32 @@ public class EmailTemplateService {
                 .body(resolvedBody)
                 .subject(template.getEmailSubject())
                 .build();
+    }
+
+    // TODO generalize template resolution for all methods in this class
+    public EmailTemplateDto resolveTemplateForContactUs(String userName,
+                                                        String message,
+                                                        String userEmail) {
+        EmailTemplate template = emailTemplateRepository.findByTemplateName(EmailEvent.CONTACT_US.getName());
+        String templateBody = template.getEmailBody();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", userName);
+        params.put("message", message);
+        params.put("userEmail", userEmail);
+
+        Context context = new Context();
+        context.setLocale(Locale.ENGLISH);
+        context.setVariables(params);
+        String resolvedBody = this.resolveTemplate(context, templateBody);
+
+        log.info("Contact Us resolution for userEmail:{}, Resolved Body:{}", userEmail, resolvedBody);
+
+        return
+                EmailTemplateDto
+                        .builder()
+                        .body(resolvedBody)
+                        .subject(template.getEmailSubject())
+                        .build();
     }
 }
