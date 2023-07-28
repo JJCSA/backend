@@ -58,7 +58,7 @@ public class UserForgotPasswordService {
         String rawPw = StringUtil.generateRandomString(6);
         log.info("generated random pw: " + rawPw);
 
-        String resetPasswordLink = StringUtil.generateForgotPasswordLink(forgotPasswordURL, email, rawPw);
+        String resetPasswordLink = StringUtil.generateForgotPasswordLink(forgotPasswordURL);
 
         log.info("Generated Reset Password Link:{}", resetPasswordLink);
         // Save temp password to db
@@ -69,7 +69,7 @@ public class UserForgotPasswordService {
         newTempPassword.setTempPassword(bCryptPasswordEncoder.encode(rawPw));
 
         userTempPasswordRepository.save(newTempPassword);
-        emailSenderService.sendEmailForForgotPassword(email, resetPasswordLink);
+        emailSenderService.sendEmailForForgotPassword(email, rawPw, resetPasswordLink);
 
         return true;
     }
