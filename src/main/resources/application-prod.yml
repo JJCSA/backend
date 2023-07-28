@@ -9,15 +9,15 @@ spring:
         lob:
           non_contextual_creation: true
   datasource:
-    url: jdbc:postgresql://jb1304ogby56ryu.cjbofz0rblqm.us-east-2.rds.amazonaws.com:5432/jjcsa
+    url: jdbc:postgresql://prod-jjcusa-rds-postgres-backenddbinstance-fijoregngl3q.cnne5cr62hpl.us-east-2.rds.amazonaws.com:5432/PROD_JJCUSA_BACKEND_DB
     # Will be set by aws parameter store variables.
     # for username it should be /config/application_stage(for whole application with stage profile)/spring.datasource.username
     # Same for PW.
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-stage.yml
+    change-log: classpath:db/changelog/db.changelog-prod.yml
 
 cors:
-  allowed-origin-patterns: 'http://*.jjcsausa.com'
+  allowed-origin-patterns: https://*.jjcsausa.org
 
 keycloak:
   auth-server-url: https://www.jjcusa.org:8080/auth/
@@ -30,7 +30,11 @@ aws:
     region: us-east-2
     enabled: true
   s3:
-    bucketname: jjc-usa
+    bucketname: prod-jjcusa
+
+email:
+  ses:
+    from-email: noreply@jjcusa.org
 
 cloud:
   aws:

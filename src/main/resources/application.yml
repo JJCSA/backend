@@ -13,8 +13,8 @@ spring:
   jpa:
     database: POSTGRESQL
   datasource:
-    username: admin
-    password: jjcsa
+    username: ${BACKEND_DB_USERNAME}
+    password: ${BACKEND_DB_PASSWORD}
   servlet:
     multipart:
       max-file-size: 100MB
@@ -70,4 +70,4 @@ show-community-proof : false
 
 google:
   recaptcha:
-    secret:
+    secret: ${GOOGLE_CAPTCHA}
