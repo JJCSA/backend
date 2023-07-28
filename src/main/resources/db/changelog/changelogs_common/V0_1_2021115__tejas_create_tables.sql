@@ -47,7 +47,7 @@ create table if not exists admin_action
 
 create table if not exists email_templates
 (
-    template_id uuid not null
+    template_id uuid not null default uuid_generate_v1()
         constraint email_templates_pkey
             primary key,
     email_body text default '',
