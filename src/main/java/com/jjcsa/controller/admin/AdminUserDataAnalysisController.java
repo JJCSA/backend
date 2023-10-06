@@ -27,4 +27,10 @@ public class AdminUserDataAnalysisController {
         log.info("Getting number of users per status");
         return userDataAnalysisService.getUserStatusCount();
     }
+
+    @GetMapping(path="/newUserNames")
+    public List<String> getListOfNewUsers(){
+        log.info("Getting number of users per status");
+        return userDataAnalysisService.getListOfNewUsers();
+    }
 }

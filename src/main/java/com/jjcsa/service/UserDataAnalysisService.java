@@ -20,4 +20,8 @@ public class UserDataAnalysisService {
     public List<IUserStatusCountDTO> getUserStatusCount() {
         return userRepository.getUserStatusCount();
     }
+
+    public List<String> getListOfNewUsers() {
+        return userRepository.getListOfNewUsers();
+    }
 }
