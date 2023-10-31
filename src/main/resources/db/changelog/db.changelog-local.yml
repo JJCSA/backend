@@ -29,3 +29,5 @@ databaseChangeLog:
       file: db/changelog/changelogs_common/V0_9_20230620_nishit_update_search_view_profile.sql
   - include:
       file: db/changelog/changelogs_data/V0_10_20230612__sanket_add_more_email_templates.sql
+  - include:
+      file: db/changelog/changelogs_data/V0_11_20231030__sanket_update_email_templates.sql
