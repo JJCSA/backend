@@ -25,3 +25,7 @@ cloud:
   aws:
     credentials:
       profile-name: default
+
+google:
+  recaptcha:
+    secret: captcha
