@@ -1,0 +1,42 @@
+spring:
+  config:
+    import: "aws-parameterstore:"
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+      jdbc:
+        lob:
+          non_contextual_creation: true
+  datasource:
+    url: jdbc:postgresql://prod-jjcusa-rds-postgres-backenddbinstance-fijoregngl3q.cnne5cr62hpl.us-east-2.rds.amazonaws.com:5432/PROD_JJCUSA_BACKEND_DB
+    # Will be set by aws parameter store variables.
+    # for username it should be /config/application_stage(for whole application with stage profile)/spring.datasource.username
+    # Same for PW.
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-prod.yml
+
+cors:
+  allowed-origin-patterns: https://*.jjcsausa.org
+
+keycloak:
+  auth-server-url: https://www.jjcusa.org:8080/auth/
+
+frontend:
+  forgotPasswordURL: https://www.jjcusa.org/ResetPassword
+
+aws:
+  paramstore:
+    region: us-east-2
+    enabled: true
+  s3:
+    bucketname: prod-jjcusa
+
+email:
+  ses:
+    from-email: noreply@jjcusa.org
+
+cloud:
+  aws:
+    s3:
+      region: us-east-2

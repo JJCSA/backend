@@ -1,0 +1,73 @@
+# Specify port to start the app in
+server:
+  port: 9080
+  error:
+    include-message: always # shows error message when ResponseStatusException is thrown
+
+# Database config
+spring:
+  application:
+    name: jjcsa-backend
+#  config:
+#    import: "aws-parameterstore:"
+  jpa:
+    database: POSTGRESQL
+  datasource:
+    username: ${BACKEND_DB_USERNAME}
+    password: ${BACKEND_DB_PASSWORD}
+  servlet:
+    multipart:
+      max-file-size: 100MB
+
+cors:
+  allowed-origin-patterns: '*'
+
+security:
+  enabled: true
+
+# Keycloak Config
+keycloak:
+  realm: jjcsa-services
+  bearer-only: true
+  ssl-required: none
+  resource: jjcsa
+  cors: true
+  use-resource-role-mappings: true
+
+# AWS properties
+aws:
+  s3:
+    bucketname: jjcsa-usa
+  region: us-east-1
+#  paramstore:
+#    enabled: true
+#    region: us-east-2
+
+cloud:
+  aws:
+    ses:
+      region:
+        static: us-east-2
+    stack:
+      auto: false
+    region:
+      static: us-east-1
+    credentials:
+       useDefaultAwsCredentialsChain: true
+#      profile-name: default
+#      access-key:
+#      secret-key:
+
+email:
+  ses:
+    from-email: noreply@jjcsausa.com
+    to-email: jjcsausa@gmail.com
+
+frontend:
+  forgotPasswordURL: localhost:5000/forgot-password-reset
+
+show-community-proof : false
+
+google:
+  recaptcha:
+    secret: ${GOOGLE_CAPTCHA}
