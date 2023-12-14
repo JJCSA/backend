@@ -99,8 +99,10 @@ public class AWSS3Service {
             return "localUrl";
         }
 
+        int expirationMins = 5;
+
         Date expiration = new Date();
-        expiration.setTime(expiration.getTime() + 10 * 30 * 40);
+        expiration.setTime(expiration.getTime() + expirationMins * 30 * 1000); // 5 mins
         try{
             if (documentURL == null) {
                 throw new IllegalArgumentException("documentURL must not be null!");
