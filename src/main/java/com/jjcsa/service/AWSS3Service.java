@@ -102,7 +102,7 @@ public class AWSS3Service {
         int expirationMins = 5;
 
         Date expiration = new Date();
-        expiration.setTime(expiration.getTime() + expirationMins * 30 * 1000); // 5 mins
+        expiration.setTime(expiration.getTime() + expirationMins * 60 * 1000); // 5 mins
         try{
             if (documentURL == null) {
                 throw new IllegalArgumentException("documentURL must not be null!");
