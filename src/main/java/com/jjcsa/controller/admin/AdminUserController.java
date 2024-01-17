@@ -6,13 +6,17 @@ import com.jjcsa.model.AdminAction;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.UserStatus;
 import com.jjcsa.service.UserService;
+import com.jjcsa.util.CsvGeneratorUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -53,6 +57,18 @@ public class AdminUserController {
     public List<UserDTO> getUsersList() {
         log.info("Getting User List");
         return userService.getAllUsers();
+    }
+
+    @GetMapping(path = "/csv", produces = "text/csv")
+    public ResponseEntity<byte[]> getUsersListInCsv() {
+        List<UserDTO> allUsers = userService.getAllUsers();
+        byte[] csvBytes = CsvGeneratorUtil.generateCSV(allUsers).getBytes();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "user.csv");
+
+        return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
     }
 
     @GetMapping(path="/{userId}/communityProof")
