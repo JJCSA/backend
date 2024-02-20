@@ -24,7 +24,7 @@ public class JJCSearchService {
         // TODO use pageable for Lazy initialization from server to client.
         return
                 jjcSearchRepository
-                        .findAllByUserIdNot(userId)
+                        .findAllByUserIdNotOrderByName(userId)
                         .stream()
                         .map(jjcSearchMapper::toJJCSearchDTO)
                         .peek(dto -> dto.setProfilePicture(awss3Service.generateSignedURLFromS3(dto.getProfilePicture())))
