@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface JJCSearchRepository extends JpaRepository<JJCSearch, String> {
     List<JJCSearch> findAllByUserIdNot(String userId);
+    List<JJCSearch> findAllByUserIdNotOrderByName(String userId);
 }
