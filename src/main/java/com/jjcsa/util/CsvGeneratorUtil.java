@@ -5,11 +5,8 @@ import com.jjcsa.model.Education;
 import com.jjcsa.model.WorkEx;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @UtilityClass
 public class CsvGeneratorUtil {
