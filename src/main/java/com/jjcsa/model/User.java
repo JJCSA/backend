@@ -42,6 +42,11 @@ public class User {
     @Column(name = "last_updated_date", columnDefinition = "varchar(45) default '11/11/1111'")
     private Date lastUpdatedDate;
 
+    @PrePersist
+    protected void onUpdate() {
+        lastUpdatedDate = new Date();
+    }
+
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "date_approved", columnDefinition = "varchar(45) default '11/11/1111'")
     private Date approvedDate;
