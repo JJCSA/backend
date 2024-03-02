@@ -5,8 +5,11 @@ import com.jjcsa.model.Education;
 import com.jjcsa.model.WorkEx;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @UtilityClass
 public class CsvGeneratorUtil {
@@ -33,9 +36,8 @@ public class CsvGeneratorUtil {
                         csvContent.append(", ");
                     }
                     Education education = user.getEducationList().get(i);
-                    csvContent.append(education.getUniversityName())
-                            .append(" - ")
-                            .append(education.getDegree());
+                    String educationString = education.getUniversityName() + " - " + education.getDegree();
+                    csvContent.append(getCsvString(educationString));
                 }
                 csvContent.append("\",");
             }
@@ -50,43 +52,54 @@ public class CsvGeneratorUtil {
                         csvContent.append(", ");
                     }
                     WorkEx workEx = user.getWorkExperience().get(i);
-                    csvContent.append(workEx.getCompanyName())
-                            .append(" - ")
-                            .append(workEx.getRole());
+                    String workExString = workEx.getCompanyName() + " - " + workEx.getRole();
+                    csvContent.append(getCsvString(workExString));
                 }
                 csvContent.append("\",");
             }
 
-            csvContent.append(user.getLastUpdatedDate()).append(",")
-                    .append(user.getApprovedDate()).append(",")
-                    .append(user.getFirstName()).append(",")
-                    .append(user.getMiddleName()).append(",")
-                    .append(user.getLastName()).append(",")
-                    .append(user.getMobileNumber()).append(",")
-                    .append(user.getContactMethod()).append(",")
-                    .append(user.getCommunityName()).append(",")
-                    .append(user.getUserStatus()).append(",")
-                    .append(user.getStreet()).append(",")
-                    .append(user.getCity()).append(",")
-                    .append(user.getState()).append(",")
-                    .append(user.getZip()).append(",")
-                    .append(user.getDateOfBirth()).append(",")
-                    .append(user.getSocialMediaPlatform()).append(",")
-                    .append(user.getVolunteeringInterest()).append(",")
-                    .append(user.getLoanTaken()).append(",")
-                    .append(user.getLoanOrganization()).append(",")
-                    .append(user.getLinkedinUrl()).append(",")
-                    .append(user.getDescription()).append(",")
-                    .append(user.getContactShared()).append(",")
-                    .append(user.getCountry()).append(",")
-                    .append(user.getUserStudent()).append(",")
-                    .append(user.getUserRole()).append(",")
-                    .append(user.getGender()).append(",")
-                    .append(user.getAboutMe()).append(",")
-                    .append(user.getIsRegionalContact()).append("\n");
+            csvContent.append(getCsvString(user.getLastUpdatedDate())).append(",")
+                    .append(getCsvString(user.getApprovedDate())).append(",")
+                    .append(getCsvString(user.getFirstName())).append(",")
+                    .append(getCsvString(user.getMiddleName())).append(",")
+                    .append(getCsvString(user.getLastName())).append(",")
+                    .append(getCsvString(user.getMobileNumber())).append(",")
+                    .append(getCsvString(user.getContactMethod())).append(",")
+                    .append(getCsvString(user.getCommunityName())).append(",")
+                    .append(getCsvString(user.getUserStatus())).append(",")
+                    .append(getCsvString(user.getStreet())).append(",")
+                    .append(getCsvString(user.getCity())).append(",")
+                    .append(getCsvString(user.getState())).append(",")
+                    .append(getCsvString(user.getZip())).append(",")
+                    .append(getCsvString(user.getDateOfBirth())).append(",")
+                    .append(getCsvString(user.getSocialMediaPlatform())).append(",")
+                    .append(getCsvString(user.getVolunteeringInterest())).append(",")
+                    .append(getCsvString(user.getLoanTaken())).append(",")
+                    .append(getCsvString(user.getLoanOrganization())).append(",")
+                    .append(getCsvString(user.getLinkedinUrl())).append(",")
+                    .append(getCsvString(user.getDescription())).append(",")
+                    .append(getCsvString(user.getContactShared())).append(",")
+                    .append(getCsvString(user.getCountry())).append(",")
+                    .append(getCsvString(user.getUserStudent())).append(",")
+                    .append(getCsvString(user.getUserRole())).append(",")
+                    .append(getCsvString(user.getGender())).append(",")
+                    .append(getCsvString(user.getAboutMe())).append(",")
+                    .append(getCsvString(user.getIsRegionalContact())).append("\n");
 
         }
 
         return csvContent.toString();
+    }
+
+    private String getCsvString(Object data) {
+        String dataStr = String.valueOf(data); // converts null objects to "null" string
+        if (dataStr.equals("null")) {
+            return "";
+        }
+
+        // replace all line breaks with space
+        dataStr = dataStr.replace("\n", " ");
+
+        return dataStr;
     }
 }
