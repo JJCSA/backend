@@ -49,10 +49,6 @@ public class UserService {
     @Value("${show-community-proof:false}")
     private boolean showCommunityProof;
 
-    public User getUser(String email) {
-        return userRepository.findUserByEmail(email);
-    }
-
     public User getUserById(String userId) {
         return userRepository.findById(userId).orElse(null);
     }
@@ -169,12 +165,6 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public void deleteUserInDbOnly(User user) {
-        this.deleteProfilePictureForUserProfile(user);
-        this.deleteCommunityDocumentForUserProfile(user);
-        userRepository.delete(user);
-    }
-
     public List<UserDTO> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
         return allUsers.stream()
@@ -209,6 +199,9 @@ public class UserService {
                 adminAction.setAction(Action.APPROVE_USER);
                 adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));
                 emailSenderService.sendEmail(user, EmailEvent.APPROVED);
+
+                user.setApprovedDate(new Date());
+                userRepository.save(user);
                 break;
             case Active:
                 if (currentStatus.equals(UserStatus.Pending)
@@ -240,16 +233,6 @@ public class UserService {
         user.setUserStatus(status);
         userRepository.save(user);
         adminActionRepository.save(adminAction);
-
-        EmailEvent emailEvent = EmailEvent.resolveEmailEventUsingAdminAction(adminAction.getAction());
-
-        if(emailEvent != null) {
-            log.info("Sending Email for Event: {} for user:{}", emailEvent, user.getFirstName());
-            // Send an email notification for Approved User
-            emailSenderService.sendEmail(user, emailEvent);
-        } else {
-            log.info("Can not resolve email event for admin action :{}", adminAction.getAction());
-        }
 
         return true;
     }
