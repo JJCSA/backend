@@ -97,6 +97,12 @@ public class CsvGeneratorUtil {
         // replace all line breaks with space
         dataStr = dataStr.replace("\n", " ");
 
+        // check if data contains any commas
+        if (dataStr.indexOf(',') >= 0) {
+            // surround dataStr with double quotes
+            dataStr = "\"" + dataStr + "\"";
+        }
+
         return dataStr;
     }
 }
