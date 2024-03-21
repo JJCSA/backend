@@ -27,32 +27,38 @@ public class CsvGeneratorUtil {
             if (CollectionUtils.isEmpty(user.getEducationList())) {
                 csvContent.append(","); // empty value
             } else {
-                csvContent.append("\""); // enclose all Education values in ""
+                csvContent.append("\"\""); // enclose all Education values in double double quotes ""<content>""
+                StringBuilder educationString = new StringBuilder();
                 for (int i = 0; i < user.getEducationList().size(); i++) {
                     if (i > 0) {
-                        csvContent.append(", ");
+                        educationString.append(", ");
                     }
                     Education education = user.getEducationList().get(i);
-                    String educationString = education.getUniversityName() + " - " + education.getDegree();
-                    csvContent.append(getCsvString(educationString));
+                    educationString.append(education.getUniversityName())
+                            .append(" - ")
+                            .append(education.getDegree());
                 }
-                csvContent.append("\",");
+                csvContent.append(getCsvString(educationString.toString()));
+                csvContent.append("\"\",");
             }
 
             // flatten workexp list
             if (CollectionUtils.isEmpty(user.getWorkExperience())) {
                 csvContent.append(","); // empty value
             } else {
-                csvContent.append("\""); // enclose all Education values in ""
+                csvContent.append("\"\""); // enclose all Education values in double double quotes ""<content>""
+                StringBuilder workString = new StringBuilder();
                 for (int i = 0; i < user.getWorkExperience().size(); i++) {
                     if (i > 0) {
-                        csvContent.append(", ");
+                        workString.append(", ");
                     }
                     WorkEx workEx = user.getWorkExperience().get(i);
-                    String workExString = workEx.getCompanyName() + " - " + workEx.getRole();
-                    csvContent.append(getCsvString(workExString));
+                    workString.append(workEx.getCompanyName())
+                            .append(" - ")
+                            .append(workEx.getRole());
                 }
-                csvContent.append("\",");
+                csvContent.append(getCsvString(workString.toString()));
+                csvContent.append("\"\",");
             }
 
             csvContent.append(getCsvString(user.getLastUpdatedDate())).append(",")
