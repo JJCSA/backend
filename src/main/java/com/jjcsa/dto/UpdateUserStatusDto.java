@@ -12,4 +12,6 @@ public class UpdateUserStatusDto {
 
     @NotBlank(message = "status should be a valid UserStatus -> Pending, NewUser, Active or Rejected")
     private UserStatus status;
+
+    private String rejectReason;
 }
