@@ -5,7 +5,6 @@ import com.jjcsa.model.EmailTemplate;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.EmailEvent;
 import com.jjcsa.repository.EmailTemplateRepository;
-import liquibase.pro.packaged.C;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
