@@ -46,6 +46,7 @@ public class UserService {
     private final KeycloakService keycloakService;
     private final UserMapper userMapper;
     private final EmailSenderService emailSenderService;
+    private final NewEmailService newEmailService;
 
     @Value("${show-community-proof:false}")
     private boolean showCommunityProof;
@@ -204,7 +205,7 @@ public class UserService {
 
                 adminAction.setAction(Action.APPROVE_USER);
                 adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));
-                emailSenderService.sendEmail(user, EmailEvent.APPROVED);
+                newEmailService.sendEmail(EmailEvent.APPROVED, user, "");
 
                 user.setApprovedDate(new Date());
                 userRepository.save(user);
@@ -232,7 +233,7 @@ public class UserService {
                 deleteUser(user);
                 adminActionRepository.save(adminAction);
 
-                emailSenderService.sendEmail(user, EmailEvent.REJECTED);
+                newEmailService.sendEmail(EmailEvent.REJECTED, user, userStatusDto.getRejectReason());
                 return true;
         }
 

@@ -5,12 +5,17 @@ import com.jjcsa.model.EmailTemplate;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.EmailEvent;
 import com.jjcsa.repository.EmailTemplateRepository;
+import liquibase.pro.packaged.C;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -22,6 +27,60 @@ public class EmailTemplateService {
 
     private final SpringTemplateEngine templateEngine;
     private final EmailTemplateRepository emailTemplateRepository;
+    private final String baseTemplateString;
+
+    public EmailTemplateService(SpringTemplateEngine templateEngine, EmailTemplateRepository emailTemplateRepository) {
+        this.templateEngine = templateEngine;
+        this.emailTemplateRepository = emailTemplateRepository;
+        baseTemplateString = getBaseTemplateString();
+    }
+
+    private String getBaseTemplateString() {
+        Resource resource = new ClassPathResource("templates/baseTemplate.html");
+        try {
+            InputStream ip = resource.getInputStream();
+            byte[] bytes = new byte[ip.available()];
+            ip.read(bytes);
+            ip.close();
+            return new String(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String resolveEmailBody(String template, Context context) {
+        String content = templateEngine.process(template, context);
+
+        // resolve base template
+        Context baseContext = new Context();
+        context.setVariable("content", content);
+        return templateEngine.process(baseTemplateString, baseContext);
+    }
+
+    public EmailTemplateDto resolveEmailContent(EmailEvent emailEvent, User user, String rejectReason) {
+
+        EmailTemplate template = emailTemplateRepository.findByTemplateName(emailEvent.getName());
+
+        Context context = new Context();
+        context.setLocale(Locale.ENGLISH);
+
+        switch (emailEvent) {
+            case REJECTED:
+                context.setVariable("firstName", user.getFirstName());
+                context.setVariable("rejectReason", rejectReason);
+                break;
+            case APPROVED:
+                context.setVariable("firstName", user.getFirstName());
+                context.setVariable("lastName", user.getLastName());
+                break;
+        }
+        String resolvedBody = resolveEmailBody(template.getEmailBody(), context);
+
+        return EmailTemplateDto.builder()
+                .body(resolvedBody)
+                .subject(template.getEmailSubject())
+                .build();
+    }
 
     public String resolveTemplate(Context context, String template){
         return templateEngine.process(template, context);
