@@ -22,6 +22,9 @@ public class NewEmailService {
     @Value("${email.ses.from-email:newsletter@jjcsausa.com}")
     private String fromEmailAddress;
 
+    @Value("${email.ses.to-email:jjcsausa@gmail.com}")
+    private String toEmailAddress;
+
     private final JavaMailSender mailSender;
     private final EmailTemplateService emailTemplateService;
 
@@ -44,6 +47,18 @@ public class NewEmailService {
 
         EmailTemplateDto emailTemplateDto = emailTemplateService.resolveEmailContent(emailEvent, user, rejectReason);
         sendEmail(user.getEmail(), emailTemplateDto.getSubject(), emailTemplateDto.getBody());
+    }
+
+    public void sendEmailForForgotPassword(String email, String tempPassword, String resetPasswordUrl) {
+        EmailTemplateDto emailTemplateDto =
+                emailTemplateService.resolveTemplateForForgotPasswordEmail(email, resetPasswordUrl, tempPassword);
+        sendEmail(email, emailTemplateDto.getSubject(), emailTemplateDto.getBody());
+    }
+
+    public void sendEmailForContactUs(String userName, String userEmail, String message) {
+        EmailTemplateDto emailTemplateDto =
+                emailTemplateService.resolveTemplateForContactUs(userName, userEmail, message);
+        sendEmail(toEmailAddress, emailTemplateDto.getSubject(), emailTemplateDto.getBody());
     }
 
 }

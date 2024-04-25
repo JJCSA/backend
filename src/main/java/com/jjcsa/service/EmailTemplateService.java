@@ -57,6 +57,10 @@ public class EmailTemplateService {
         return templateEngine.process(baseTemplateString, baseContext);
     }
 
+    public String resolveTemplate(Context context, String template){
+        return templateEngine.process(template, context);
+    }
+
     public EmailTemplateDto resolveEmailContent(EmailEvent emailEvent, User user, String rejectReason) {
 
         EmailTemplate template = emailTemplateRepository.findByTemplateName(emailEvent.getName());
@@ -73,6 +77,11 @@ public class EmailTemplateService {
                 context.setVariable("firstName", user.getFirstName());
                 context.setVariable("lastName", user.getLastName());
                 break;
+            case PW_UPDATE:
+            case PROFILE_UPDATE:
+            case REGISTRATION:
+                context.setVariable("firstName", user.getFirstName());
+                break;
         }
         String resolvedBody = resolveEmailBody(template.getEmailBody(), context);
 
@@ -80,10 +89,6 @@ public class EmailTemplateService {
                 .body(resolvedBody)
                 .subject(template.getEmailSubject())
                 .build();
-    }
-
-    public String resolveTemplate(Context context, String template){
-        return templateEngine.process(template, context);
     }
 
     // TODO create converter and use EmailTemplate enum while retrieving the template from DB.
@@ -113,19 +118,14 @@ public class EmailTemplateService {
                                                                   String link,
                                                                   String tempPassword) {
         EmailTemplate template = emailTemplateRepository.findByTemplateName(EmailEvent.FORGOT_PW.getName());
-        String templateBody = template.getEmailBody();
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("email", email);
-        params.put("link", link);
-        params.put("tempPassword", tempPassword);
 
         Context context = new Context();
         context.setLocale(Locale.ENGLISH);
-        context.setVariables(params);
-        String resolvedBody = this.resolveTemplate(context, templateBody);
+        context.setVariable("email", email);
+        context.setVariable("link", link);
+        context.setVariable("tempPassword", tempPassword);
 
-        log.info("User:{}, Resolved Body:{}", email, resolvedBody);
+        String resolvedBody = resolveEmailBody(template.getEmailBody(), context);
 
         return EmailTemplateDto.builder()
                 .body(resolvedBody)
@@ -133,30 +133,22 @@ public class EmailTemplateService {
                 .build();
     }
 
-    // TODO generalize template resolution for all methods in this class
     public EmailTemplateDto resolveTemplateForContactUs(String userName,
                                                         String message,
                                                         String userEmail) {
         EmailTemplate template = emailTemplateRepository.findByTemplateName(EmailEvent.CONTACT_US.getName());
-        String templateBody = template.getEmailBody();
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", userName);
-        params.put("message", message);
-        params.put("userEmail", userEmail);
 
         Context context = new Context();
         context.setLocale(Locale.ENGLISH);
-        context.setVariables(params);
-        String resolvedBody = this.resolveTemplate(context, templateBody);
+        context.setVariable("name", userName);
+        context.setVariable("message", message);
+        context.setVariable("userEmail", userEmail);
 
-        log.info("Contact Us resolution for userEmail:{}, Resolved Body:{}", userEmail, resolvedBody);
+        String resolvedBody = resolveEmailBody(template.getEmailBody(), context);
 
-        return
-                EmailTemplateDto
-                        .builder()
-                        .body(resolvedBody)
-                        .subject(template.getEmailSubject())
-                        .build();
+        return EmailTemplateDto.builder()
+                .body(resolvedBody)
+                .subject(template.getEmailSubject())
+                .build();
     }
 }

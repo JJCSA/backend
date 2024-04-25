@@ -5,11 +5,9 @@ import java.security.Principal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.AddNewUser;
-import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.EmailEvent;
-import com.jjcsa.service.KeycloakService;
-import com.jjcsa.service.EmailSenderService;
+import com.jjcsa.service.NewEmailService;
 import com.jjcsa.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,9 +31,7 @@ import javax.validation.constraints.NotNull;
 public class LoginController {
 
     private final UserService userService;
-    private final KeycloakService keycloakService;
-    private final UserMapper userMapper;
-    private final EmailSenderService emailSenderService;
+    private final NewEmailService newEmailSenderService;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -66,7 +62,7 @@ public class LoginController {
 
         User user = userService.saveUser(addNewUser, jainProofDoc, profPicture);
 
-        emailSenderService.sendEmail(user, EmailEvent.REGISTRATION);
+        newEmailSenderService.sendEmail(EmailEvent.REGISTRATION, user, "");
         return new ResponseEntity<>(addNewUser, HttpStatus.CREATED);
     }
 }

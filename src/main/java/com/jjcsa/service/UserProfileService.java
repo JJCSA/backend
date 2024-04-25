@@ -36,6 +36,7 @@ public class UserProfileService {
     private final KeycloakService keycloakService;
     private final AWSS3Service awss3Service;
     private final EmailSenderService emailSenderService;
+    private final NewEmailService newEmailService;
 
     // TODO change it with Set.of() when we build with java 9 or latest
     private final static Set<String> VOLUNTEERINGINTEREST =
@@ -153,7 +154,7 @@ public class UserProfileService {
 
         String profileS3Url = awss3Service.generateSignedURLFromS3(savedUser.getProfilePicture());
         log.info("Generated pre signed URL :{} for user :{}", profileS3Url, savedUser.getFirstName());
-        emailSenderService.sendEmail(savedUser, EmailEvent.PROFILE_UPDATE);
+        newEmailService.sendEmail(EmailEvent.PROFILE_UPDATE, savedUser, "");
         return userProfileMapper.toUserProfile(savedUser, userRole, profileS3Url);
     }
 
