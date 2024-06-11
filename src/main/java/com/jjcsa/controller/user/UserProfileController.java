@@ -31,6 +31,7 @@ public class UserProfileController {
     private final AWSS3Service awss3Service;
     private final KeycloakService keycloakService;
     private final EmailSenderService emailSenderService;
+    private final NewEmailService newEmailService;
 
     @GetMapping()
     public UserProfile getUserProfile(KeycloakAuthenticationToken authenticationToken) {
@@ -102,7 +103,7 @@ public class UserProfileController {
         // It will never be false. Change/Refactor verifyAndUpdateUserPassword to provide
         // more info when update failed
         if(pwUpdated) {
-            emailSenderService.sendEmail(user, EmailEvent.PW_UPDATE);
+            newEmailService.sendEmail(EmailEvent.PW_UPDATE, user, "");
         } else {
             log.error("password update failed for user:{}, name:{}", user.getId(), user.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password Update Failed. Please contact jjcsausa@gmail.com");

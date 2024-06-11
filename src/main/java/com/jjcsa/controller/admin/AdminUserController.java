@@ -90,12 +90,12 @@ public class AdminUserController {
         AccessToken token = account.getKeycloakSecurityContext().getToken();
 
         User adminUser = userService.getUserById(token.getSubject());
-        AdminAction adminAction = new AdminAction();
-        adminAction.setFromUserId(adminUser.getId());
-        adminAction.setToUserId(updateUserStatusDto.getUserId());
-        adminAction.setDateOfAction(new Date());
+        if (isNull(adminUser)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find admin user making the request");
+        }
 
-        return userService.updateUserStatus(user, updateUserStatusDto.getStatus(), adminAction);
+
+        return userService.updateUserStatus(user, adminUser, updateUserStatusDto);
     }
 
     @PostMapping(path = "/{userId}/regional-contact")

@@ -2,7 +2,7 @@ package com.jjcsa.controller;
 
 import com.jjcsa.dto.ContactUsRequest;
 import com.jjcsa.service.CaptchaService;
-import com.jjcsa.service.EmailSenderService;
+import com.jjcsa.service.NewEmailService;
 import com.jjcsa.util.GeneralUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import javax.validation.Valid;
 public class ContactUsController {
 
     private final CaptchaService captchaService;
-    private final EmailSenderService emailSenderService;
+    private final NewEmailService newEmailService;
 
     @PostMapping("/verify")
     public ResponseEntity verify(@RequestBody @Valid ContactUsRequest contactUsRequest, HttpServletRequest request) {
@@ -37,8 +37,8 @@ public class ContactUsController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recaptcha token is invalid");
         }
 
-        emailSenderService
-                .invokeContactUsEmail(contactUsRequest.getName(), contactUsRequest.getEmail(), contactUsRequest.getMessage());
+        newEmailService.sendEmailForContactUs(contactUsRequest.getName(), contactUsRequest.getEmail(),
+                contactUsRequest.getMessage());
 
         return ResponseEntity.ok().build();
     }

@@ -28,7 +28,7 @@ public class UserForgotPasswordService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final KeycloakService keycloakService;
-    private final EmailSenderService emailSenderService;
+    private final NewEmailService newEmailService;
 
     @Value("${frontend.forgotPasswordURL}")
     private String forgotPasswordURL;
@@ -69,7 +69,7 @@ public class UserForgotPasswordService {
         newTempPassword.setTempPassword(bCryptPasswordEncoder.encode(rawPw));
 
         userTempPasswordRepository.save(newTempPassword);
-        emailSenderService.sendEmailForForgotPassword(email, rawPw, resetPasswordLink);
+        newEmailService.sendEmailForForgotPassword(email, rawPw, resetPasswordLink);
 
         return true;
     }
@@ -110,7 +110,7 @@ public class UserForgotPasswordService {
 
         // Delete temp password record
         userTempPasswordRepository.delete(userTempPassword);
-        emailSenderService.sendEmail(user, EmailEvent.PW_UPDATE);
+        newEmailService.sendEmail(EmailEvent.PW_UPDATE, user, "");
 
         return true;
     }

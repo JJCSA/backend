@@ -1,6 +1,7 @@
 package com.jjcsa.service;
 
 import com.jjcsa.dto.AddNewUser;
+import com.jjcsa.dto.UpdateUserStatusDto;
 import com.jjcsa.dto.UserDTO;
 import com.jjcsa.mapper.UserMapper;
 import com.jjcsa.model.AdminAction;
@@ -45,6 +46,7 @@ public class UserService {
     private final KeycloakService keycloakService;
     private final UserMapper userMapper;
     private final EmailSenderService emailSenderService;
+    private final NewEmailService newEmailService;
 
     @Value("${show-community-proof:false}")
     private boolean showCommunityProof;
@@ -182,11 +184,16 @@ public class UserService {
      * Updates user's status with the given status
      * returns true if successful
      */
-    public boolean updateUserStatus(User user, UserStatus status, AdminAction adminAction) {
+    public boolean updateUserStatus(User user, User adminUser, UpdateUserStatusDto userStatusDto) {
+
+        AdminAction adminAction = new AdminAction();
+        adminAction.setFromUserId(adminUser.getId());
+        adminAction.setToUserId(user.getId());
+        adminAction.setDateOfAction(new Date());
 
         UserStatus currentStatus = user.getUserStatus();
 
-        switch (status) {
+        switch (userStatusDto.getStatus()) {
             case NewUser:
                 if (currentStatus.equals(UserStatus.Active)
                         || currentStatus.equals(UserStatus.Rejected)) {
@@ -198,7 +205,7 @@ public class UserService {
 
                 adminAction.setAction(Action.APPROVE_USER);
                 adminAction.setDescrip(String.format("User with email %s approved by Admin", user.getEmail()));
-                emailSenderService.sendEmail(user, EmailEvent.APPROVED);
+                newEmailService.sendEmail(EmailEvent.APPROVED, user, "");
 
                 user.setApprovedDate(new Date());
                 userRepository.save(user);
@@ -217,20 +224,22 @@ public class UserService {
                         || currentStatus.equals(UserStatus.Active)) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot update UserStatus to Rejected for NewUser or Active users");
                 }
-                log.info("Rejecting user with email {}", user.getEmail());
+                String message = String.format("User with email %s rejected by admin with reason: %s",
+                        user.getEmail(), userStatusDto.getRejectReason());
+                log.info(message);
                 adminAction.setAction(Action.REJECT_USER);
-                adminAction.setDescrip(String.format("User with email %s rejected by Admin", user.getEmail()));
+                adminAction.setDescrip(message);
 
                 deleteUser(user);
                 adminActionRepository.save(adminAction);
 
-                emailSenderService.sendEmail(user, EmailEvent.REJECTED);
+                newEmailService.sendEmail(EmailEvent.REJECTED, user, userStatusDto.getRejectReason());
                 return true;
         }
 
-        log.info("Updating user's status from {} to {}", currentStatus, status);
+        log.info("Updating user's status from {} to {}", currentStatus, userStatusDto.getStatus());
 
-        user.setUserStatus(status);
+        user.setUserStatus(userStatusDto.getStatus());
         userRepository.save(user);
         adminActionRepository.save(adminAction);
 

@@ -81,6 +81,7 @@ public class EmailSenderService {
         return failed;
     }
 
+    @Deprecated
     public int sendEmailForForgotPassword(String email,
                                           String temporaryPassword,
                                           String resetPasswordUrl) {
@@ -98,6 +99,7 @@ public class EmailSenderService {
         return failed;
     }
 
+    @Deprecated
     public int invokeContactUsEmail(String userName,
                                     String userEmail,
                                     String userMessage) {
