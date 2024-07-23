@@ -60,7 +60,7 @@ cloud:
 
 email:
   ses:
-    from-email: noreply@jjcsausa.com
+    from-email: noreply@jjcusa.org
     to-email: jjcsausa@gmail.com
 
 frontend:
