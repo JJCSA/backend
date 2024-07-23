@@ -38,7 +38,7 @@ keycloak:
 aws:
   s3:
     bucketname: jjcsa-usa
-  region: us-east-1
+  region: us-east-2
 #  paramstore:
 #    enabled: true
 #    region: us-east-2
@@ -51,7 +51,7 @@ cloud:
     stack:
       auto: false
     region:
-      static: us-east-1
+      static: us-east-2
     credentials:
        useDefaultAwsCredentialsChain: true
 #      profile-name: default
