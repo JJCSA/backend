@@ -1,16 +1,12 @@
 package com.jjcsa.controller;
 
 import java.security.Principal;
-import java.util.Locale;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjcsa.dto.AddNewUser;
-import com.jjcsa.model.EmailTemplate;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.EmailEvent;
-import com.jjcsa.repository.EmailTemplateRepository;
-import com.jjcsa.service.EmailTemplateService;
 import com.jjcsa.service.NewEmailService;
 import com.jjcsa.service.UserService;
 
@@ -37,8 +33,6 @@ public class LoginController {
 
     private final UserService userService;
     private final NewEmailService newEmailSenderService;
-    private final EmailTemplateService emailTemplateService;
-    private final EmailTemplateRepository emailTemplateRepository;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
