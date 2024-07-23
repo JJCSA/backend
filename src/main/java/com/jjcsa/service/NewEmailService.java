@@ -28,6 +28,7 @@ public class NewEmailService {
     private final EmailTemplateService emailTemplateService;
 
     public void sendEmail(String to, String subject, String content) {
+        log.info("Sending email to: {}, subject: {}, content: {}", to, subject, content);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
