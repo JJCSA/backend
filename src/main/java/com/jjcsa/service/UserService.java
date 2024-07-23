@@ -45,7 +45,6 @@ public class UserService {
     private final AdminActionRepository adminActionRepository;
     private final KeycloakService keycloakService;
     private final UserMapper userMapper;
-    private final EmailSenderService emailSenderService;
     private final NewEmailService newEmailService;
 
     @Value("${show-community-proof:false}")

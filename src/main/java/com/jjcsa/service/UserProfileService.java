@@ -35,7 +35,6 @@ public class UserProfileService {
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
     private final AWSS3Service awss3Service;
-    private final EmailSenderService emailSenderService;
     private final NewEmailService newEmailService;
 
     // TODO change it with Set.of() when we build with java 9 or latest
