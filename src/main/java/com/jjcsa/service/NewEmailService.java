@@ -3,7 +3,6 @@ package com.jjcsa.service;
 import com.jjcsa.dto.EmailTemplateDto;
 import com.jjcsa.model.User;
 import com.jjcsa.model.enumModel.EmailEvent;
-import io.awspring.cloud.ses.SimpleEmailServiceJavaMailSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

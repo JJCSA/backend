@@ -30,7 +30,6 @@ public class UserProfileController {
     private final UserService userService;
     private final AWSS3Service awss3Service;
     private final KeycloakService keycloakService;
-    private final EmailSenderService emailSenderService;
     private final NewEmailService newEmailService;
 
     @GetMapping()

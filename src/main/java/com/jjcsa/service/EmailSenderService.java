@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
+@Deprecated // Deprecated in favor of NewEmailService
+//@Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmailSenderService {
