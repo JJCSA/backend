@@ -32,10 +32,6 @@ aws:
   s3:
     bucketname: prod-jjcusa
 
-email:
-  ses:
-    from-email: noreply@jjcusa.org
-
 cloud:
   aws:
     s3:
