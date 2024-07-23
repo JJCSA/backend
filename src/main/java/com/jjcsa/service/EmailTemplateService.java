@@ -52,7 +52,8 @@ public class EmailTemplateService {
 
         // resolve base template
         Context baseContext = new Context();
-        context.setVariable("content", content);
+        baseContext.setLocale(Locale.ENGLISH);
+        baseContext.setVariable("content", content);
         return templateEngine.process(baseTemplateString, baseContext);
     }
 
