@@ -36,3 +36,7 @@ cloud:
   aws:
     s3:
       region: us-east-2
+
+email:
+  ses:
+    from-email: noreply@stage.jjcusa.org
