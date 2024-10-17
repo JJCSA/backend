@@ -35,3 +35,5 @@ databaseChangeLog:
       file: db/changelog/changelogs_common/V0_12_20231101__sanket_update_search_view_ignore_admin_emails.sql
   - include:
       file: db/changelog/changelogs_data/V0_13_20240424__tejas_update_email_templates.sql
+  - include:
+      file: db/changelog/changelogs_common/V1_1_20241016__tejas_events_new_tables.sql
