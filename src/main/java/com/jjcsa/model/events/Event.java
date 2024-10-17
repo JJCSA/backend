@@ -6,11 +6,12 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "events")
 @Data
-public class Events {
+public class Event {
 
     @Id
     private String id;
@@ -31,7 +32,7 @@ public class Events {
     private DateTime end_time; // UTC time
 
     @Column(name = "is_published")
-    private Boolean isPublished;
+    private Boolean isPublished = false; // default false
 
     @Column(name = "registration_deadline")
     private DateTime registrationDeadline; // UTC time
@@ -40,7 +41,7 @@ public class Events {
     private String meetingLink;
 
     @Enumerated(EnumType.STRING)
-    private EventStatus status;
+    private EventStatus status; // should this be in db??
 
     @Column(name="created_by_user")
     private String createdByUserId;
@@ -61,4 +62,14 @@ public class Events {
     protected void onUpdate() {
         updatedAt = DateTime.now(DateTimeZone.UTC);
     }
+
+    // *********************************************** //
+    // Relations
+    // *********************************************** //
+
+    @OneToMany(mappedBy = "event")
+    private Set<EventSpeaker> eventSpeakers;
+
+    @OneToMany(mappedBy = "event")
+    private Set<EventResources> eventResources;
 }
