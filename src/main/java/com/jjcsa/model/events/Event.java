@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Set;
 
 @Entity
@@ -14,6 +16,7 @@ import java.util.Set;
 public class Event {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     private String title;
@@ -26,41 +29,41 @@ public class Event {
     private String location;
 
     @Column(name = "start_time")
-    private DateTime startTime; // UTC time
+    private LocalDateTime startTime; // UTC time
 
     @Column(name = "end_time")
-    private DateTime end_time; // UTC time
+    private LocalDateTime endTime; // UTC time
 
     @Column(name = "is_published")
     private Boolean isPublished = false; // default false
 
     @Column(name = "registration_deadline")
-    private DateTime registrationDeadline; // UTC time
+    private LocalDateTime registrationDeadline; // UTC time
 
     @Column(name = "meeting_link")
     private String meetingLink;
 
     @Enumerated(EnumType.STRING)
-    private EventStatus status; // should this be in db??
+    private EventStatus status = null; // should this be in db??
 
     @Column(name="created_by_user")
     private String createdByUserId;
 
     @Column(name = "created_at")
-    private DateTime createdAt; // UTC time
+    private LocalDateTime createdAt; // UTC time
 
     @Column(name = "updated_at")
-    private DateTime updatedAt; // UTC time
+    private LocalDateTime updatedAt; // UTC time
 
     @PrePersist
     protected void onCreate() {
-        createdAt = DateTime.now(DateTimeZone.UTC);
-        updatedAt = DateTime.now(DateTimeZone.UTC);
+        createdAt = LocalDateTime.now(ZoneOffset.UTC);;
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = DateTime.now(DateTimeZone.UTC);
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);;
     }
 
     // *********************************************** //

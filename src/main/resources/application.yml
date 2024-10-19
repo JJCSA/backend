@@ -3,6 +3,7 @@ server:
   port: 9080
   error:
     include-message: always # shows error message when ResponseStatusException is thrown
+    include-binding-errors: always
 
 # Database config
 spring:

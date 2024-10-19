@@ -2,8 +2,6 @@
 
 --changeset tejas:events-new-tables
 
-CREATE TYPE event_status AS ENUM('upcoming', 'ongoing', 'past');
-
 CREATE TABLE IF NOT EXISTS events
 (
     id                    VARCHAR(255) PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -16,13 +14,11 @@ CREATE TABLE IF NOT EXISTS events
     is_published          BOOLEAN      NOT NULL    DEFAULT FALSE,
     registration_deadline TIMESTAMP,
     meeting_link          TEXT,
-    status                event_status             DEFAULT 'upcoming',
+    status                VARCHAR(10)              DEFAULT 'upcoming',
     created_by_user       VARCHAR(255) NOT NULL,
     created_at            TIMESTAMP    NOT NULL    DEFAULT NOW(),
     updated_at            TIMESTAMP    NOT NULL    DEFAULT NOW()
 );
-
-CREATE TYPE event_response AS ENUM('yes', 'no', 'maybe');
 
 CREATE TABLE IF NOT EXISTS user_event_responses
 (
@@ -33,7 +29,7 @@ CREATE TABLE IF NOT EXISTS user_event_responses
     user_id         VARCHAR(255)   NOT NULL
         CONSTRAINT fk_user_account__user_event_responses
             REFERENCES user_account,
-    response        event_response NOT NULL,
+    response        VARCHAR(10)    NOT NULL,
     created_by_user VARCHAR(255)   NOT NULL,
     created_at      TIMESTAMP      NOT NULL  DEFAULT NOW(),
     updated_at      TIMESTAMP      NOT NULL  DEFAULT NOW()

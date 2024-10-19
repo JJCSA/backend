@@ -14,7 +14,7 @@ public class EventResources {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    private Event eventId;
+    private Event event;
 
     @Column(name="resource_type")
     private String resourceType;

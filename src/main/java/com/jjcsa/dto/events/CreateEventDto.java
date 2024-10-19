@@ -1,30 +1,31 @@
 package com.jjcsa.dto.events;
 
 import lombok.Data;
-import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Set;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class CreateEventDto {
 
-    @NotBlank
+    @NotBlank(message = "Event Title cannot be empty")
     private String title;
 
     private String shortDescription;
     private String longDescription;
     private String location;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) //ISO Date Time Format yyyy-MM-dd'T'HH:mm:ss.SSSXXX
-    private DateTime startTime;
+    //ISO Date Time Format yyyy-MM-dd'T'HH:mm:ss
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$", message = "startTime must be of the format yyyy-MM-dd'T'HH:mm:ss")
+    private String startTime;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) //ISO Date Time Format yyyy-MM-dd'T'HH:mm:ss.SSSXXX
-    private DateTime endTime;
+    //ISO Date Time Format yyyy-MM-dd'T'HH:mm:ss
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$", message = "endTime must be of the format yyyy-MM-dd'T'HH:mm:ss")
+    private String endTime;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) //ISO Date Time Format yyyy-MM-dd'T'HH:mm:ss.SSSXXX
-    private DateTime registrationDeadline;
+    //ISO Date Time Format yyyy-MM-dd'T'HH:mm:ss
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$", message = "registrationDeadline must be of the format yyyy-MM-dd'T'HH:mm:ss")
+    private String registrationDeadline;
 
     private String meetingLink;
 

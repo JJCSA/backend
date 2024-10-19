@@ -8,7 +8,11 @@ import com.jjcsa.repository.events.EventsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
 
 import static java.util.Objects.nonNull;
 
@@ -21,24 +25,23 @@ public class EventService {
 
     public Event createEvent(CreateEventDto event, User adminUser) {
 
+        Event newEvent = eventMapper.toEvents(event);
         // Validations
         // endDate should be after startDate
-        DateTime startTime = event.getStartTime();
-        DateTime endTime = event.getEndTime();
+        LocalDateTime startTime = newEvent.getStartTime();
+        LocalDateTime endTime = newEvent.getEndTime();
         if (nonNull(startTime) && nonNull(endTime)
             && startTime.isAfter(endTime)) {
-            // throw error
-            return null;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start time is after end time");
         }
 
         // registrationDeadline should be after now
-        DateTime registrationDeadline = event.getRegistrationDeadline();
-        if (nonNull(registrationDeadline) && registrationDeadline.isBeforeNow()) {
-            // throw error
-            return null;
+        LocalDateTime registrationDeadline = newEvent.getRegistrationDeadline();
+        if (nonNull(registrationDeadline) && registrationDeadline.isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Registration deadline has to be in future");
         }
 
-        Event newEvent = eventMapper.toEvents(event);
+        // assignments
         newEvent.setCreatedByUserId(adminUser.getId());
 
         return eventsRepository.save(newEvent);
